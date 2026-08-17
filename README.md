@@ -10,8 +10,8 @@ End state: Windows 11 Pro **and** Ubuntu 26.04 LTS side by side, with
 - **Linux kernel 7.0+** — Ubuntu 26.04's stock GA kernel is 7.0, verified by
   `scripts/20-kernel.sh` (with optional HWE/mainline paths to newer kernels);
 - **Official NVIDIA driver** for the RTX 5090 Laptop GPU — Blackwell requires
-  the *open* kernel modules (`nvidia-driver-580-open` or newer branch), with
-  Secure Boot/MOK handled;
+  the *open* kernel modules (R595 is the current production branch, e.g.
+  `nvidia-driver-595-open`), with Secure Boot/MOK handled;
 - an **interactive dev-tool installer** (each item individually prompted):
   Git, Claude Code, Docker, JDK (25 LTS), Maven, C/C++, Go, Rust,
   Elastic Stack (Basic license, in Docker), and Ollama.
@@ -24,6 +24,7 @@ End state: Windows 11 Pro **and** Ubuntu 26.04 LTS side by side, with
 | 2. Install Ubuntu 26.04 alongside Windows | Ubuntu installer | [docs/02-ubuntu-install.md](docs/02-ubuntu-install.md) |
 | 3. NVIDIA driver → kernel check → dev tools | Ubuntu | [docs/03-post-install.md](docs/03-post-install.md) |
 | Anything broken | — | [docs/troubleshooting.md](docs/troubleshooting.md) |
+| Verified facts + sources behind this runbook | — | [docs/research-notes.md](docs/research-notes.md) |
 
 ## Quick start (on the freshly installed Ubuntu)
 

@@ -16,15 +16,25 @@ module_docker_install() {
   # shellcheck disable=SC1091
   . /etc/os-release
   local suite="${UBUNTU_CODENAME:-$VERSION_CODENAME}"
-  # Docker supports Ubuntu LTS releases, but repo metadata for a brand-new
-  # codename can lag GA — the documented workaround is the previous LTS suite.
+  # Docker officially supports Ubuntu 26.04 ("resolute"), but guard against
+  # repo metadata lagging a brand-new codename — fall back to the prior LTS.
   if ! fetch --head "https://download.docker.com/linux/ubuntu/dists/${suite}/Release" >/dev/null 2>&1; then
     warn "Docker repo has no '${suite}' suite yet; using 'noble' as documented fallback."
     suite="noble"
   fi
-  add_apt_repo docker \
-    "https://download.docker.com/linux/ubuntu/gpg" \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${suite} stable"
+  # deb822 .sources format, per Docker's current install docs.
+  sudo install -m 0755 -d /etc/apt/keyrings
+  fetch https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc >/dev/null
+  sudo chmod a+r /etc/apt/keyrings/docker.asc
+  sudo tee /etc/apt/sources.list.d/docker.sources >/dev/null <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: ${suite}
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+  _APT_UPDATED=""
 
   apt_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 

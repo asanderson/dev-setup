@@ -70,6 +70,11 @@ On any machine, with an 8GB+ USB stick (it will be erased):
 | BIOS setup | **Del** (then **F7** toggles Advanced mode) |
 | One-time boot menu | **F11** |
 
+> These keys come from MSI's support documentation and community reports for
+> this laptop family, but were not independently verified on the A2XWJG
+> specifically — if one doesn't respond, try the other, or use Windows:
+> Settings → System → Recovery → Advanced startup → *UEFI Firmware Settings*.
+
 Recommended BIOS settings for the install (Del → F7 Advanced):
 
 - **Secure Boot: leave enabled.** Ubuntu 26.04 boots fine under Secure Boot,

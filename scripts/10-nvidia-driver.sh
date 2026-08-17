@@ -2,9 +2,9 @@
 # 10-nvidia-driver.sh — official NVIDIA driver for the RTX 5090 Laptop GPU.
 #
 # Blackwell (RTX 50-series) GPUs are supported ONLY by the open GPU kernel
-# modules — install an "-open" driver package. The 580 branch is the
-# long-lived production branch (pairs with CUDA 13.x); newer branches
-# (e.g. 595) also support Blackwell.
+# modules — install an "-open" driver package. R595 is the current
+# production branch and explicitly lists the RTX 5090 Laptop GPU; the older
+# 580 branch (CUDA 13.x era) also supports Blackwell.
 #
 # Run, reboot, then verify with: nvidia-smi
 

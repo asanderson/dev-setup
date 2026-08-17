@@ -7,12 +7,13 @@
 # "kernel 7.0 or newer" — this script mostly just confirms that.
 #
 # Newer kernels arrive through:
-#   * linux-generic-hwe-26.04 — Canonical's HWE stack; rolls forward from
-#     ~26.04.2 onward and stays signed/supported. Preferred.
-#   * kernel.ubuntu.com mainline builds — bleeding edge (e.g. 7.1+), but
-#     UNSIGNED (Secure Boot must be off or modules self-signed) and without
-#     Ubuntu patches or security updates. NVIDIA DKMS may lag brand-new
-#     kernels. Only for troubleshooting very new hardware.
+#   * linux-generic-hwe-26.04 — Canonical's HWE stack (currently also 7.0;
+#     rolls forward at later point releases) and stays signed/supported.
+#     Preferred.
+#   * kernel.ubuntu.com mainline builds — bleeding edge (7.1+/7.2-rc), but
+#     UNSIGNED (Secure Boot must be off or modules self-signed), unsupported,
+#     with no security updates — and NVIDIA DKMS modules are not expected to
+#     build against them. Only for troubleshooting very new hardware.
 
 set -euo pipefail
 

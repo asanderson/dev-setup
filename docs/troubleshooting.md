@@ -45,6 +45,16 @@ Ethernet to do so. Bluetooth on the same module follows the Wi-Fi firmware.
 - Confirm you have the **open** module variant (required for Blackwell):
   `dpkg -l | grep nvidia-driver` should show `nvidia-driver-XXX-open`.
 
+## Suspend/resume hangs (RTX 50-series + kernel 7.0)
+
+A known issue on NVIDIA's open-gpu-kernel-modules tracker: RTX 50-series
+GPUs can hang on resume from s2idle suspend on kernel 7.0. If the laptop
+freezes on lid-open, update to the newest 595/610 driver point release
+(`sudo apt update && sudo apt full-upgrade`) and check
+<https://github.com/NVIDIA/open-gpu-kernel-modules/issues> for the current
+status. Workaround until fixed: use shutdown or disable suspend
+(`sudo systemctl mask sleep.target suspend.target`).
+
 ## Black screen booting the installer or the installed system
 
 Boot with `nomodeset`: in GRUB press `e`, append `nomodeset` to the `linux`

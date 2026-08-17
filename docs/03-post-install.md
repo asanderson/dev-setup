@@ -13,13 +13,15 @@ cd ~/dev-setup
 ## 3.1 NVIDIA driver — `scripts/10-nvidia-driver.sh`
 
 The RTX 5090 Laptop GPU (Blackwell) is supported **only by NVIDIA's open GPU
-kernel modules** — the legacy proprietary kernel modules do not support this
-generation. The production branch is **580** (pairs with CUDA 13.x); newer
-branches such as **595** also carry Blackwell support. The script:
+kernel modules** — NVIDIA states the proprietary kernel modules are
+unsupported on this generation. The current production branch is **R595**
+(595.58.03+, which explicitly lists the RTX 5090 Laptop GPU as supported, and
+which Ubuntu 26.04 packages); the previous **580** branch (CUDA 13.x era) also
+carries Blackwell support. The script:
 
 1. Checks Secure Boot state and explains **MOK enrollment** (below).
 2. Runs `ubuntu-drivers devices` and installs the recommended driver,
-   preferring the `-open` variant (e.g. `nvidia-driver-580-open`).
+   preferring the `-open` variant (e.g. `nvidia-driver-595-open`).
 3. Optionally installs the CUDA toolkit.
 
 ### MOK enrollment (Secure Boot only)
@@ -53,11 +55,13 @@ mode.
 Ubuntu 26.04's stock kernel **is already 7.0**, so this script is a
 verification step. It also offers:
 
-- **HWE stack** (`linux-generic-hwe-26.04`): Canonical-signed newer kernels as
-  point releases arrive (≈26.04.2 onward). Safe default — say yes.
+- **HWE stack** (`linux-generic-hwe-26.04`): currently also kernel 7.0; rolls
+  forward to Canonical-signed newer kernels as point releases arrive. Safe
+  default — say yes.
 - **Mainline builds** (kernel.ubuntu.com via the `mainline` tool): bleeding
-  edge 7.x. These are **unsigned** (conflicts with Secure Boot) and can be
-  newer than what NVIDIA's DKMS supports. Say no unless you're chasing a
+  edge (7.1+/7.2-rc). These are **unsupported, receive no security updates,
+  and are unsigned** (conflicts with Secure Boot) — and NVIDIA DKMS modules
+  are not expected to build against them. Say no unless you're chasing a
   specific hardware fix.
 
 ## 3.3 Dev tools — `scripts/setup.sh`

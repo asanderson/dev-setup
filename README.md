@@ -1,2 +1,2 @@
-# aws-dev
-AWS development environment
+# dev-setup
+Development environment setup configs, scripts, etc.

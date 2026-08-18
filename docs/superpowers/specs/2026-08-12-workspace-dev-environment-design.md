@@ -55,7 +55,7 @@ Three-stack layering was chosen over a single root module (user decision) so the
 | Resource | Detail |
 |---|---|
 | Simple AD | Size Small, deployed across the two subnets. ~$0.036/domain-controller-hour ≈ $52/month for the 2 DCs, 24/7, cannot be stopped. **Rate is medium-confidence — verify against the AWS Directory Service pricing page at apply time.** |
-| WorkSpaces directory registration | Registers the Simple AD directory with WorkSpaces |
+| WorkSpaces directory registration | Registers the Simple AD directory with WorkSpaces, with **auto-assign public IP enabled** so the WorkSpace has outbound internet for apt and vendor installers (public-subnet path; avoids a ~$32/month NAT Gateway; inbound remains blocked by the WorkSpaces security group) |
 | WorkSpace | One, Ubuntu **Power** bundle (4 vCPU / 16 GB, 175 GB root / 100 GB user), running mode `AUTO_STOP`, timeout 60 minutes, both volumes encrypted with the foundation KMS key |
 | Directory user | One named user in Simple AD for the developer |
 

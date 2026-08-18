@@ -7,9 +7,14 @@ module_jdk_describe() { echo "JDK ${JDK_MAJOR} LTS (OpenJDK or Eclipse Temurin)"
 module_jdk_install() {
   section "JDK ${JDK_MAJOR} (LTS)"
   local choice
-  echo "  1) Ubuntu OpenJDK packages (openjdk-${JDK_MAJOR}-jdk) — simplest, distro-patched"
-  echo "  2) Eclipse Temurin ${JDK_MAJOR} (Adoptium apt repo) — upstream builds, fastest updates"
-  read -r -p "${C_BOLD}Which JDK?${C_RESET} [1/2, default 1] " choice
+  if [[ "${DEV_SETUP_ASSUME_YES:-0}" == "1" ]]; then
+    choice=1
+    log "DEV_SETUP_ASSUME_YES=1 — defaulting to Ubuntu OpenJDK packages."
+  else
+    echo "  1) Ubuntu OpenJDK packages (openjdk-${JDK_MAJOR}-jdk) — simplest, distro-patched"
+    echo "  2) Eclipse Temurin ${JDK_MAJOR} (Adoptium apt repo) — upstream builds, fastest updates"
+    read -r -p "${C_BOLD}Which JDK?${C_RESET} [1/2, default 1] " choice
+  fi
 
   if [[ "$choice" == "2" ]]; then
     # shellcheck disable=SC1091

@@ -16,7 +16,9 @@ module_git_install() {
   ok "Installed: $(git --version)"
 
   if [[ -z "$(git config --global user.name || true)" ]]; then
-    if confirm "Configure git user.name / user.email now?" y; then
+    if [[ "${DEV_SETUP_ASSUME_YES:-0}" == "1" ]]; then
+      log "DEV_SETUP_ASSUME_YES=1 — skipping git identity setup (run 'git config --global user.name/user.email' later)."
+    elif confirm "Configure git user.name / user.email now?" y; then
       local name email
       read -r -p "  git user.name: " name
       read -r -p "  git user.email: " email

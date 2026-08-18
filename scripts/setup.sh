@@ -5,8 +5,8 @@
 #   Usage:            ./scripts/setup.sh
 #   Unattended (all): DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh
 #
-# NVIDIA driver and kernel upgrades are separate, reboot-heavy steps:
-#   scripts/10-nvidia-driver.sh   scripts/20-kernel.sh
+# NVIDIA driver and kernel setup are separate, reboot-heavy steps that live
+# in the dual-boot repo: https://github.com/asanderson/dual-boot
 
 set -euo pipefail
 
@@ -40,7 +40,7 @@ main() {
   if command_exists nvidia-smi; then
     log "GPU:     $(nvidia-smi --query-gpu=name,driver_version --format=csv,noheader 2>/dev/null || echo 'NVIDIA (driver loading)')"
   else
-    warn "NVIDIA driver not active. Run scripts/10-nvidia-driver.sh (then reboot) for GPU support."
+    warn "NVIDIA driver not active. Install it first for GPU support (see github.com/asanderson/dual-boot), then reboot."
   fi
 
   # Base tools every module relies on.

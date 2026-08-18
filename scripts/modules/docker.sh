@@ -59,6 +59,6 @@ EOF
       ok "NVIDIA Container Toolkit configured (test: docker run --rm --gpus all ubuntu nvidia-smi)."
     fi
   else
-    log "No NVIDIA driver detected; skipping NVIDIA Container Toolkit (re-run after scripts/10-nvidia-driver.sh)."
+    log "No NVIDIA driver detected; skipping NVIDIA Container Toolkit (re-run this module after installing the driver — see github.com/asanderson/dual-boot)."
   fi
 }

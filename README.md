@@ -1,40 +1,24 @@
 # dev-setup
 
-Repeatable dual-boot + development environment setup for the
-**MSI Raider 18 HX AI A2XWJG-069US**
-(Intel Core Ultra 9 285HX · GeForce RTX 5090 Laptop GPU · 64GB DDR5-6400 ·
-2TB NVMe SSD · 18" 120Hz), factory-installed with Windows 11 Pro.
+Development environment setup: an **interactive, idempotent installer** for a
+full dev toolchain on Ubuntu 26.04 — each tool individually prompted, every
+module safe to re-run.
 
-End state: Windows 11 Pro **and** Ubuntu 26.04 LTS side by side, with
+Tools covered: Git, Claude Code, Docker (+ NVIDIA Container Toolkit),
+JDK 25 LTS, Maven, C/C++ (GCC/Clang), Go, Rust, Elastic Stack (Basic license,
+in Docker), and Ollama. See [docs/dev-tools.md](docs/dev-tools.md) for the
+full module table.
 
-- **Linux kernel 7.0+** — Ubuntu 26.04's stock GA kernel is 7.0, verified by
-  `scripts/20-kernel.sh` (with optional HWE/mainline paths to newer kernels);
-- **Official NVIDIA driver** for the RTX 5090 Laptop GPU — Blackwell requires
-  the *open* kernel modules (R595 is the current production branch, e.g.
-  `nvidia-driver-595-open`), with Secure Boot/MOK handled;
-- an **interactive dev-tool installer** (each item individually prompted):
-  Git, Claude Code, Docker, JDK (25 LTS), Maven, C/C++, Go, Rust,
-  Elastic Stack (Basic license, in Docker), and Ollama.
+> **Setting up the dual-boot laptop first?** The OS-level runbook — Windows
+> prep, Ubuntu 26.04 install, NVIDIA driver, kernel — lives in
+> [asanderson/dual-boot](https://github.com/asanderson/dual-boot). Run that
+> to completion, then come back here for the dev tools.
 
-## The path
-
-| Step | Where | Doc |
-|---|---|---|
-| 1. Prepare Windows (BitLocker, fast startup, shrink disk, USB, BIOS keys) | Windows | [docs/01-windows-prep.md](docs/01-windows-prep.md) |
-| 2. Install Ubuntu 26.04 alongside Windows | Ubuntu installer | [docs/02-ubuntu-install.md](docs/02-ubuntu-install.md) |
-| 3. NVIDIA driver → kernel check → dev tools | Ubuntu | [docs/03-post-install.md](docs/03-post-install.md) |
-| Anything broken | — | [docs/troubleshooting.md](docs/troubleshooting.md) |
-| Verified facts + sources behind this runbook | — | [docs/research-notes.md](docs/research-notes.md) |
-
-## Quick start (on the freshly installed Ubuntu)
+## Quick start
 
 ```bash
-sudo apt update && sudo apt install -y git
 git clone https://github.com/asanderson/dev-setup.git ~/dev-setup
 cd ~/dev-setup
-
-./scripts/10-nvidia-driver.sh   # NVIDIA driver + MOK guidance, then reboot
-./scripts/20-kernel.sh          # verify kernel 7.0+, optional newer kernels
 ./scripts/setup.sh              # interactive: pick your dev tools
 ```
 
@@ -43,10 +27,10 @@ Unattended (accept every prompt): `DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh`
 ## Repo layout
 
 ```
-docs/                    Step-by-step runbook (Windows prep → install → post-install)
+docs/
+  dev-tools.md           Module table, ordering notes, post-install verification
+  troubleshooting.md     Elastic / Docker / Ollama fixes
 scripts/
-  10-nvidia-driver.sh    RTX 5090 Laptop GPU driver (open modules, Secure Boot aware)
-  20-kernel.sh           Kernel 7.0+ verification, HWE / mainline options
   setup.sh               Interactive orchestrator for the modules below
   lib/common.sh          Shared helpers (prompts, apt, logging)
   modules/*.sh           One idempotent installer per tool

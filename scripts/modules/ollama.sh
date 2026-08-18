@@ -8,7 +8,7 @@ module_ollama_install() {
   section "Ollama"
   if ! command_exists nvidia-smi; then
     warn "NVIDIA driver not detected. Ollama will fall back to CPU."
-    warn "Run scripts/10-nvidia-driver.sh first for GPU acceleration, then reinstall/restart Ollama."
+    warn "Install the NVIDIA driver first for GPU acceleration (see github.com/asanderson/dual-boot), then reinstall/restart Ollama."
     confirm "Continue installing Ollama anyway?" n || return 0
   fi
 

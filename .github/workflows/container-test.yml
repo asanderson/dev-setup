@@ -32,3 +32,20 @@ jobs:
         # container, the latter is a GB-scale download that needs a GPU to
         # be meaningful.
         run: ./test/container-test.sh --rerun
+
+  gpu-path:
+    name: GPU-present branches (stubbed RTX 5090)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run GPU-path test in a fresh container
+        # An nvidia-smi stub simulates the MSI Raider 18's RTX 5090 so the
+        # branches the GPU-less fresh-install job can never reach get
+        # exercised: the docker module's NVIDIA Container Toolkit
+        # repo+package install and nvidia-ctk daemon.json configuration,
+        # dockerd registering the nvidia runtime (container runs
+        # --privileged for this), and the ollama module's GPU path.
+        # Validates branching and toolkit machinery — not CUDA execution,
+        # which still needs real hardware.
+        run: ./test/container-test.sh --gpu-path

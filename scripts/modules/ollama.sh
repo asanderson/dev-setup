@@ -12,6 +12,10 @@ module_ollama_install() {
     confirm "Continue installing Ollama anyway?" n || return 0
   fi
 
+  # The vendor installer extracts a zstd-compressed bundle and exits if
+  # zstd is missing — fresh Ubuntu installs don't ship it.
+  apt_install zstd
+
   fetch https://ollama.com/install.sh | sh
 
   sudo systemctl enable --now ollama 2>/dev/null || true

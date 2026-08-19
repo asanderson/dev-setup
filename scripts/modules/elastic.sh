@@ -78,13 +78,10 @@ EOF
 
   # Set the kibana_system password so Kibana can authenticate. -f makes curl
   # fail on HTTP errors so a bad request or auth failure fails this module
-  # loudly instead of leaving Kibana unable to log in.
+  # loudly instead of leaving Kibana unable to log in. (The HTTP layer is
+  # plain http on 127.0.0.1 — see the note in docker-compose.yml.)
   if ! "${D[@]}" exec elasticsearch bash -c \
-    "curl -sf -X POST --cacert config/certs/http_ca.crt -u 'elastic:${ELASTIC_PASSWORD}' \
-     -H 'Content-Type: application/json' \
-     https://localhost:9200/_security/user/kibana_system/_password \
-     -d '{\"password\":\"${KIBANA_PASSWORD}\"}' \
-     || curl -sf -X POST -u 'elastic:${ELASTIC_PASSWORD}' \
+    "curl -sf -X POST -u 'elastic:${ELASTIC_PASSWORD}' \
      -H 'Content-Type: application/json' \
      http://localhost:9200/_security/user/kibana_system/_password \
      -d '{\"password\":\"${KIBANA_PASSWORD}\"}'" >/dev/null; then
@@ -96,8 +93,8 @@ EOF
   ( cd "$dest_dir" && "${D[@]}" compose up -d )
 
   ok "Elastic Stack is starting."
-  log "  Elasticsearch: https://localhost:9200  (user: elastic, password in $dest_dir/.env)"
+  log "  Elasticsearch: http://localhost:9200  (user: elastic, password in $dest_dir/.env; localhost-only)"
   log "  Kibana:        http://localhost:5601   (same credentials; may take ~1 min to come up)"
-  log "  License check: docker exec elasticsearch curl -sk -u elastic:<pw> https://localhost:9200/_license"
+  log "  License check: curl -s -u elastic:<pw> http://localhost:9200/_license"
   log "  Manage:        cd $dest_dir && docker compose [stop|start|down|logs -f]"
 }

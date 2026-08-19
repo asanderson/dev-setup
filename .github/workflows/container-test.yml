@@ -14,7 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install shellcheck
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+        # ubuntu-latest runners ship shellcheck preinstalled; the apt path is
+        # only a fallback (it has hung on runner mirror flakiness).
+        run: command -v shellcheck || (sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck)
       - name: Lint all shell scripts
         run: shellcheck -x -S warning scripts/setup.sh scripts/lib/common.sh scripts/modules/*.sh test/*.sh
 

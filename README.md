@@ -44,8 +44,12 @@ config/
 Every PR runs the installer end-to-end in a **fresh Ubuntu 26.04 container**
 (`.github/workflows/container-test.yml`): all default modules under
 `DEV_SETUP_ASSUME_YES=1`, a second pass to prove idempotency, and per-module
-version probes — plus shellcheck across every script. Run it locally with
-Docker: `./test/container-test.sh --rerun`.
+version probes — plus shellcheck across every script. A separate **GPU-path
+job** stubs `nvidia-smi` as the MSI Raider's RTX 5090 to exercise the
+GPU-present branches (NVIDIA Container Toolkit install, nvidia runtime
+registration, Ollama's GPU path) that the GPU-less matrix can't reach. Run
+them locally with Docker: `./test/container-test.sh --rerun` and
+`./test/container-test.sh --gpu-path`.
 
 ## Repeatability notes
 

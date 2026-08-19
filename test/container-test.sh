@@ -4,8 +4,15 @@
 #
 # Usage:
 #   ./test/container-test.sh [--rerun] [module ...]
+#   ./test/container-test.sh --gpu-path
 #
 #   --rerun      run setup.sh a second time to verify idempotency
+#   --gpu-path   instead of the module matrix, exercise the GPU-present
+#                branches (docker module's NVIDIA Container Toolkit install,
+#                nvidia runtime registration, ollama's GPU path) with an
+#                nvidia-smi stub simulating the MSI Raider's RTX 5090. Runs
+#                the container --privileged for the nested dockerd. Takes
+#                no other arguments.
 #   module ...   modules to test (default: git claude-code docker jdk
 #                maven cpp golang rust). elastic (needs a Docker daemon
 #                inside the container) and ollama (GB-scale download,
@@ -23,20 +30,34 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 IMAGE="${DEV_SETUP_TEST_IMAGE:-ubuntu:26.04}"
 
 RERUN=""
+GPU_PATH=""
 MODULES=()
 for arg in "$@"; do
   case "$arg" in
     --rerun) RERUN="rerun" ;;
+    --gpu-path) GPU_PATH="1" ;;
     *) MODULES+=("$arg") ;;
   esac
 done
-[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code docker jdk maven cpp golang rust)
 
 DOCKER_ARGS=(--rm --network host -v "${REPO_ROOT}:/repo:ro")
 if [[ -n "${https_proxy:-}" ]]; then
   DOCKER_ARGS+=(-e https_proxy -e no_proxy)
   [[ -f /root/.ccr/ca-bundle.crt ]] && DOCKER_ARGS+=(-v /root/.ccr/ca-bundle.crt:/ccr-ca.crt:ro)
 fi
+
+if [[ -n "$GPU_PATH" ]]; then
+  if [[ ${#MODULES[@]} -gt 0 || -n "$RERUN" ]]; then
+    echo "error: --gpu-path takes no other arguments" >&2
+    exit 2
+  fi
+  echo ">>> image: ${IMAGE}"
+  echo ">>> GPU-path test (nvidia-smi stub; docker toolkit + ollama GPU branches)"
+  exec docker run "${DOCKER_ARGS[@]}" --privileged "${IMAGE}" \
+    bash /repo/test/gpu-path-init.sh
+fi
+
+[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code docker jdk maven cpp golang rust)
 
 echo ">>> image: ${IMAGE}"
 echo ">>> modules: ${MODULES[*]}${RERUN:+ (+ idempotency rerun)}"

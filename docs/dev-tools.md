@@ -34,7 +34,7 @@ session yet).
 exec bash -l                              # pick up PATH changes
 docker run --rm hello-world               # docker group active? (else log out/in)
 docker run --rm --gpus all ubuntu nvidia-smi   # GPU visible in containers
-curl -sk -u elastic:<pw> https://localhost:9200/_license   # "type" : "basic"
+curl -s -u elastic:<pw> http://localhost:9200/_license    # "type":"basic"
 ollama run llama3.2                       # first model
 ```
 

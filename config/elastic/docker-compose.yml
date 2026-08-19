@@ -4,6 +4,11 @@
 # License note: the official images default to a 30-day "trial" license unless
 # told otherwise. xpack.license.self_generated.type=basic below pins the free
 # Basic license from first boot — no expiry, no license key required.
+#
+# Transport security note: with explicit security env set, the ES image does
+# NOT auto-configure TLS, so the HTTP layer is plain http. Authentication is
+# still enforced, and both ports bind to 127.0.0.1 only — fine for a local
+# dev stack; add explicit TLS certs before exposing beyond localhost.
 
 name: elastic
 
@@ -33,7 +38,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -s --cacert /usr/share/elasticsearch/config/certs/http_ca.crt -u elastic:${ELASTIC_PASSWORD} https://localhost:9200 | grep -q cluster_name || curl -s -u elastic:${ELASTIC_PASSWORD} http://localhost:9200 | grep -q cluster_name",
+          "curl -s -u elastic:${ELASTIC_PASSWORD} http://localhost:9200 | grep -q cluster_name",
         ]
       interval: 10s
       timeout: 10s
@@ -48,10 +53,9 @@ services:
         condition: service_healthy
     environment:
       - SERVER_NAME=kibana
-      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
     ports:
       - "127.0.0.1:5601:5601"
     healthcheck:

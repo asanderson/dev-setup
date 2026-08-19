@@ -39,6 +39,14 @@ config/
   elastic/               Docker Compose for Elasticsearch + Kibana (Basic license)
 ```
 
+## Testing
+
+Every PR runs the installer end-to-end in a **fresh Ubuntu 26.04 container**
+(`.github/workflows/container-test.yml`): all default modules under
+`DEV_SETUP_ASSUME_YES=1`, a second pass to prove idempotency, and per-module
+version probes — plus shellcheck across every script. Run it locally with
+Docker: `./test/container-test.sh --rerun`.
+
 ## Repeatability notes
 
 - Modules are **idempotent** — re-run `setup.sh` any time; already-installed

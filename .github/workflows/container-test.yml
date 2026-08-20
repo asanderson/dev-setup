@@ -28,8 +28,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run installer end-to-end in a fresh container
         # Default module set (git claude-code claude-plugins vscode docker
-        # jdk maven cpp golang rust python cloud + the seven proton-*
-        # modules), scoped via setup.sh --modules (which doubles as the CI test
+        # jdk maven cpp golang rust python cloud + six proton-* modules;
+        # proton-vpn is excluded because its daemon's postinst needs
+        # systemd, absent in containers), scoped via
+        # setup.sh --modules (which doubles as the CI test
         # of the component-selection flags) under DEV_SETUP_ASSUME_YES=1,
         # then a second pass to verify idempotency, then per-module version
         # probes. elastic and opensearch are excluded (they need a Docker

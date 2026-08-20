@@ -15,10 +15,12 @@
 #                no other arguments.
 #   module ...   modules to test (default: git claude-code claude-plugins
 #                vscode docker jdk maven cpp golang rust python cloud plus
-#                the seven proton-* modules). elastic and opensearch (need
-#                a Docker daemon inside the container) and ollama (GB-scale
-#                download, needs a GPU to be meaningful) are excluded by
-#                default.
+#                six proton-* modules). elastic and opensearch (need a
+#                Docker daemon inside the container), ollama (GB-scale
+#                download, needs a GPU to be meaningful), and proton-vpn
+#                (its daemon's postinst needs systemd, absent in
+#                containers — a failure there poisons every later apt run)
+#                are excluded by default.
 #
 # Env:
 #   DEV_SETUP_TEST_IMAGE   container image (default ubuntu:26.04)
@@ -60,7 +62,7 @@ if [[ -n "$GPU_PATH" ]]; then
 fi
 
 [[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code claude-plugins vscode docker jdk maven cpp golang rust python cloud
-  proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator)
+  proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator)
 
 echo ">>> image: ${IMAGE}"
 echo ">>> modules: ${MODULES[*]}${RERUN:+ (+ idempotency rerun)}"

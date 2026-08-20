@@ -26,9 +26,9 @@ source "${SCRIPT_DIR}/lib/common.sh"
 # shellcheck source=../config/versions.env
 source "${REPO_ROOT}/config/versions.env"
 
-# Module order matters: docker before elastic/opensearch, jdk before maven,
-# nvidia-dependent modules (ollama) last.
-MODULES=(git claude-code vscode docker jdk maven cpp golang rust python elastic opensearch ollama)
+# Module order matters: claude-code before claude-plugins, docker before
+# elastic/opensearch, jdk before maven, nvidia-dependent modules (ollama) last.
+MODULES=(git claude-code claude-plugins vscode docker jdk maven cpp golang rust python cloud elastic opensearch ollama)
 
 for m in "${MODULES[@]}"; do
   # shellcheck disable=SC1090

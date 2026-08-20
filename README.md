@@ -4,10 +4,12 @@ Development environment setup: an **interactive, idempotent installer** for a
 full dev toolchain on Ubuntu 26.04 — each tool individually prompted, every
 module safe to re-run.
 
-Tools covered: Git, Claude Code, VS Code, Docker (+ NVIDIA Container
-Toolkit), JDK 25 LTS, Maven, C/C++ (GCC/Clang), Go, Rust, Python, Elastic
-Stack (Basic license, in Docker), OpenSearch Platform (the Apache-2.0
-Elastic alternative, in Docker), and Ollama. See
+Tools covered: Git, Claude Code (+ a curated plugin set), VS Code (+ a
+curated extension set), Docker (+ NVIDIA Container Toolkit), JDK 25 LTS,
+Maven, C/C++ (GCC/Clang, plus the newest LLVM release), Go, Rust, Python,
+cloud dev tools (k3s, Helm, k9s, Ansible, AWS CLI), Elastic Stack (Basic
+license, in Docker), OpenSearch Platform (the Apache-2.0 Elastic
+alternative, in Docker), and Ollama. See
 [docs/dev-tools.md](docs/dev-tools.md) for the full module table.
 
 > **Setting up the dual-boot laptop first?** The OS-level runbook — Windows

@@ -113,6 +113,17 @@ add_apt_repo() {
   _APT_UPDATED=""   # force refresh after adding a source
 }
 
+# Download a vendor .deb over HTTPS and install it (apt resolves its
+# dependencies). Used by modules whose vendor publishes a stable
+# latest-version .deb URL rather than an apt repository.
+fetch_deb_install() {
+  local url="$1" tmp
+  tmp="$(mktemp -d)"
+  fetch "$url" -o "${tmp}/pkg.deb"
+  apt_install "${tmp}/pkg.deb"
+  rm -rf "$tmp"
+}
+
 # ---------------------------------------------------------------------------
 # Misc
 # ---------------------------------------------------------------------------

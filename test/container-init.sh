@@ -80,6 +80,13 @@ for m in ${MODULES_OVERRIDE}; do
     python)      probes=("python3 --version" "pip3 --version" "pipx --version") ;;
     cloud)       probes=("k3s --version" "helm version --short" "k9s version" "ansible --version" "aws --version") ;;
     claude-plugins) probes=('$HOME/.local/bin/claude plugin list') ;;
+    proton-vpn)  probes=("dpkg -s proton-vpn-gnome-desktop") ;;
+    proton-mail) probes=("dpkg -s proton-mail") ;;
+    proton-bridge) probes=("dpkg -s protonmail-bridge") ;;
+    proton-drive)  probes=("proton-drive --version") ;;
+    proton-pass)   probes=("dpkg -s proton-pass") ;;
+    proton-meet)   probes=("dpkg -s proton-meet") ;;
+    proton-authenticator) probes=("dpkg -s proton-authenticator") ;;
     elastic|opensearch|ollama) echo "  SKIP ${m} (no probe in container)"; continue ;;
     *)           echo "  SKIP ${m} (unknown module)"; continue ;;
   esac

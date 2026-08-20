@@ -28,7 +28,7 @@ source "${REPO_ROOT}/config/versions.env"
 
 # Module order matters: claude-code before claude-plugins, docker before
 # elastic/opensearch, jdk before maven, nvidia-dependent modules (ollama) last.
-MODULES=(git claude-code claude-plugins vscode docker jdk maven cpp golang rust python kubernetes elastic opensearch ollama)
+MODULES=(git claude-code claude-plugins vscode docker jdk maven cpp golang rust python cloud elastic opensearch ollama)
 
 for m in "${MODULES[@]}"; do
   # shellcheck disable=SC1090

@@ -18,8 +18,15 @@ VSCODE_EXTENSIONS=(
   golang.go                                      # Go (go.dev)
   vadimcn.vscode-lldb                            # CodeLLDB
   ms-vscode-remote.vscode-remote-extensionpack   # Remote Development
+  ms-vscode.remote-explorer                      # Remote Explorer (Microsoft)
+  ms-vscode-remote.remote-ssh-edit               # Remote - SSH: Editing Configuration Files
   ms-kubernetes-tools.vscode-kubernetes-tools    # Kubernetes (Microsoft)
   ms-azuretools.vscode-docker                    # Docker (Microsoft)
+  amazonwebservices.aws-toolkit-vscode           # AWS Toolkit (AWS)
+  github.remotehub                               # GitHub Repositories (GitHub)
+  gitlab.gitlab-workflow                         # GitLab Workflow (GitLab)
+  codezombiech.gitignore                         # gitignore (CodeZombie)
+  eamodio.gitlens                                # GitLens (GitKraken)
 )
 
 module_vscode_describe() { echo "Visual Studio Code (Microsoft apt repo, stable; curated extension set)"; }
@@ -34,7 +41,7 @@ module_vscode_install() {
 
   ok "Installed: $(code --version 2>/dev/null | head -n1 || echo 'code (version check needs a non-root shell)')"
 
-  if confirm "Install the curated extension set (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Dev, Kubernetes, Docker)?" y; then
+  if confirm "Install the curated extension set (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Dev/Explorer/SSH-edit, Kubernetes, Docker, AWS Toolkit, GitHub Repos, GitLab, gitignore, GitLens)?" y; then
     local ext failed=0
     for ext in "${VSCODE_EXTENSIONS[@]}"; do
       if code --install-extension "$ext" --force >/dev/null 2>&1; then

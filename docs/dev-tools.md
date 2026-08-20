@@ -30,7 +30,7 @@ order (Docker before Elastic/OpenSearch, JDK before Maven).
 | Git | Latest stable git + git-lfs | git-core PPA (optional) |
 | Claude Code | Anthropic's coding CLI | Official native installer (auto-updating; npm route is deprecated) |
 | Claude Code plugins | superpowers, caveman, karpathy-skills, ecc, claude-mem, agentic-awesome-skills, gsd-core — latest releases | `claude plugin` marketplaces (each plugin's GitHub repo) |
-| VS Code | Visual Studio Code, stable channel + curated extensions (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Dev, Kubernetes, Docker) | Microsoft apt repo; extensions from the VS Code Marketplace at the newest compatible version |
+| VS Code | Visual Studio Code, stable channel + curated extensions (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Development/Explorer/SSH-edit, Kubernetes, Docker, AWS Toolkit, GitHub Repositories, GitLab, gitignore, GitLens) | Microsoft apt repo; extensions from the VS Code Marketplace at the newest compatible version |
 | Docker | Engine + Buildx + Compose v2, docker group, NVIDIA Container Toolkit | Official Docker apt repo |
 | JDK | Java 25 LTS | Ubuntu OpenJDK **or** Eclipse Temurin (Adoptium repo) |
 | Maven | Pinned Apache Maven (see `config/versions.env`) | Apache dist tarball → `/opt/maven`, SHA-512 verified |
@@ -38,7 +38,7 @@ order (Docker before Elastic/OpenSearch, JDK before Maven).
 | Go | Latest stable (resolved from go.dev) | Official tarball → `/usr/local/go` |
 | Rust | Stable toolchain + clippy + rustfmt | rustup |
 | Python | Python 3 + venv, pip, dev headers, pipx | Ubuntu archive |
-| Kubernetes | k3s (+ bundled kubectl), Helm, k9s, Ansible — latest stable releases | Official k3s/Helm install scripts; k9s from its GitHub releases; Ansible from PyPI via pipx |
+| Cloud | k3s (+ bundled kubectl), Helm, k9s, Ansible, AWS CLI v2 — latest stable releases | Official k3s/Helm install scripts; k9s from its GitHub releases; Ansible from PyPI via pipx; AWS CLI official bundle |
 | Elastic Stack | Elasticsearch + Kibana, **Basic license**, single node | Docker Compose (`~/elastic`), generated credentials |
 | OpenSearch | OpenSearch + Dashboards, **Apache-2.0, no license tiers** — the Elastic alternative (OpenSearch Software Foundation / Linux Foundation), single node | Docker Compose (`~/opensearch`), generated credentials |
 | Ollama | Local LLM runtime, GPU-accelerated | Official install script |

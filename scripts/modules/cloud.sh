@@ -1,15 +1,16 @@
 # shellcheck shell=bash
-# Module: Kubernetes & automation tools — k3s (lightweight Kubernetes,
-# bundles kubectl), Helm, k9s, and Ansible. k3s and Helm install via their
-# official scripts, each resolving the latest stable release; k9s comes from
-# its official GitHub releases (latest resolved at run time; K9S_VERSION in
-# versions.env is the offline fallback); Ansible installs the latest
-# community package from PyPI via pipx, the method its docs recommend.
+# Module: Cloud development tools — k3s (lightweight Kubernetes, bundles
+# kubectl), Helm, k9s, Ansible, and the AWS CLI. k3s and Helm install via
+# their official scripts, each resolving the latest stable release; k9s
+# comes from its official GitHub releases (latest resolved at run time;
+# K9S_VERSION in versions.env is the offline fallback); Ansible installs
+# the latest community package from PyPI via pipx, the method its docs
+# recommend; the AWS CLI v2 bundle URL always serves the latest release.
 
-module_kubernetes_describe() { echo "Kubernetes tools (k3s + kubectl, Helm, k9s, Ansible — latest stable)"; }
+module_cloud_describe() { echo "Cloud dev tools (k3s + kubectl, Helm, k9s, Ansible, AWS CLI — latest stable)"; }
 
-module_kubernetes_install() {
-  section "Kubernetes & automation tools"
+module_cloud_install() {
+  section "Cloud development tools"
 
   # --- k3s (bundles kubectl/crictl/ctr as symlinks) --------------------------
   log "Installing k3s (latest stable channel) via the official script..."
@@ -40,7 +41,6 @@ module_kubernetes_install() {
   fetch "https://github.com/derailed/k9s/releases/download/${k9s_ver}/k9s_linux_amd64.deb" \
     -o "${tmp}/k9s.deb"
   apt_install "${tmp}/k9s.deb"
-  rm -rf "$tmp"
   ok "k9s: $(k9s version --short 2>/dev/null | head -n1 || k9s version | head -n1)"
 
   # --- Ansible ---------------------------------------------------------------
@@ -53,6 +53,16 @@ module_kubernetes_install() {
   fi
   pipx ensurepath >/dev/null 2>&1
   ok "Ansible: $("$HOME/.local/bin/ansible" --version 2>/dev/null | head -n1 || ansible --version | head -n1)"
+
+  # --- AWS CLI v2 ------------------------------------------------------------
+  # The official bundle URL always serves the latest v2 release; --update
+  # makes re-runs an in-place upgrade.
+  log "Installing AWS CLI v2 (latest) from the official bundle..."
+  command_exists unzip || apt_install unzip
+  fetch "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "${tmp}/awscliv2.zip"
+  ( cd "$tmp" && unzip -q awscliv2.zip && sudo ./aws/install --update )
+  rm -rf "$tmp"
+  ok "AWS CLI: $(aws --version 2>&1 | head -n1)"
 
   log "k3s cluster access needs root by default: 'sudo k3s kubectl get nodes'."
   log "For your user: sudo chmod 644 /etc/rancher/k3s/k3s.yaml (or set KUBECONFIG from a copy)."

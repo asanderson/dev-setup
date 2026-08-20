@@ -61,17 +61,17 @@ exit 0
 STUB
 chmod +x /usr/local/bin/nvidia-smi
 
-scope() { sed -i "s/^MODULES=(.*)$/MODULES=($1)/" /home/dev/dev-setup/scripts/setup.sh; }
+# run_setup <module> — unattended install scoped via the component flag,
+# which doubles as the CI test of setup.sh's per-component selection.
 run_setup() {
   sudo -u dev -H env \
     https_proxy="${https_proxy:-}" no_proxy="${no_proxy:-}" \
     DEV_SETUP_ASSUME_YES=1 \
-    bash -c 'cd ~/dev-setup && ./scripts/setup.sh'
+    bash -c "cd ~/dev-setup && ./scripts/setup.sh --${1:?module required}"
 }
 
 echo "### [phase 1] docker module with GPU present (NVIDIA Container Toolkit branch)"
-scope "docker"
-set +e; p1="$(run_setup 2>&1)"; rc=$?; set -e
+set +e; p1="$(run_setup docker 2>&1)"; rc=$?; set -e
 grep -q "GPU:.*RTX 5090" <<<"$p1" || fail "setup.sh did not print the GPU banner"
 grep -q "NVIDIA driver not active" <<<"$p1" && fail "GPU-absent warning fired despite GPU present"
 grep -q "skipping NVIDIA Container Toolkit" <<<"$p1" && fail "toolkit branch was skipped despite GPU present"
@@ -101,10 +101,9 @@ docker info --format '{{json .Runtimes}}' | grep -q nvidia || fail "dockerd did 
 echo "  PASS: dockerd up with runtimes: $(docker info --format '{{json .Runtimes}}' | tr -d '"')"
 
 echo "### [phase 3] ollama module takes the GPU path"
-scope "ollama"
 o1=""
 for attempt in 1 2; do
-  set +e; o1="$(run_setup 2>&1)"; orc=$?; set -e
+  set +e; o1="$(run_setup ollama 2>&1)"; orc=$?; set -e
   [[ $orc -eq 0 ]] && break
   # Retry once if the bundle download was cut mid-transfer; any other
   # failure — and a second cut — is a real failure.

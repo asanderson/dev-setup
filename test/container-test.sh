@@ -14,9 +14,10 @@
 #                the container --privileged for the nested dockerd. Takes
 #                no other arguments.
 #   module ...   modules to test (default: git claude-code docker jdk
-#                maven cpp golang rust). elastic (needs a Docker daemon
-#                inside the container) and ollama (GB-scale download,
-#                needs a GPU to be meaningful) are excluded by default.
+#                maven cpp golang rust python). elastic and opensearch
+#                (need a Docker daemon inside the container) and ollama
+#                (GB-scale download, needs a GPU to be meaningful) are
+#                excluded by default.
 #
 # Env:
 #   DEV_SETUP_TEST_IMAGE   container image (default ubuntu:26.04)
@@ -57,7 +58,7 @@ if [[ -n "$GPU_PATH" ]]; then
     bash /repo/test/gpu-path-init.sh
 fi
 
-[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code docker jdk maven cpp golang rust)
+[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code docker jdk maven cpp golang rust python)
 
 echo ">>> image: ${IMAGE}"
 echo ">>> modules: ${MODULES[*]}${RERUN:+ (+ idempotency rerun)}"

@@ -42,12 +42,23 @@ module_vscode_install() {
   ok "Installed: $(code --version 2>/dev/null | head -n1 || echo 'code (version check needs a non-root shell)')"
 
   if confirm "Install the curated extension set (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Dev/Explorer/SSH-edit, Kubernetes, Docker, AWS Toolkit, GitHub Repos, GitLab, gitignore, GitLens)?" y; then
-    local ext failed=0
+    local ext failed=0 installed
     for ext in "${VSCODE_EXTENSIONS[@]}"; do
-      if code --install-extension "$ext" --force >/dev/null 2>&1; then
+      # Marketplace downloads can be cut mid-transfer on flaky networks —
+      # retry before calling it a failure, the same philosophy as fetch's
+      # --retry on every other download in this repo.
+      installed=""
+      for _ in 1 2 3; do
+        if code --install-extension "$ext" --force >/dev/null 2>&1; then
+          installed=1
+          break
+        fi
+        sleep 2
+      done
+      if [[ -n "$installed" ]]; then
         ok "  $ext"
       else
-        err "  $ext failed (try: code --install-extension $ext)"
+        err "  $ext failed 3 times (try: code --install-extension $ext)"
         failed=1
       fi
     done

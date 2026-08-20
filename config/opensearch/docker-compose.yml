@@ -30,13 +30,13 @@ services:
       - bootstrap.memory_lock=true
       - OPENSEARCH_JAVA_OPTS=-Xms${OPENSEARCH_HEAP:-2g} -Xmx${OPENSEARCH_HEAP:-2g}
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+    # OpenSearch's sample compose also raises nofile to 65536; not needed
+    # here — modern Docker Engine's default nofile limit is already far
+    # higher (and the repo's Elastic compose relies on the same default).
     ulimits:
       memlock:
         soft: -1
         hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
     volumes:
       - osdata:/usr/share/opensearch/data
     ports:

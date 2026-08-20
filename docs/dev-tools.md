@@ -29,6 +29,7 @@ order (Docker before Elastic/OpenSearch, JDK before Maven).
 |---|---|---|
 | Git | Latest stable git + git-lfs | git-core PPA (optional) |
 | Claude Code | Anthropic's coding CLI | Official native installer (auto-updating; npm route is deprecated) |
+| VS Code | Visual Studio Code, stable channel | Microsoft apt repo |
 | Docker | Engine + Buildx + Compose v2, docker group, NVIDIA Container Toolkit | Official Docker apt repo |
 | JDK | Java 25 LTS | Ubuntu OpenJDK **or** Eclipse Temurin (Adoptium repo) |
 | Maven | Pinned Apache Maven (see `config/versions.env`) | Apache dist tarball → `/opt/maven`, SHA-512 verified |

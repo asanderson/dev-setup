@@ -13,8 +13,8 @@
 #                nvidia-smi stub simulating the MSI Raider's RTX 5090. Runs
 #                the container --privileged for the nested dockerd. Takes
 #                no other arguments.
-#   module ...   modules to test (default: git claude-code docker jdk
-#                maven cpp golang rust python). elastic and opensearch
+#   module ...   modules to test (default: git claude-code vscode docker
+#                jdk maven cpp golang rust python). elastic and opensearch
 #                (need a Docker daemon inside the container) and ollama
 #                (GB-scale download, needs a GPU to be meaningful) are
 #                excluded by default.
@@ -58,7 +58,7 @@ if [[ -n "$GPU_PATH" ]]; then
     bash /repo/test/gpu-path-init.sh
 fi
 
-[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code docker jdk maven cpp golang rust python)
+[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code vscode docker jdk maven cpp golang rust python)
 
 echo ">>> image: ${IMAGE}"
 echo ">>> modules: ${MODULES[*]}${RERUN:+ (+ idempotency rerun)}"

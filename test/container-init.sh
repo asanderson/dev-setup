@@ -78,6 +78,8 @@ for m in ${MODULES_OVERRIDE}; do
     golang)      probes=("go version") ;;
     rust)        probes=("rustc --version" "cargo --version") ;;
     python)      probes=("python3 --version" "pip3 --version" "pipx --version") ;;
+    kubernetes)  probes=("k3s --version" "helm version --short" "k9s version" "ansible --version") ;;
+    claude-plugins) probes=('$HOME/.local/bin/claude plugin list') ;;
     elastic|opensearch|ollama) echo "  SKIP ${m} (no probe in container)"; continue ;;
     *)           echo "  SKIP ${m} (unknown module)"; continue ;;
   esac

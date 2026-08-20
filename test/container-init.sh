@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # container-init.sh — runs INSIDE a fresh Ubuntu container (as root).
-# Bootstraps a non-root user with passwordless sudo, scopes setup.sh to the
-# requested modules, runs the installer unattended, and verifies the results.
+# Bootstraps a non-root user with passwordless sudo, runs the installer
+# unattended scoped to the requested modules (via setup.sh --modules, which
+# doubles as the CI test of the component-selection flags), and verifies
+# the results.
 #
 # Invoked by test/container-test.sh — not meant to be run on a real machine.
 #
@@ -40,17 +42,15 @@ echo 'dev ALL=(ALL) NOPASSWD:ALL' >/etc/sudoers.d/dev
 echo 'Defaults env_keep += "https_proxy no_proxy HTTPS_PROXY NO_PROXY DEBIAN_FRONTEND"' >/etc/sudoers.d/proxy-env
 chmod 440 /etc/sudoers.d/dev /etc/sudoers.d/proxy-env
 
-echo "### [init] copy repo, scope modules to: ${MODULES_OVERRIDE}"
+echo "### [init] copy repo; will scope via: setup.sh --modules ${MODULES_OVERRIDE// /,}"
 cp -r /repo /home/dev/dev-setup
-sed -i "s/^MODULES=(.*)$/MODULES=(${MODULES_OVERRIDE})/" /home/dev/dev-setup/scripts/setup.sh
-grep -n '^MODULES=' /home/dev/dev-setup/scripts/setup.sh
 chown -R dev:dev /home/dev/dev-setup
 
 run_setup() {
   sudo -u dev -H env \
     https_proxy="${https_proxy:-}" no_proxy="${no_proxy:-}" \
     DEV_SETUP_ASSUME_YES=1 \
-    bash -c 'cd ~/dev-setup && ./scripts/setup.sh'
+    bash -c "cd ~/dev-setup && ./scripts/setup.sh --modules ${MODULES_OVERRIDE// /,}"
 }
 
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
@@ -76,7 +76,8 @@ for m in ${MODULES_OVERRIDE}; do
     cpp)         probes=("gcc --version" "clang --version" "cmake --version") ;;
     golang)      probes=("go version") ;;
     rust)        probes=("rustc --version" "cargo --version") ;;
-    elastic|ollama) echo "  SKIP ${m} (no probe in container)"; continue ;;
+    python)      probes=("python3 --version" "pip3 --version" "pipx --version") ;;
+    elastic|opensearch|ollama) echo "  SKIP ${m} (no probe in container)"; continue ;;
     *)           echo "  SKIP ${m} (unknown module)"; continue ;;
   esac
   for probe in "${probes[@]}"; do

@@ -28,11 +28,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run installer end-to-end in a fresh container
         # Default module set (git claude-code docker jdk maven cpp golang
-        # rust) under DEV_SETUP_ASSUME_YES=1, then a second pass to verify
-        # idempotency, then per-module version probes. elastic and ollama
-        # are excluded: the former needs a Docker daemon inside the test
-        # container, the latter is a GB-scale download that needs a GPU to
-        # be meaningful.
+        # rust python), scoped via setup.sh --modules (which doubles as the CI test
+        # of the component-selection flags) under DEV_SETUP_ASSUME_YES=1,
+        # then a second pass to verify idempotency, then per-module version
+        # probes. elastic and opensearch are excluded (they need a Docker
+        # daemon inside the test container); ollama too (GB-scale download
+        # that needs a GPU to be meaningful).
         run: ./test/container-test.sh --rerun
 
   gpu-path:

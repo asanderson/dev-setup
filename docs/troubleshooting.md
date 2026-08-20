@@ -16,12 +16,25 @@ covers the dev tools installed by `scripts/setup.sh`.
   with trial, run `docker compose down -v` (erases data) or POST
   `/_license/start_basic` to convert in place.
 
+## OpenSearch container exits immediately
+
+- `docker logs opensearch` mentioning the initial admin password → the
+  password in `~/opensearch/.env` doesn't meet the image's strength rules
+  (min 8 chars, upper+lower+digit+special, zxcvbn-strong). The generated one
+  always passes; if you edited it, pick a stronger one and
+  `docker compose up -d` again.
+- `vm.max_map_count` too low → same fix as Elasticsearch above, persisted in
+  `/etc/sysctl.d/99-opensearch.conf`.
+- `curl https://localhost:9201` complains about the certificate: expected —
+  the dev stack serves the security plugin's self-signed demo certs. Use
+  `curl -k` (and replace the demo certs before exposing beyond localhost).
+
 ## Docker works with sudo only
 
 Group membership hasn't landed in your session: `newgrp docker` for the
 current shell, or log out/in. Verify with `id -nG | grep docker`.
-(The Elastic module detects this case automatically and falls back to
-`sudo docker` for that run.)
+(The Elastic and OpenSearch modules detect this case automatically and fall
+back to `sudo docker` for that run.)
 
 ## Ollama runs on CPU
 

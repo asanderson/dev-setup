@@ -1,0 +1,76 @@
+# OpenSearch Platform (OpenSearch + Dashboards) — Apache-2.0, single node.
+# Managed by scripts/modules/opensearch.sh; configure via .env in this
+# directory. The whole distribution (security, alerting, SQL, ML plugins) is
+# Apache-2.0 — no license tiers, so unlike the Elastic module there is
+# nothing to pin to a "Basic" license.
+#
+# Security posture (the posture OpenSearch's own sample compose documents):
+# the security plugin stays ENABLED with the demo configuration — the REST
+# API on 9200 serves HTTPS with self-signed demo certs (hence curl -k), and
+# OPENSEARCH_INITIAL_ADMIN_PASSWORD is mandatory (min 8 chars, upper+lower+
+# digit+special, zxcvbn-strong — the container exits otherwise). Dashboards
+# reaches the node over TLS with verification off (demo default) and itself
+# serves plain http. Replace the demo certs before exposing beyond localhost.
+#
+# Ports are offset from the Elastic module's (9200/5601) so both dev stacks
+# can run side by side: 9201 → OpenSearch REST, 5602 → Dashboards. The
+# Performance Analyzer port (9600) is not published; add it if you need it.
+
+name: opensearch
+
+services:
+  opensearch:
+    image: opensearchproject/opensearch:${OPENSEARCH_VERSION}
+    container_name: opensearch
+    restart: unless-stopped
+    environment:
+      - node.name=os01
+      - cluster.name=dev-opensearch
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_JAVA_OPTS=-Xms${OPENSEARCH_HEAP:-2g} -Xmx${OPENSEARCH_HEAP:-2g}
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+    # OpenSearch's sample compose also raises nofile to 65536; not needed
+    # here — modern Docker Engine's default nofile limit is already far
+    # higher (and the repo's Elastic compose relies on the same default).
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - osdata:/usr/share/opensearch/data
+    ports:
+      - "127.0.0.1:9201:9200"
+    healthcheck:
+      # $$ defers expansion to the container shell, so the password never
+      # sits verbatim in the command line and special chars can't break it.
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sk -u \"admin:$$OPENSEARCH_INITIAL_ADMIN_PASSWORD\" https://localhost:9200 | grep -q cluster_name",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:${OPENSEARCH_VERSION}
+    container_name: opensearch-dashboards
+    restart: unless-stopped
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    environment:
+      # The image's demo defaults cover the rest (kibanaserver service user,
+      # opensearch.ssl.verificationMode: none for the self-signed certs).
+      - OPENSEARCH_HOSTS=["https://opensearch:9200"]
+    ports:
+      - "127.0.0.1:5602:5601"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302'"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+
+volumes:
+  osdata:

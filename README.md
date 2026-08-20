@@ -5,7 +5,8 @@ full dev toolchain on Ubuntu 26.04 — each tool individually prompted, every
 module safe to re-run.
 
 Tools covered: Git, Claude Code, Docker (+ NVIDIA Container Toolkit),
-JDK 25 LTS, Maven, C/C++ (GCC/Clang), Go, Rust, Elastic Stack (Basic license,
+JDK 25 LTS, Maven, C/C++ (GCC/Clang), Go, Rust, Python, Elastic Stack (Basic
+license, in Docker), OpenSearch Platform (the Apache-2.0 Elastic alternative,
 in Docker), and Ollama. See [docs/dev-tools.md](docs/dev-tools.md) for the
 full module table.
 
@@ -24,12 +25,17 @@ cd ~/dev-setup
 
 Unattended (accept every prompt): `DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh`
 
+Every component has a matching flag (`--docker`, `--opensearch`, ...; see
+`./scripts/setup.sh --list`), and `--modules` takes a comma-separated list —
+interactively they pre-scope the menu, unattended they install exactly the
+selection: `DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh --docker --opensearch`
+
 ## Repo layout
 
 ```
 docs/
   dev-tools.md           Module table, ordering notes, post-install verification
-  troubleshooting.md     Elastic / Docker / Ollama fixes
+  troubleshooting.md     Elastic / OpenSearch / Docker / Ollama fixes
 scripts/
   setup.sh               Interactive orchestrator for the modules below
   lib/common.sh          Shared helpers (prompts, apt, logging)
@@ -37,6 +43,7 @@ scripts/
 config/
   versions.env           Pinned versions for artifact-based installs
   elastic/               Docker Compose for Elasticsearch + Kibana (Basic license)
+  opensearch/            Docker Compose for OpenSearch + Dashboards (Apache-2.0)
 ```
 
 ## Testing
@@ -55,7 +62,7 @@ them locally with Docker: `./test/container-test.sh --rerun` and
 
 - Modules are **idempotent** — re-run `setup.sh` any time; already-installed
   tools update or no-op.
-- Artifact-based installs (Maven, Elastic) are **pinned** in
+- Artifact-based installs (Maven, Elastic, OpenSearch) are **pinned** in
   `config/versions.env`; apt/rustup/go-based installs track their official
   channels. Bump the pins deliberately and re-run the module.
 - Everything third-party comes from **official sources only**: vendor apt

@@ -39,6 +39,13 @@ order (Docker before Elastic/OpenSearch, JDK before Maven).
 | Rust | Stable toolchain + clippy + rustfmt | rustup |
 | Python | Python 3 + venv, pip, dev headers, pipx | Ubuntu archive |
 | Cloud | k3s (+ bundled kubectl), Helm, k9s, Ansible, AWS CLI v2 — latest stable releases | Official k3s/Helm install scripts; k9s from its GitHub releases; Ansible from PyPI via pipx; AWS CLI official bundle |
+| Proton VPN | Official GNOME desktop app (CLI available) | Proton's apt repo (bootstrap .deb sha256-pinned against Proton's published checksum) |
+| Proton Mail | Desktop app, **bundles Proton Calendar** (no standalone Linux Calendar app exists) | Official latest-version .deb; app self-updates |
+| Proton Bridge | IMAP/SMTP bridge for mail clients (paid plans) | Official .deb from Proton's version feed, **GPG-signature-verified**; self-updates |
+| Proton Drive | **CLI** (Proton ships no Linux GUI app for Drive yet) | Official static binary from Proton's version feed, SHA512-verified |
+| Proton Pass | Password manager desktop app | Official latest-version .deb; app self-updates |
+| Proton Meet | E2E-encrypted videoconferencing desktop app | Official latest-version .deb; app self-updates |
+| Proton Authenticator | TOTP two-factor app | Official latest-version .deb; app self-updates |
 | Elastic Stack | Elasticsearch + Kibana, **Basic license**, single node | Docker Compose (`~/elastic`), generated credentials |
 | OpenSearch | OpenSearch + Dashboards, **Apache-2.0, no license tiers** — the Elastic alternative (OpenSearch Software Foundation / Linux Foundation), single node | Docker Compose (`~/opensearch`), generated credentials |
 | Ollama | Local LLM runtime, GPU-accelerated | Official install script |

@@ -7,10 +7,12 @@ module safe to re-run.
 Tools covered: Git, Claude Code (+ a curated plugin set), VS Code (+ a
 curated extension set), Docker (+ NVIDIA Container Toolkit), JDK 25 LTS,
 Maven, C/C++ (GCC/Clang, plus the newest LLVM release), Go, Rust, Python,
-cloud dev tools (k3s, Helm, k9s, Ansible, AWS CLI), Elastic Stack (Basic
-license, in Docker), OpenSearch Platform (the Apache-2.0 Elastic
-alternative, in Docker), and Ollama. See
-[docs/dev-tools.md](docs/dev-tools.md) for the full module table.
+cloud dev tools (k3s, Helm, k9s, Ansible, AWS CLI), the Proton apps with
+Linux support (VPN, Mail + bundled Calendar, Bridge, Drive CLI, Pass, Meet,
+Authenticator — one module and flag each), Elastic Stack (Basic license, in
+Docker), OpenSearch Platform (the Apache-2.0 Elastic alternative, in
+Docker), and Ollama. See [docs/dev-tools.md](docs/dev-tools.md) for the
+full module table.
 
 > **Setting up the dual-boot laptop first?** The OS-level runbook — Windows
 > prep, Ubuntu 26.04 install, NVIDIA driver, kernel — lives in

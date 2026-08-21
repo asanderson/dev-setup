@@ -79,7 +79,9 @@ log "Building ${TAG} with ${ENGINE}: ${MODLIST}"
 
 # Optional proxy CA into the build context (removed from the image later).
 CA_IN_CONTEXT=""
-cleanup() { [[ -n "$CA_IN_CONTEXT" ]] && rm -f "$CA_IN_CONTEXT"; }
+# if-form, not `[[ ]] &&`: a false guard as the trap's last command would
+# override the script's exit status with 1 under set -e.
+cleanup() { if [[ -n "$CA_IN_CONTEXT" ]]; then rm -f "$CA_IN_CONTEXT"; fi; }
 trap cleanup EXIT
 if [[ -n "${DEV_SETUP_CA_BUNDLE:-}" && -f "${DEV_SETUP_CA_BUNDLE}" ]]; then
   CA_IN_CONTEXT="${REPO_ROOT}/.build-ca.crt"

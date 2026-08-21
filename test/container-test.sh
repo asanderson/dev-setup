@@ -68,6 +68,6 @@ fi
   proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator)
 
 echo ">>> image: ${IMAGE}"
-echo ">>> modules: ${MODULES[*]}${RERUN:+ (+ idempotency rerun)}"
+echo ">>> modules: ${MODULES[*]}${RERUN:+ (mode: ${RERUN})}"
 docker run "${DOCKER_ARGS[@]}" "${IMAGE}" \
-  bash /repo/test/container-init.sh "${MODULES[*]}" ${RERUN:+rerun}
+  bash /repo/test/container-init.sh "${MODULES[*]}" ${RERUN:+"$RERUN"}

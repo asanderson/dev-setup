@@ -1,0 +1,1822 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-08-21T10:46:11Z",
+    "authors": [
+      {
+        "name": "asanderson/dev-setup"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "name": "dev-setup",
+      "description": "Interactive, idempotent dev-toolchain installer for Ubuntu 26.04 (with target-OS selection)",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/asanderson/dev-setup"
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "scope",
+        "value": "Every third-party component the installer modules explicitly install or fetch: distro packages, vendor repos and .debs, tarballs, container images, VS Code extensions, and Claude Code plugins. Transitive package dependencies are resolved by apt/dnf at install time and are not enumerated. Versions marked with a 'resolution' property are resolved at install time; pinned versions live in config/versions.env and this file is maintained alongside it."
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "curl",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/curl",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ca-certificates",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/ca-certificates",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "gnupg",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/gnupg",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "lsb-release",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/lsb-release",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "openssl",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/openssl",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "unzip",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/unzip",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "jq",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/jq",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "zstd",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/zstd",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "software-properties-common",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/software-properties-common",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "git",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/git",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "git-lfs",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/git-lfs",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "podman",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/podman",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "uidmap",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/uidmap",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "python3",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/python3",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "python3-venv",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/python3-venv",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "python3-pip",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/python3-pip",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "python3-dev",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/python3-dev",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pipx",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/pipx",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libsecret-1-0",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/libsecret-1-0",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "build-essential",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/build-essential",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "gcc",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/gcc",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "g++",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/g++",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "gdb",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/gdb",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clang",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/clang",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clangd",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/clangd",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clang-format",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/clang-format",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clang-tidy",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/clang-tidy",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "lldb",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/lldb",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "llvm",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/llvm",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cmake",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/cmake",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ninja-build",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/ninja-build",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ccache",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/ccache",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "valgrind",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/valgrind",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pkg-config",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/pkg-config",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "autoconf",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/autoconf",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "automake",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/automake",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "libtool",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/libtool",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "manpages-dev",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/manpages-dev",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "openjdk-25-jdk",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "licenses": [
+        {
+          "expression": "GPL-2.0-only WITH Classpath-exception-2.0"
+        }
+      ],
+      "purl": "pkg:deb/ubuntu/openjdk-25-jdk",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "alternative choice: temurin-25-jdk from the Eclipse Adoptium apt repo"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clang-22",
+      "version": "22",
+      "supplier": {
+        "name": "apt.llvm.org (LLVM project)"
+      },
+      "licenses": [
+        {
+          "expression": "Apache-2.0 WITH LLVM-exception"
+        }
+      ],
+      "purl": "pkg:deb/llvm/clang-22",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clangd-22",
+      "version": "22",
+      "supplier": {
+        "name": "apt.llvm.org (LLVM project)"
+      },
+      "licenses": [
+        {
+          "expression": "Apache-2.0 WITH LLVM-exception"
+        }
+      ],
+      "purl": "pkg:deb/llvm/clangd-22",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clang-format-22",
+      "version": "22",
+      "supplier": {
+        "name": "apt.llvm.org (LLVM project)"
+      },
+      "licenses": [
+        {
+          "expression": "Apache-2.0 WITH LLVM-exception"
+        }
+      ],
+      "purl": "pkg:deb/llvm/clang-format-22",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "clang-tidy-22",
+      "version": "22",
+      "supplier": {
+        "name": "apt.llvm.org (LLVM project)"
+      },
+      "licenses": [
+        {
+          "expression": "Apache-2.0 WITH LLVM-exception"
+        }
+      ],
+      "purl": "pkg:deb/llvm/clang-tidy-22",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "lld-22",
+      "version": "22",
+      "supplier": {
+        "name": "apt.llvm.org (LLVM project)"
+      },
+      "licenses": [
+        {
+          "expression": "Apache-2.0 WITH LLVM-exception"
+        }
+      ],
+      "purl": "pkg:deb/llvm/lld-22",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "lldb-22",
+      "version": "22",
+      "supplier": {
+        "name": "apt.llvm.org (LLVM project)"
+      },
+      "licenses": [
+        {
+          "expression": "Apache-2.0 WITH LLVM-exception"
+        }
+      ],
+      "purl": "pkg:deb/llvm/lldb-22",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "llvm-22",
+      "version": "22",
+      "supplier": {
+        "name": "apt.llvm.org (LLVM project)"
+      },
+      "licenses": [
+        {
+          "expression": "Apache-2.0 WITH LLVM-exception"
+        }
+      ],
+      "purl": "pkg:deb/llvm/llvm-22",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "docker-ce",
+      "supplier": {
+        "name": "Docker, Inc. (download.docker.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:generic/docker-ce",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "docker-ce-cli",
+      "supplier": {
+        "name": "Docker, Inc. (download.docker.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:generic/docker-ce-cli",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "containerd.io",
+      "supplier": {
+        "name": "Docker, Inc. (download.docker.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:generic/containerd.io",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "docker-buildx-plugin",
+      "supplier": {
+        "name": "Docker, Inc. (download.docker.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:generic/docker-buildx-plugin",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "docker-compose-plugin",
+      "supplier": {
+        "name": "Docker, Inc. (download.docker.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:generic/docker-compose-plugin",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "nvidia-container-toolkit",
+      "supplier": {
+        "name": "NVIDIA (nvidia.github.io/libnvidia-container)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "installed only when an NVIDIA driver is present"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "Claude Code",
+      "supplier": {
+        "name": "Anthropic"
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "Anthropic Commercial Terms"
+          }
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://claude.ai/install.sh"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest (self-updating native installer)"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "superpowers@superpowers-dev",
+      "supplier": {
+        "name": "github.com/obra/superpowers"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/obra/superpowers"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from the marketplace repo at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "caveman@caveman",
+      "supplier": {
+        "name": "github.com/juliusbrussee/caveman"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/juliusbrussee/caveman"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from the marketplace repo at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "andrej-karpathy-skills@karpathy-skills",
+      "supplier": {
+        "name": "github.com/multica-ai/andrej-karpathy-skills"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/multica-ai/andrej-karpathy-skills"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from the marketplace repo at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ecc@ecc",
+      "supplier": {
+        "name": "github.com/affaan-m/ecc"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/affaan-m/ecc"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from the marketplace repo at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "claude-mem@thedotmack",
+      "supplier": {
+        "name": "github.com/thedotmack/claude-mem"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/thedotmack/claude-mem"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from the marketplace repo at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "agentic-awesome-skills@agentic-awesome-skills",
+      "supplier": {
+        "name": "github.com/sickn33/agentic-awesome-skills"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/sickn33/agentic-awesome-skills"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from the marketplace repo at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "gsd-core@gsd-core",
+      "supplier": {
+        "name": "github.com/open-gsd/gsd-core"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/open-gsd/gsd-core"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from the marketplace repo at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "code (Visual Studio Code)",
+      "supplier": {
+        "name": "Microsoft (packages.microsoft.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "Microsoft Software License"
+          }
+        }
+      ],
+      "purl": "pkg:deb/microsoft/code",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "anthropic.claude-code",
+      "supplier": {
+        "name": "Anthropic"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "openai.chatgpt",
+      "supplier": {
+        "name": "OpenAI (Codex)"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=openai.chatgpt"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms-python.python",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=ms-python.python"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms-vscode.cpptools-extension-pack",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools-extension-pack"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "vscjava.vscode-java-pack",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rust-lang.rust-analyzer",
+      "supplier": {
+        "name": "rust-lang"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "redhat.ansible",
+      "supplier": {
+        "name": "Red Hat"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=redhat.ansible"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "redhat.vscode-yaml",
+      "supplier": {
+        "name": "Red Hat"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "golang.go",
+      "supplier": {
+        "name": "Go Team at Google"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=golang.go"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "vadimcn.vscode-lldb",
+      "supplier": {
+        "name": "CodeLLDB"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms-vscode-remote.vscode-remote-extensionpack",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms-vscode.remote-explorer",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms-vscode-remote.remote-ssh-edit",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh-edit"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms-kubernetes-tools.vscode-kubernetes-tools",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms-azuretools.vscode-docker",
+      "supplier": {
+        "name": "Microsoft"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "amazonwebservices.aws-toolkit-vscode",
+      "supplier": {
+        "name": "Amazon Web Services"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=amazonwebservices.aws-toolkit-vscode"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "github.remotehub",
+      "supplier": {
+        "name": "GitHub"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=github.remotehub"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "gitlab.gitlab-workflow",
+      "supplier": {
+        "name": "GitLab"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=gitlab.gitlab-workflow"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "codezombiech.gitignore",
+      "supplier": {
+        "name": "CodeZombie"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=codezombiech.gitignore"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "eamodio.gitlens",
+      "supplier": {
+        "name": "GitKraken"
+      },
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest version compatible with the installed VS Code"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "Apache Maven",
+      "version": "3.9.16",
+      "supplier": {
+        "name": "Apache Software Foundation"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:generic/apache-maven@3.9.16",
+      "properties": [
+        {
+          "name": "note",
+          "value": "MAVEN_VERSION pin; SHA-512 verified"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "Go toolchain",
+      "supplier": {
+        "name": "Google (go.dev)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest stable, resolved via go.dev/VERSION"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "Rust toolchain (rustup)",
+      "supplier": {
+        "name": "Rust Foundation (rustup.rs)"
+      },
+      "licenses": [
+        {
+          "expression": "MIT OR Apache-2.0"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest stable via rustup"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "k3s (bundles kubectl)",
+      "supplier": {
+        "name": "K3s project / SUSE (get.k3s.io)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest stable channel via the official script"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "Helm",
+      "supplier": {
+        "name": "Helm project / CNCF"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via the official get-helm-4 script"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "k9s",
+      "supplier": {
+        "name": "derailed (github.com/derailed/k9s)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:github/derailed/k9s",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest GitHub release at install time; K9S_VERSION=v0.50.18 offline fallback"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "Ansible",
+      "supplier": {
+        "name": "Ansible community / Red Hat (PyPI)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "purl": "pkg:pypi/ansible",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest community release from PyPI via pipx"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "AWS CLI v2",
+      "supplier": {
+        "name": "Amazon Web Services"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest v2 (the official bundle URL always serves it)"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "protonvpn-stable-release (repo bootstrap)",
+      "version": "1.0.8",
+      "supplier": {
+        "name": "Proton AG"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "note",
+          "value": "sha256-pinned in versions.env against Proton's published checksum"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "proton-vpn-gnome-desktop",
+      "supplier": {
+        "name": "Proton AG (repo.protonvpn.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "proton-mail (desktop, bundles Proton Calendar)",
+      "supplier": {
+        "name": "Proton AG"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via Proton's stable .deb URL"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "protonmail-bridge",
+      "supplier": {
+        "name": "Proton AG"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via Proton's version feed; GPG-signature verified"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "Proton Drive CLI",
+      "supplier": {
+        "name": "Proton AG"
+      },
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via Proton's version feed; SHA512 verified"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "proton-pass",
+      "supplier": {
+        "name": "Proton AG"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via Proton's stable .deb URL"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "proton-meet",
+      "supplier": {
+        "name": "Proton AG"
+      },
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via Proton's stable .deb URL"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "proton-authenticator",
+      "supplier": {
+        "name": "Proton AG"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via Proton's stable .deb URL"
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "name": "elasticsearch",
+      "version": "9.5.1",
+      "supplier": {
+        "name": "Elastic N.V."
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "Elastic License 2.0 (Basic tier pinned)"
+          }
+        }
+      ],
+      "purl": "pkg:docker/elasticsearch@9.5.1?repository_url=docker.elastic.co",
+      "properties": [
+        {
+          "name": "note",
+          "value": "ELASTIC_VERSION pin"
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "name": "kibana",
+      "version": "9.5.1",
+      "supplier": {
+        "name": "Elastic N.V."
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "Elastic License 2.0 (Basic tier pinned)"
+          }
+        }
+      ],
+      "purl": "pkg:docker/kibana@9.5.1?repository_url=docker.elastic.co"
+    },
+    {
+      "type": "container",
+      "name": "opensearchproject/opensearch",
+      "version": "3.8.0",
+      "supplier": {
+        "name": "OpenSearch Software Foundation (Linux Foundation)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:docker/opensearchproject/opensearch@3.8.0",
+      "properties": [
+        {
+          "name": "note",
+          "value": "OPENSEARCH_VERSION pin (lockstep with Dashboards)"
+        }
+      ]
+    },
+    {
+      "type": "container",
+      "name": "opensearchproject/opensearch-dashboards",
+      "version": "3.8.0",
+      "supplier": {
+        "name": "OpenSearch Software Foundation (Linux Foundation)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:docker/opensearchproject/opensearch-dashboards@3.8.0"
+    },
+    {
+      "type": "application",
+      "name": "Ollama",
+      "supplier": {
+        "name": "Ollama (ollama.com)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via the official install script"
+        }
+      ]
+    }
+  ]
+}

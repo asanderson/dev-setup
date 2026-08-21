@@ -47,6 +47,7 @@ target are warned about and skipped unattended — see the
 | [Module reference](docs/dev-tools.md) | Every module — what it installs and from where; the component-selection flags (`--modules`, one flag per component) with examples; dependency-ordering notes; and the [post-install verification](docs/dev-tools.md#after-it-finishes) commands |
 | [Troubleshooting](docs/troubleshooting.md) | Symptom-first fixes: [Elasticsearch](docs/troubleshooting.md#elasticsearch-container-exits-immediately) / [OpenSearch](docs/troubleshooting.md#opensearch-container-exits-immediately) containers exiting at start, [Docker only working with sudo](docs/troubleshooting.md#docker-works-with-sudo-only), and [Ollama running on CPU](docs/troubleshooting.md#ollama-runs-on-cpu) |
 | [WorkSpace design spec](docs/superpowers/specs/2026-08-12-workspace-dev-environment-design.md) | Archived design reference for an AWS WorkSpace cloud dev desktop — a separate effort, not part of this installer |
+| [Software bill of materials](sbom.cdx.json) | CycloneDX 1.6 SBOM of **everything the installer delivers**: every distro package, vendor repo/.deb, tarball, container image, VS Code extension, and Claude Code plugin the modules install, with suppliers, licenses, and pinned-vs-latest resolution per component (maintained alongside `config/versions.env`) |
 
 The OS-level story (dual-boot install, NVIDIA driver, kernel) is documented
 in [asanderson/dual-boot](https://github.com/asanderson/dual-boot), which has

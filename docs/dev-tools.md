@@ -20,6 +20,27 @@ DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh                    # install everythin
 Selection order never matters: components always install in dependency
 order (Docker before Elastic/OpenSearch, JDK before Maven).
 
+## Target operating systems
+
+Interactive runs prompt for the target OS; non-interactive runs take
+`--os` — the **default is `ubuntu`** either way, the platform every module
+is written and tested for. Catalog: `ubuntu debian pureos rocky rhel qubes
+windows`. The installer configures the machine it runs on, so it verifies
+`/etc/os-release` matches the declared target before installing anything;
+`qubes` and `windows` are in the catalog for honest guidance (use a
+Debian-template qube with `--os debian`; use WSL2 Ubuntu with `--os
+ubuntu`) rather than installs.
+
+Components whose installer can't work on the target OS are **warned
+about**: unattended runs never install them; interactive runs may force one
+(default no). Support follows each module's package sources, as written:
+
+| Supported on | Components | Why |
+|---|---|---|
+| Ubuntu only | Git, Docker, C/C++ | git-core PPA, Docker's Ubuntu apt repo, apt.llvm.org's Ubuntu suite |
+| Debian family (ubuntu, debian, pureos) | VS Code, JDK, Python, Cloud tools, all Proton apps, Elastic, OpenSearch | apt packages, vendor `.deb`s, or Debian-suite vendor repos |
+| + Enterprise Linux (rocky, rhel) | Claude Code (+ plugins), Maven, Go, Rust, Ollama | distro-agnostic vendor installers, tarballs, or rustup |
+
 > **GPU note:** if this machine has an NVIDIA GPU, install the driver first —
 > the NVIDIA Container Toolkit and Ollama acceleration key off it. For the
 > MSI Raider 18 dual-boot machine that runbook lives in

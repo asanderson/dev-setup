@@ -78,6 +78,23 @@ require_ubuntu() {
   fi
 }
 
+# require_target_os <os> — the installer configures the system it runs on:
+# verify /etc/os-release matches the declared target OS. The ubuntu target
+# keeps the tested-version warning (26.04).
+require_target_os() {
+  local target="$1"
+  [[ -r /etc/os-release ]] || die "Cannot read /etc/os-release; unsupported system."
+  # shellcheck disable=SC1091
+  . /etc/os-release
+  local detected="${ID:-unknown}"
+  if [[ "$detected" != "$target" ]]; then
+    die "Target OS is '${target}' but this machine is '${detected}' — the installer configures the system it runs on."
+  fi
+  if [[ "$target" == "ubuntu" && "${VERSION_ID:-}" != "26.04" ]]; then
+    warn "Expected Ubuntu 26.04, found ${VERSION_ID:-unknown}. Continuing, but packages may differ."
+  fi
+}
+
 require_network() {
   if ! timeout 10 bash -c ':</dev/tcp/archive.ubuntu.com/80' 2>/dev/null; then
     die "No network connectivity to archive.ubuntu.com. Connect to the internet and retry."

@@ -53,6 +53,22 @@ run_setup() {
     bash -c "cd ~/dev-setup && ./scripts/setup.sh --modules ${MODULES_OVERRIDE// /,}"
 }
 
+echo "### [flags] target-OS argument contract"
+rc=0
+sudo -u dev -H bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os bogus' >/dev/null 2>&1 || rc=$?
+[[ $rc -eq 2 ]] || { echo "FAIL: --os bogus must exit 2 (got ${rc})"; exit 1; }
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os rocky --docker --claude-code' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] || { echo "FAIL: --os rocky on an ubuntu machine must fail"; exit 1; }
+grep -q "docker: not supported on rocky" <<<"$out" \
+  || { echo "FAIL: missing unsupported-component warning"; exit 1; }
+grep -q "unattended runs never install unsupported" <<<"$out" \
+  || { echo "FAIL: missing unattended skip notice"; exit 1; }
+grep -q "the installer configures the system it runs on" <<<"$out" \
+  || { echo "FAIL: missing target/machine mismatch guard"; exit 1; }
+echo "  PASS: --os validation (exit 2), unsupported-component warn+skip, mismatch guard"
+
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
 set +e; run_setup; rc=$?; set -e
 echo "### [run] setup.sh exit code: ${rc}"

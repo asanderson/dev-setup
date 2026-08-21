@@ -80,3 +80,27 @@ module_cloud_install() {
   log "k3s cluster access needs root by default: 'sudo k3s kubectl get nodes'."
   log "For your user: sudo chmod 644 /etc/rancher/k3s/k3s.yaml (or set KUBECONFIG from a copy)."
 }
+
+module_cloud_uninstall() {
+  section "Uninstall: Cloud development tools"
+  if [[ -x /usr/local/bin/k3s-uninstall.sh ]]; then
+    sudo /usr/local/bin/k3s-uninstall.sh >/dev/null 2>&1 || true
+    log "k3s removed via its own uninstaller."
+  else
+    sudo rm -f /usr/local/bin/k3s
+  fi
+  sudo rm -f /usr/local/bin/helm
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y k9s 2>/dev/null || true
+  else
+    sudo dnf remove -y k9s 2>/dev/null || true
+  fi
+  command_exists pipx && pipx uninstall ansible >/dev/null 2>&1 || true
+  sudo rm -rf /usr/local/aws-cli /usr/local/bin/aws /usr/local/bin/aws_completer
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    rm -rf "$HOME/.kube" "$HOME/.aws" "$HOME/.ansible"
+    log "Purged ~/.kube, ~/.aws, ~/.ansible."
+  else
+    log "Kept: ~/.kube, ~/.aws, ~/.ansible (--purge-data removes them)."
+  fi
+}

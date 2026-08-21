@@ -12,3 +12,12 @@ module_proton_pass_install() {
     "https://proton.me/download/PassDesktop/linux/x64/ProtonPass.rpm"
   ok "Installed: proton-pass $(command -v dpkg-query >/dev/null && dpkg-query -W -f='${Version}' proton-pass 2>/dev/null || rpm -q --qf '%{VERSION}' proton-pass 2>/dev/null || true)"
 }
+
+module_proton_pass_uninstall() {
+  section "Uninstall: Proton Pass"
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y proton-pass 2>/dev/null || true
+  else
+    sudo dnf remove -y proton-pass 2>/dev/null || true
+  fi
+}

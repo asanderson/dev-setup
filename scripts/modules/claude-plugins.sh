@@ -51,3 +51,20 @@ module_claude_plugins_install() {
   fi
   ok "All plugins installed. Inspect with 'claude plugin list' (or /plugin in a session)."
 }
+
+module_claude_plugins_uninstall() {
+  section "Uninstall: Claude Code plugins"
+  local claude_bin="$HOME/.local/bin/claude"
+  command_exists claude && claude_bin=claude
+  if [[ ! -x "$claude_bin" ]] && ! command_exists claude; then
+    log "claude CLI not present — nothing to remove (plugin state lives in ~/.claude)."
+    return 0
+  fi
+  local spec plugin repo
+  for spec in "${CLAUDE_PLUGIN_SPECS[@]}"; do
+    repo="${spec%% *}"; plugin="${spec#* }"
+    "$claude_bin" plugin uninstall "$plugin" >/dev/null 2>&1 || true
+    "$claude_bin" plugin marketplace remove "${repo#*/}" >/dev/null 2>&1 || true
+  done
+  ok "Curated plugins and their marketplaces removed."
+}

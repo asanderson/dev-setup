@@ -23,3 +23,17 @@ module_ollama_install() {
   log "Try it: 'ollama run llama3.2' — with the RTX 5090's 24GB VRAM, larger models like"
   log "'ollama run qwen3:32b' are practical. Models are stored under /usr/share/ollama."
 }
+
+module_ollama_uninstall() {
+  section "Uninstall: Ollama"
+  sudo systemctl disable --now ollama 2>/dev/null || true
+  sudo rm -f /etc/systemd/system/ollama.service /usr/local/bin/ollama /usr/bin/ollama
+  sudo rm -rf /usr/local/lib/ollama /usr/lib/ollama
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    sudo rm -rf /usr/share/ollama "$HOME/.ollama"
+    sudo userdel ollama 2>/dev/null || true
+    log "Purged models (/usr/share/ollama, ~/.ollama) and the service user."
+  else
+    log "Kept: downloaded models (--purge-data removes them)."
+  fi
+}

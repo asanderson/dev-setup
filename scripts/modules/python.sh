@@ -25,3 +25,21 @@ module_python_install() {
   ok "pip:    $(pip3 --version)"
   log "Use 'python3 -m venv' for project environments and 'pipx install' for CLI tools."
 }
+
+module_python_uninstall() {
+  section "Uninstall: Python extras"
+  # python3 itself is never removed — the OS depends on it. Only the dev
+  # extras this module added go.
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y python3-venv python3-pip python3-dev pipx 2>/dev/null || true
+  else
+    sudo dnf remove -y python3-pip python3-devel 2>/dev/null || true
+    rm -f "$HOME/.local/bin/pipx"
+  fi
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    rm -rf "$HOME/.local/pipx"
+    log "Purged ~/.local/pipx (pipx-installed tools)."
+  else
+    log "Kept: python3 (OS dependency) and ~/.local/pipx (--purge-data removes the latter)."
+  fi
+}

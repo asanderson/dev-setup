@@ -56,3 +56,13 @@ module_jdk_install() {
   ok "Installed: $(java -version 2>&1 | head -n1)"
   log "JAVA_HOME resolves via update-alternatives; explicit export usually unnecessary."
 }
+
+module_jdk_uninstall() {
+  section "Uninstall: JDK"
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y "openjdk-${JDK_MAJOR}-jdk" "temurin-${JDK_MAJOR}-jdk" default-jdk 2>/dev/null || true
+    sudo rm -f /etc/apt/sources.list.d/adoptium.list /etc/apt/keyrings/adoptium.gpg
+  else
+    sudo dnf remove -y "java-${JDK_MAJOR}-openjdk-devel" java-latest-openjdk-devel 2>/dev/null || true
+  fi
+}

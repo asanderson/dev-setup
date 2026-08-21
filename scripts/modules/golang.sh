@@ -30,3 +30,14 @@ EOF
   ok "Installed: $(/usr/local/go/bin/go version)"
   log "Open a new shell (or 'source /etc/profile.d/golang.sh') to get 'go' on PATH."
 }
+
+module_golang_uninstall() {
+  section "Uninstall: Go"
+  sudo rm -rf /usr/local/go /etc/profile.d/golang.sh
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    rm -rf "$HOME/go"
+    log "Purged ~/go (GOPATH: modules cache, installed binaries)."
+  else
+    log "Kept: ~/go (--purge-data removes it)."
+  fi
+}

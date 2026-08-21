@@ -36,3 +36,14 @@ module_git_install() {
   fi
   git config --global init.defaultBranch main
 }
+
+module_git_uninstall() {
+  section "Uninstall: Git"
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y git git-lfs || true
+    sudo rm -f /etc/apt/sources.list.d/git-core-*.list /etc/apt/sources.list.d/git-core-*.sources
+  else
+    sudo dnf remove -y git git-lfs || true
+  fi
+  log "Kept: your global git config (~/.gitconfig) and repositories."
+}

@@ -7,6 +7,8 @@
 #   ./test/container-test.sh --gpu-path
 #
 #   --rerun      run setup.sh a second time to verify idempotency
+#   --uninstall  after install + verify, run uninstall.sh on the same set
+#                and verify removal (python3 must survive)
 #   --gpu-path   instead of the module matrix, exercise the GPU-present
 #                branches (docker module's NVIDIA Container Toolkit install,
 #                nvidia runtime registration, ollama's GPU path) with an
@@ -39,6 +41,7 @@ MODULES=()
 for arg in "$@"; do
   case "$arg" in
     --rerun) RERUN="rerun" ;;
+    --uninstall) RERUN="uninstall-check" ;;
     --gpu-path) GPU_PATH="1" ;;
     *) MODULES+=("$arg") ;;
   esac

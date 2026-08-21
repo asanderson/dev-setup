@@ -45,6 +45,11 @@ Air-gapped enclave? `./scripts/offline-bundle.sh --pack` uses the
 into one archive with a self-contained offline installer — see
 [offline installs](docs/dev-tools.md#offline--air-gapped-installs).
 
+Removing things? `./scripts/uninstall.sh` mirrors the same selection
+contract (all components by default, per-component prompts, the same
+flags), keeps user data unless `--purge-data`, and never removes `python3`
+— see [uninstalling](docs/dev-tools.md#uninstalling).
+
 ## Documentation
 
 | Doc | What's inside |

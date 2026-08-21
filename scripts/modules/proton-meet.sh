@@ -12,3 +12,12 @@ module_proton_meet_install() {
     "https://proton.me/download/meet/linux/ProtonMeet-desktop.rpm"
   ok "Installed: proton-meet $(command -v dpkg-query >/dev/null && dpkg-query -W -f='${Version}' proton-meet 2>/dev/null || rpm -q --qf '%{VERSION}' proton-meet 2>/dev/null || true)"
 }
+
+module_proton_meet_uninstall() {
+  section "Uninstall: Proton Meet"
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y proton-meet 2>/dev/null || true
+  else
+    sudo dnf remove -y proton-meet 2>/dev/null || true
+  fi
+}

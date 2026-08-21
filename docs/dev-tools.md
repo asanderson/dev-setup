@@ -20,6 +20,26 @@ DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh                    # install everythin
 Selection order never matters: components always install in dependency
 order (Docker before Elastic/OpenSearch, JDK before Maven).
 
+## Uninstalling
+
+`scripts/uninstall.sh` mirrors the installer's selection contract: **all
+components are candidates by default** — interactive runs confirm each one
+(default yes), non-interactive runs (`DEV_SETUP_ASSUME_YES=1`) remove
+exactly the command-line selection (`--modules LIST`, one `--<component>`
+flag each), or everything with no flags. Components remove in reverse
+dependency order (stacks before Docker, Maven before JDK), vendor repo
+files are cleaned up, and `python3` is never removed (the OS depends on
+it). **User data is kept by default** — container volumes and images,
+`~/.m2`, `~/go`, `~/.kube`/`~/.aws`, VS Code settings, Ollama models,
+Claude config — pass `--purge-data` to remove that too; every module logs
+what it kept.
+
+```bash
+./scripts/uninstall.sh                          # confirm each component (default yes)
+DEV_SETUP_ASSUME_YES=1 ./scripts/uninstall.sh --elastic --ollama
+DEV_SETUP_ASSUME_YES=1 ./scripts/uninstall.sh --purge-data   # everything, data included
+```
+
 ## Offline / air-gapped installs
 
 `scripts/offline-bundle.sh --pack` builds a **self-contained archive** for

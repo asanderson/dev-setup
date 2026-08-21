@@ -55,3 +55,19 @@ module_cpp_install() {
       ;;
   esac
 }
+
+module_cpp_uninstall() {
+  section "Uninstall: C/C++ toolchain"
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y \
+      build-essential gdb clang clangd clang-format clang-tidy lldb llvm \
+      cmake ninja-build ccache valgrind \
+      "clang-${LLVM_VERSION}" "clangd-${LLVM_VERSION}" "clang-format-${LLVM_VERSION}" \
+      "clang-tidy-${LLVM_VERSION}" "lld-${LLVM_VERSION}" "lldb-${LLVM_VERSION}" "llvm-${LLVM_VERSION}" \
+      2>/dev/null || true
+    sudo rm -f /etc/apt/sources.list.d/llvm.list /etc/apt/keyrings/llvm.gpg
+  else
+    sudo dnf remove -y gcc gcc-c++ gdb clang clang-tools-extra lldb lld llvm cmake ninja-build ccache valgrind 2>/dev/null || true
+  fi
+  log "Kept: gcc/libc on the Debian family where other packages depend on them (apt removes only what is safe)."
+}

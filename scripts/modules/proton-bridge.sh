@@ -48,3 +48,12 @@ module_proton_bridge_install() {
   log "Bridge requires a paid Proton Mail plan. First run: 'protonmail-bridge'"
   log "(or the CLI: 'protonmail-bridge --cli') to log in; it then self-updates."
 }
+
+module_proton_bridge_uninstall() {
+  section "Uninstall: Proton Mail Bridge"
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y protonmail-bridge 2>/dev/null || true
+  else
+    sudo dnf remove -y protonmail-bridge 2>/dev/null || true
+  fi
+}

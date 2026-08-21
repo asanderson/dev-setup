@@ -12,3 +12,12 @@ module_proton_authenticator_install() {
     "https://proton.me/download/authenticator/linux/ProtonAuthenticator.rpm"
   ok "Installed: proton-authenticator $(command -v dpkg-query >/dev/null && dpkg-query -W -f='${Version}' proton-authenticator 2>/dev/null || rpm -q --qf '%{VERSION}' proton-authenticator 2>/dev/null || true)"
 }
+
+module_proton_authenticator_uninstall() {
+  section "Uninstall: Proton Authenticator"
+  if [[ "$(os_family)" == deb ]]; then
+    sudo apt-get remove -y proton-authenticator 2>/dev/null || true
+  else
+    sudo dnf remove -y proton-authenticator 2>/dev/null || true
+  fi
+}

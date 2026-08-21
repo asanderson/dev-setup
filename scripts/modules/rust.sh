@@ -20,3 +20,12 @@ module_rust_install() {
   ok "Installed: $("$HOME/.cargo/bin/rustc" --version)"
   log "cargo/rustc live in ~/.cargo/bin (added to PATH via ~/.cargo/env in your shell rc)."
 }
+
+module_rust_uninstall() {
+  section "Uninstall: Rust"
+  if command_exists rustup || [[ -x "$HOME/.cargo/bin/rustup" ]]; then
+    "$HOME/.cargo/bin/rustup" self uninstall -y >/dev/null 2>&1 || rustup self uninstall -y >/dev/null 2>&1 || true
+  fi
+  rm -rf "$HOME/.cargo" "$HOME/.rustup"
+  ok "rustup, toolchains, and ~/.cargo removed."
+}

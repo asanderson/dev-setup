@@ -14,8 +14,8 @@
 #                the container --privileged for the nested dockerd. Takes
 #                no other arguments.
 #   module ...   modules to test (default: git claude-code claude-plugins
-#                vscode docker jdk maven cpp golang rust python cloud plus
-#                six proton-* modules). elastic and opensearch (need a
+#                vscode docker podman jdk maven cpp golang rust python
+#                cloud plus six proton-* modules). elastic and opensearch (need a
 #                Docker daemon inside the container), ollama (GB-scale
 #                download, needs a GPU to be meaningful), and proton-vpn
 #                (its daemon's postinst needs systemd, absent in
@@ -61,7 +61,7 @@ if [[ -n "$GPU_PATH" ]]; then
     bash /repo/test/gpu-path-init.sh
 fi
 
-[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code claude-plugins vscode docker jdk maven cpp golang rust python cloud
+[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
   proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator)
 
 echo ">>> image: ${IMAGE}"

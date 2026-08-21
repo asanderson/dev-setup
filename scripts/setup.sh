@@ -34,7 +34,7 @@ source "${REPO_ROOT}/config/versions.env"
 
 # Module order matters: claude-code before claude-plugins, docker before
 # elastic/opensearch, jdk before maven, nvidia-dependent modules (ollama) last.
-MODULES=(git claude-code claude-plugins vscode docker jdk maven cpp golang rust python cloud
+MODULES=(git claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
          proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
          elastic opensearch ollama)
 
@@ -46,17 +46,21 @@ OS_CATALOG=(ubuntu debian pureos rocky rhel qubes windows)
 TARGET_OS=""
 
 # Per-component OS support, exactly as the modules are written — decided by
-# their package sources: git (ubuntu PPA), docker (Docker's Ubuntu repo), and
-# cpp (apt.llvm.org's ubuntu suite) are Ubuntu-only; apt/.deb-based modules
-# cover the Debian family; pure binary/vendor-script installs (rustup,
-# go.dev tarball, Apache tarball, claude native installer, ollama script)
-# also cover Enterprise Linux. See docs/dev-tools.md#target-operating-systems.
+# their package sources: git (ubuntu PPA) and cpp (apt.llvm.org's ubuntu
+# suite) are Ubuntu-only; docker follows Docker's official repos (ubuntu,
+# debian, and the centos/rhel dnf repos — no PureOS suite exists); podman is
+# everywhere (EL-native, in every Debian-family archive); apt/.deb-based
+# modules cover the Debian family; pure binary/vendor-script installs
+# (rustup, go.dev tarball, Apache tarball, claude native installer, ollama
+# script) also cover Enterprise Linux, as do elastic/opensearch (their code
+# only needs a container engine). See docs/dev-tools.md#target-operating-systems.
 declare -A MODULE_SUPPORT=(
   [git]="ubuntu"
   [claude-code]="ubuntu debian pureos rocky rhel"
   [claude-plugins]="ubuntu debian pureos rocky rhel"
   [vscode]="ubuntu debian pureos"
-  [docker]="ubuntu"
+  [docker]="ubuntu debian rocky rhel"
+  [podman]="ubuntu debian pureos rocky rhel"
   [jdk]="ubuntu debian pureos"
   [maven]="ubuntu debian pureos rocky rhel"
   [cpp]="ubuntu"
@@ -71,8 +75,8 @@ declare -A MODULE_SUPPORT=(
   [proton-pass]="ubuntu debian pureos"
   [proton-meet]="ubuntu debian pureos"
   [proton-authenticator]="ubuntu debian pureos"
-  [elastic]="ubuntu debian pureos"
-  [opensearch]="ubuntu debian pureos"
+  [elastic]="ubuntu debian pureos rocky rhel"
+  [opensearch]="ubuntu debian pureos rocky rhel"
   [ollama]="ubuntu debian pureos rocky rhel"
 )
 

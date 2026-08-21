@@ -108,8 +108,11 @@ for m in ${MODULES_OVERRIDE}; do
     *)           echo "  SKIP ${m} (unknown module)"; continue ;;
   esac
   for probe in "${probes[@]}"; do
-    if out=$(sudo -u dev -H bash -lc "$probe" 2>&1 | head -n1); then
-      printf '  OK   %-12s %s\n' "$m" "$out"
+    # Capture fully, truncate after: piping through `head -n1` under
+    # pipefail SIGPIPEs multi-line probes (k3s --version prints several
+    # lines) into random 141 failures.
+    if out=$(sudo -u dev -H bash -lc "$probe" 2>&1); then
+      printf '  OK   %-12s %s\n' "$m" "${out%%$'\n'*}"
     else
       printf '  FAIL %-12s probe failed: %s\n' "$m" "$probe"
       verify_rc=1

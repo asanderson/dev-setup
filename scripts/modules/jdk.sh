@@ -60,9 +60,16 @@ module_jdk_install() {
 module_jdk_uninstall() {
   section "Uninstall: JDK"
   if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y "openjdk-${JDK_MAJOR}-jdk" "temurin-${JDK_MAJOR}-jdk" default-jdk 2>/dev/null || true
+    # Remove the runtime pieces explicitly too — dropping only the -jdk
+    # metapackage leaves openjdk-*-jre-headless (and its 'java') behind,
+    # and autoremove does not reliably sweep it.
+    sudo apt-get remove -y \
+      "openjdk-${JDK_MAJOR}-jdk" "openjdk-${JDK_MAJOR}-jdk-headless" \
+      "openjdk-${JDK_MAJOR}-jre" "openjdk-${JDK_MAJOR}-jre-headless" \
+      "temurin-${JDK_MAJOR}-jdk" default-jdk default-jre 2>/dev/null || true
     sudo rm -f /etc/apt/sources.list.d/adoptium.list /etc/apt/keyrings/adoptium.gpg
   else
-    sudo dnf remove -y "java-${JDK_MAJOR}-openjdk-devel" java-latest-openjdk-devel 2>/dev/null || true
+    sudo dnf remove -y "java-${JDK_MAJOR}-openjdk-devel" "java-${JDK_MAJOR}-openjdk" \
+      "java-${JDK_MAJOR}-openjdk-headless" java-latest-openjdk-devel 2>/dev/null || true
   fi
 }

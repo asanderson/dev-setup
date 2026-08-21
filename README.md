@@ -34,6 +34,11 @@ Every component has a matching flag (`--docker`, `--opensearch`, ...; see
 interactively they pre-scope the menu, unattended they install exactly the
 selection: `DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh --docker --opensearch`
 
+The target operating system is prompted for interactively (or `--os` for
+unattended runs) and **defaults to Ubuntu**; components not supported on the
+target are warned about and skipped unattended — see the
+[support matrix](docs/dev-tools.md#target-operating-systems).
+
 ## Documentation
 
 | Doc | What's inside |

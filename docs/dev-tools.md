@@ -72,15 +72,25 @@ proton-* apps.
 an OCI-compliant container image of the selected components — the same
 selection contract as the installer (`--modules LIST`, one `--<component>`
 flag each, everything imageable with no flags; `--list` prints the set).
-The image is Ubuntu 26.04 with the components installed by the same
-modules, as the non-root user `dev` (uid 1000). Build with Docker (default)
-or Podman via `--engine`, and name the result with `--tag`
-(default `dev-setup:latest`).
+The image is the target OS's base image — `--os
+ubuntu|debian|pureos|rocky|rhel`, default ubuntu (26.04); PureOS builds on
+the byzantium base, the only OCI image Purism publishes — with the
+components installed by the same modules, as the non-root user `dev`
+(uid 1000). Build with Docker (default) or Podman via `--engine`, and name
+the result with `--tag` (default `dev-setup:latest`).
 
 Not imageable, by design: **docker and podman** (they are the engines that
-run this image, not image content) and **elastic/opensearch** (their
-installs need a running Docker daemon — run those stacks beside the
-container instead).
+run this image, not image content), **elastic/opensearch** (their installs
+need a running Docker daemon — run those stacks beside the container
+instead), and **proton-vpn** (its daemon's postinst needs a running
+systemd, and a VPN belongs on the host, not in a container image).
+
+The **publish-images workflow** (`.github/workflows/publish-images.yml`,
+manual trigger) builds the full-component image for every target OS and
+pushes each to a container registry — `ghcr.io/asanderson/dev-setup:<os>`
+(plus `:latest` for ubuntu) by default, which the workflow's own token can
+push to; the `registry` input redirects to another namespace (e.g. Google
+Artifact Registry once its credentials are configured as repo secrets).
 
 `scripts/run.sh` runs the image. It prompts interactively — or takes flags
 for non-interactive runs — for **which user to run as** (the user who

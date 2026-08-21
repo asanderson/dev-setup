@@ -42,16 +42,19 @@ if [[ "$FAMILY" == deb ]]; then
     update-ca-certificates >/dev/null
   fi
 else
+  # CA trust first and independent of the proxy env: a transparently-
+  # intercepting proxy MITMs dnf's https mirrorlists with no proxy
+  # variable set at all.
+  if [[ -f /ccr-ca.crt ]]; then
+    cp /ccr-ca.crt /etc/pki/ca-trust/source/anchors/agent-proxy.crt
+    update-ca-trust
+  fi
   if [[ -n "${https_proxy:-}" ]]; then
     echo "proxy=${https_proxy}" >>/etc/dnf/dnf.conf
     # A CONNECT-only proxy rejects plain-HTTP proxying, and EL mirrorlists
     # hand out http package URLs — pin the repos to their https baseurls.
     sed -i -e 's|^mirrorlist=|#mirrorlist=|' -e 's|^#baseurl=http://|baseurl=https://|' \
       /etc/yum.repos.d/*.repo 2>/dev/null || true
-    if [[ -f /ccr-ca.crt ]]; then
-      cp /ccr-ca.crt /etc/pki/ca-trust/source/anchors/agent-proxy.crt
-      update-ca-trust
-    fi
   fi
   dnf install -y sudo shadow-utils ca-certificates >/dev/null
 fi

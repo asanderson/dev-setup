@@ -52,6 +52,26 @@ jobs:
           docker run --rm --network none -v "${bundle}:/bundle:ro" ubuntu:26.04 \
             bash -c "/bundle/install-offline.sh && git --version && git lfs version && python3 --version && pip3 --version && pipx --version && /opt/maven/bin/mvn -version | head -1"
 
+  engines:
+    name: engines on ${{ matrix.os }} (docker/podman per support matrix)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, debian, pureos, rocky, rhel]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the engine modules in a fresh ${{ matrix.os }} container
+        # Per the support matrix: docker everywhere Docker has an official
+        # repo path (ubuntu, debian, rocky via Docker's centos repo, rhel);
+        # podman on all five targets. pureos additionally asserts docker is
+        # warned about and skipped (podman covers containers there), and
+        # runs on the byzantium image — the only OCI image Purism
+        # publishes. systemctl is stubbed where the base image has no
+        # systemd (EL bases), matching real systemctl's chroot no-op.
+        run: ./test/engines-test.sh ${{ matrix.os }}
+
   image-build:
     name: OCI image build + run
     runs-on: ubuntu-latest

@@ -213,7 +213,9 @@ main() {
   if command_exists apt-get; then
     apt_install curl ca-certificates gnupg lsb-release openssl
   else
-    sudo dnf install -y curl ca-certificates gnupg2 openssl
+    # --allowerasing: EL ships curl-minimal, which conflicts with full curl
+    # until dnf is allowed to swap them.
+    sudo dnf install -y --allowerasing curl ca-certificates gnupg2 openssl
   fi
 
   section "Installing: ${selected[*]}"

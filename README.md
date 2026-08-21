@@ -107,9 +107,13 @@ Every PR runs the installer end-to-end in a **fresh Ubuntu 26.04 container**
 version probes — plus shellcheck across every script. A separate **GPU-path
 job** stubs `nvidia-smi` as the MSI Raider's RTX 5090 to exercise the
 GPU-present branches (NVIDIA Container Toolkit install, nvidia runtime
-registration, Ollama's GPU path) that the GPU-less matrix can't reach. Run
-them locally with Docker: `./test/container-test.sh --rerun` and
-`./test/container-test.sh --gpu-path`.
+registration, Ollama's GPU path) that the GPU-less matrix can't reach. An
+**engines matrix** installs Docker and Podman in a fresh container of every
+target OS each supports (docker on ubuntu/debian/rocky/rhel, podman on all
+five — PureOS asserts docker is refused there). Run
+them locally with Docker: `./test/container-test.sh --rerun`,
+`./test/container-test.sh --gpu-path`, and
+`./test/engines-test.sh <ubuntu|debian|pureos|rocky|rhel>`.
 
 ## Repeatability notes
 

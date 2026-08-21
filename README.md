@@ -45,6 +45,13 @@ Air-gapped enclave? `./scripts/offline-bundle.sh --pack` uses the
 into one archive with a self-contained offline installer — see
 [offline installs](docs/dev-tools.md#offline--air-gapped-installs).
 
+Want the toolchain as a container instead? `./scripts/build.sh` runs the
+installer inside an image build and produces an OCI image of the selected
+components (everything except the container engines and the Docker-hosted
+stacks), and `./scripts/run.sh` runs it in Docker or Podman — prompting (or
+taking flags) for the user to run as and the local directories to mount —
+see [container image](docs/dev-tools.md#container-image).
+
 Removing things? `./scripts/uninstall.sh` mirrors the same selection
 contract (all components by default, per-component prompts, the same
 flags), keeps user data unless `--purge-data`, and never removes `python3`
@@ -68,7 +75,8 @@ its own documentation map.
 ```
 docs/
   dev-tools.md           Module table, selection flags, target OSes,
-                           uninstalling, offline installs, post-install checks
+                           uninstalling, offline installs, container image,
+                           post-install checks
   troubleshooting.md     Elastic / OpenSearch / Docker / Ollama fixes
 scripts/
   setup.sh               Interactive orchestrator: target OS + component
@@ -76,6 +84,9 @@ scripts/
   uninstall.sh           Mirror of the selection contract for removal
                            (all components by default; --purge-data for data)
   offline-bundle.sh      SBOM-driven packer for air-gapped installs
+  build.sh               Builds an OCI image of the selected components
+  run.sh                 Runs that image in Docker/Podman (user + mounts
+                           prompted or flagged)
   lib/common.sh          Shared helpers (prompts, apt/dnf, per-family installs)
   lib/install-offline.sh Standalone installer shipped inside offline bundles
   modules/*.sh           One idempotent installer + uninstaller per tool
@@ -96,9 +107,13 @@ Every PR runs the installer end-to-end in a **fresh Ubuntu 26.04 container**
 version probes — plus shellcheck across every script. A separate **GPU-path
 job** stubs `nvidia-smi` as the MSI Raider's RTX 5090 to exercise the
 GPU-present branches (NVIDIA Container Toolkit install, nvidia runtime
-registration, Ollama's GPU path) that the GPU-less matrix can't reach. Run
-them locally with Docker: `./test/container-test.sh --rerun` and
-`./test/container-test.sh --gpu-path`.
+registration, Ollama's GPU path) that the GPU-less matrix can't reach. An
+**engines matrix** installs Docker and Podman in a fresh container of every
+target OS each supports (docker on ubuntu/debian/rocky/rhel, podman on all
+five — PureOS asserts docker is refused there). Run
+them locally with Docker: `./test/container-test.sh --rerun`,
+`./test/container-test.sh --gpu-path`, and
+`./test/engines-test.sh <ubuntu|debian|pureos|rocky|rhel>`.
 
 ## Repeatability notes
 

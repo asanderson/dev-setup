@@ -153,6 +153,12 @@ fi
 apt-get update -qq
 # shellcheck disable=SC2086
 apt-get install -y --download-only -o Dir::Cache::archives=/out $APT_LIST
+# Index the download as a local apt repo, so the offline installer can let
+# apt resolve ordering from a file: source instead of raw dpkg ordering.
+apt-get install -y -qq dpkg-dev >/dev/null
+( cd /out && dpkg-scanpackages --multiversion . /dev/null 2>/dev/null | gzip > Packages.gz )
+# shellcheck disable=SC2086
+printf '%s\n' $APT_LIST | sort -u > /out/PACKAGES.list
 chmod -R a+r /out
 echo "debs: $(ls /out/*.deb | wc -l)"
 INNER

@@ -22,12 +22,20 @@ log "Verifying bundle integrity (MANIFEST.sha256)..."
 log "Bundle intact. Modules packed: $(tr '\n' ' ' < "${HERE}/MODULES")"
 
 # ---- debs (complete dependency closure from pack time) ---------------------
+# The bundle is a local apt repo (Packages.gz generated at pack time): apt
+# resolves install ordering itself from the file: source — no network, and
+# no raw-dpkg ordering problems on large sets.
 if compgen -G "${HERE}/debs/*.deb" >/dev/null; then
-  log "Installing $(ls "${HERE}"/debs/*.deb | wc -l) .deb packages (dependency-complete set)..."
-  # Two passes + configure: dpkg orders within the set; the closure is complete.
-  $SUDO dpkg -i "${HERE}"/debs/*.deb >/dev/null 2>&1 || true
-  $SUDO dpkg -i "${HERE}"/debs/*.deb >/dev/null 2>&1 || true
-  $SUDO dpkg --configure -a
+  log "Installing $(ls "${HERE}"/debs/*.deb | wc -l) packages from the bundled local apt repo..."
+  list=/etc/apt/sources.list.d/dev-setup-offline.list
+  echo "deb [trusted=yes] file:${HERE}/debs ./" | $SUDO tee "$list" >/dev/null
+  # Update ONLY our source — the machine's normal sources are unreachable here.
+  $SUDO apt-get update -qq \
+    -o Dir::Etc::sourcelist="$list" -o Dir::Etc::sourceparts=/dev/null
+  # shellcheck disable=SC2046  # package names are safe single tokens
+  $SUDO env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+    $(cat "${HERE}/debs/PACKAGES.list")
+  $SUDO rm -f "$list"
   log "Packages installed."
 fi
 

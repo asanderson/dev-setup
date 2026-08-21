@@ -84,3 +84,15 @@ EOF
 
   log "Launch with 'code'; extensions live per-user under ~/.vscode."
 }
+
+module_vscode_uninstall() {
+  section "Uninstall: Visual Studio Code"
+  pkg_remove code
+  sudo rm -f /etc/apt/sources.list.d/vscode.list /etc/apt/keyrings/vscode.gpg /etc/yum.repos.d/vscode.repo
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    rm -rf "$HOME/.vscode" "$HOME/.config/Code"
+    log "Purged ~/.vscode and ~/.config/Code (extensions, settings)."
+  else
+    log "Kept: ~/.vscode and ~/.config/Code (--purge-data removes them)."
+  fi
+}

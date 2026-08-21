@@ -151,6 +151,32 @@ fetch_deb_install() {
   rm -rf "$tmp"
 }
 
+# Remove only the packages that are actually installed. apt aborts the
+# WHOLE transaction when any name is unknown to its configured archives
+# (e.g. a vendor package whose repo is not present on this machine), so
+# never pass raw lists to apt-get remove — filter here first. Family
+# resolved by what the machine has; unknown/absent names are skipped.
+pkg_remove() {
+  local -a present=()
+  local p
+  if command_exists dpkg; then
+    for p in "$@"; do
+      dpkg -s "$p" >/dev/null 2>&1 && present+=("$p")
+    done
+    if [[ ${#present[@]} -gt 0 ]]; then
+      sudo apt-get remove -y "${present[@]}"
+    fi
+  else
+    for p in "$@"; do
+      rpm -q "$p" >/dev/null 2>&1 && present+=("$p")
+    done
+    if [[ ${#present[@]} -gt 0 ]]; then
+      sudo dnf remove -y "${present[@]}"
+    fi
+  fi
+  return 0
+}
+
 # Same for vendor .rpm packages on Enterprise Linux targets.
 fetch_rpm_install() {
   local url="$1" tmp

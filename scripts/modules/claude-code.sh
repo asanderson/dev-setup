@@ -25,3 +25,15 @@ module_claude_code_install() {
     return 1
   fi
 }
+
+module_claude_code_uninstall() {
+  section "Uninstall: Claude Code"
+  rm -f "$HOME/.local/bin/claude"
+  rm -rf "$HOME/.local/share/claude"
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    rm -rf "$HOME/.claude" "$HOME/.claude.json"
+    log "Purged ~/.claude (config, history, plugins)."
+  else
+    log "Kept: ~/.claude (config/history — --purge-data removes it)."
+  fi
+}

@@ -48,3 +48,8 @@ module_proton_bridge_install() {
   log "Bridge requires a paid Proton Mail plan. First run: 'protonmail-bridge'"
   log "(or the CLI: 'protonmail-bridge --cli') to log in; it then self-updates."
 }
+
+module_proton_bridge_uninstall() {
+  section "Uninstall: Proton Mail Bridge"
+  pkg_remove protonmail-bridge
+}

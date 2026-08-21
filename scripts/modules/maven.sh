@@ -40,3 +40,14 @@ EOF
   ok "Installed: $(/opt/maven/bin/mvn -version 2>/dev/null | head -n1)"
   log "Open a new shell (or 'source /etc/profile.d/maven.sh') to get 'mvn' on PATH."
 }
+
+module_maven_uninstall() {
+  section "Uninstall: Maven"
+  sudo rm -rf /opt/apache-maven-* /opt/maven /etc/profile.d/maven.sh
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    rm -rf "$HOME/.m2"
+    log "Purged ~/.m2 (local repository)."
+  else
+    log "Kept: ~/.m2 (--purge-data removes it)."
+  fi
+}

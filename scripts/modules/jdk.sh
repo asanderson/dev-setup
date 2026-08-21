@@ -56,3 +56,18 @@ module_jdk_install() {
   ok "Installed: $(java -version 2>&1 | head -n1)"
   log "JAVA_HOME resolves via update-alternatives; explicit export usually unnecessary."
 }
+
+module_jdk_uninstall() {
+  section "Uninstall: JDK"
+  # The runtime pieces go explicitly too — dropping only the -jdk
+  # metapackage leaves openjdk-*-jre-headless (and its 'java') behind, and
+  # autoremove does not reliably sweep it. pkg_remove filters to what is
+  # actually installed, so vendor names (temurin) are safe everywhere.
+  pkg_remove \
+    "openjdk-${JDK_MAJOR}-jdk" "openjdk-${JDK_MAJOR}-jdk-headless" \
+    "openjdk-${JDK_MAJOR}-jre" "openjdk-${JDK_MAJOR}-jre-headless" \
+    "temurin-${JDK_MAJOR}-jdk" default-jdk default-jre \
+    "java-${JDK_MAJOR}-openjdk-devel" "java-${JDK_MAJOR}-openjdk" \
+    "java-${JDK_MAJOR}-openjdk-headless" java-latest-openjdk-devel
+  sudo rm -f /etc/apt/sources.list.d/adoptium.list /etc/apt/keyrings/adoptium.gpg
+}

@@ -41,3 +41,8 @@ module_proton_drive_install() {
   log "Log in with 'proton-drive auth login' — it opens a browser flow, so do"
   log "that interactively (headless machines: see Proton's drive-cli support page)."
 }
+
+module_proton_drive_uninstall() {
+  section "Uninstall: Proton Drive CLI"
+  sudo rm -f /usr/local/bin/proton-drive
+}

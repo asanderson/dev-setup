@@ -118,5 +118,46 @@ for m in ${MODULES_OVERRIDE}; do
 done
 [[ $rc -eq 0 && $verify_rc -ne 0 ]] && rc=$verify_rc
 
+# Optional round trip: uninstall the same set unattended and verify removal
+# (and that python3 — an OS dependency — is never removed).
+if [[ "$RERUN" == "uninstall-check" ]]; then
+  echo "### [uninstall] removing the same set unattended"
+  set +e
+  sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+    bash -c "cd ~/dev-setup && ./scripts/uninstall.sh --modules ${MODULES_OVERRIDE// /,}"
+  urc=$?
+  set -e
+  echo "### [uninstall] uninstall.sh exit code: ${urc}"
+  for m in ${MODULES_OVERRIDE}; do
+    case "$m" in
+      git)
+        if sudo -u dev -H bash -lc 'command -v git' >/dev/null 2>&1; then
+          echo "  FAIL git still present"; urc=1
+        else echo "  OK   git removed"; fi ;;
+      maven)
+        if [[ -e /opt/maven ]]; then echo "  FAIL maven still present"; urc=1
+        else echo "  OK   maven removed"; fi ;;
+      jdk)
+        if sudo -u dev -H bash -lc 'command -v java' >/dev/null 2>&1; then
+          echo "  FAIL java still present"; urc=1
+        else echo "  OK   jdk removed"; fi ;;
+      python)
+        if sudo -u dev -H bash -lc 'command -v pipx' >/dev/null 2>&1; then
+          echo "  FAIL pipx still present"; urc=1
+        else echo "  OK   python extras removed"; fi ;;
+      golang)
+        if [[ -e /usr/local/go ]]; then echo "  FAIL go still present"; urc=1
+        else echo "  OK   go removed"; fi ;;
+      *) echo "  SKIP ${m} (no removal probe)" ;;
+    esac
+  done
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "  FAIL python3 was removed — the uninstaller must never do that"; urc=1
+  else
+    echo "  OK   python3 preserved (OS dependency)"
+  fi
+  [[ $rc -eq 0 && $urc -ne 0 ]] && rc=$urc
+fi
+
 echo "### [done] overall exit: ${rc}"
 exit "${rc}"

@@ -14,3 +14,8 @@ module_proton_mail_install() {
   log "Proton Calendar is bundled in this app (no standalone Linux app exists;"
   log "web: calendar.proton.me). The app self-checks for updates — no apt repo."
 }
+
+module_proton_mail_uninstall() {
+  section "Uninstall: Proton Mail desktop"
+  pkg_remove proton-mail
+}

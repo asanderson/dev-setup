@@ -96,3 +96,18 @@ EOF
     log "No NVIDIA driver detected; skipping NVIDIA Container Toolkit (re-run this module after installing the driver — see github.com/asanderson/dual-boot)."
   fi
 }
+
+module_docker_uninstall() {
+  section "Uninstall: Docker Engine"
+  sudo systemctl disable --now docker 2>/dev/null || true
+  pkg_remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin nvidia-container-toolkit
+  sudo rm -f /etc/apt/sources.list.d/docker.sources /etc/apt/keyrings/docker.asc \
+    /etc/apt/sources.list.d/nvidia-container-toolkit.list /etc/apt/keyrings/nvidia-container-toolkit.gpg \
+    /etc/yum.repos.d/docker-ce.repo
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    sudo rm -rf /var/lib/docker /var/lib/containerd
+    log "Purged /var/lib/docker and /var/lib/containerd (images, volumes, containers)."
+  else
+    log "Kept: /var/lib/docker (images/volumes — --purge-data removes it)."
+  fi
+}

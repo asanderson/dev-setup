@@ -27,3 +27,10 @@ module_proton_vpn_install() {
   log "Official CLI alternative: 'sudo apt install proton-vpn-cli' — but don't run"
   log "the GUI and CLI at the same time (Proton documents them as exclusive)."
 }
+
+module_proton_vpn_uninstall() {
+  section "Uninstall: Proton VPN"
+  pkg_remove proton-vpn-gnome-desktop proton-vpn-cli protonvpn-stable-release
+  sudo rm -f /etc/apt/sources.list.d/protonvpn-stable.list \
+    /usr/share/keyrings/protonvpn-stable-archive-keyring.gpg
+}

@@ -98,3 +98,24 @@ EOF
   log "  License check: curl -s -u elastic:<pw> http://localhost:9200/_license"
   log "  Manage:        cd $dest_dir && docker compose [stop|start|down|logs -f]"
 }
+
+module_elastic_uninstall() {
+  section "Uninstall: Elastic Stack"
+  local dest="${ELASTIC_HOME:-$HOME/elastic}"
+  local -a D=(docker)
+  docker info >/dev/null 2>&1 || D=(sudo docker)
+  if [[ -f "$dest/docker-compose.yml" ]]; then
+    if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+      ( cd "$dest" && "${D[@]}" compose down -v ) 2>/dev/null || true
+      rm -rf "$dest"
+      "${D[@]}" rmi "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}" \
+        "docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}" 2>/dev/null || true
+      log "Purged the stack, its data volume, ${dest}, and the images."
+    else
+      ( cd "$dest" && "${D[@]}" compose down ) 2>/dev/null || true
+      log "Containers stopped and removed. Kept: the data volume, ${dest}/.env, and the images (--purge-data removes them)."
+    fi
+  else
+    log "No stack found at ${dest} — nothing to do."
+  fi
+}

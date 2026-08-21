@@ -36,3 +36,10 @@ module_git_install() {
   fi
   git config --global init.defaultBranch main
 }
+
+module_git_uninstall() {
+  section "Uninstall: Git"
+  pkg_remove git git-lfs
+  sudo rm -f /etc/apt/sources.list.d/git-core-*.list /etc/apt/sources.list.d/git-core-*.sources
+  log "Kept: your global git config (~/.gitconfig) and repositories."
+}

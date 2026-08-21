@@ -20,6 +20,18 @@ jobs:
       - name: Lint all shell scripts
         run: shellcheck -x -S warning scripts/setup.sh scripts/offline-bundle.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
 
+  uninstall:
+    name: install + uninstall round trip
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install a scoped set, then uninstall it and verify removal
+        # git+python+maven+jdk+golang install unattended, probe green, then
+        # uninstall.sh --modules removes them; asserts each tool is gone
+        # and python3 (an OS dependency) survives.
+        run: ./test/container-test.sh --uninstall git python maven jdk golang
+
   offline-bundle:
     name: offline bundle (pack, then air-gapped install)
     runs-on: ubuntu-latest

@@ -36,3 +36,14 @@ module_podman_install() {
   log "skip it if Docker Engine is also installed (the two shims conflict)."
   log "Compose: 'podman compose' delegates to podman-compose or docker-compose."
 }
+
+module_podman_uninstall() {
+  section "Uninstall: Podman"
+  pkg_remove podman
+  if [[ "${PURGE_DATA:-0}" == "1" ]]; then
+    rm -rf "$HOME/.local/share/containers" "$HOME/.config/containers"
+    log "Purged rootless container storage (~/.local/share/containers)."
+  else
+    log "Kept: rootless container storage (--purge-data removes it). Subordinate ID ranges left in place."
+  fi
+}

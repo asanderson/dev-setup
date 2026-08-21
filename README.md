@@ -67,16 +67,25 @@ its own documentation map.
 
 ```
 docs/
-  dev-tools.md           Module table, ordering notes, post-install verification
+  dev-tools.md           Module table, selection flags, target OSes,
+                           uninstalling, offline installs, post-install checks
   troubleshooting.md     Elastic / OpenSearch / Docker / Ollama fixes
 scripts/
-  setup.sh               Interactive orchestrator for the modules below
-  lib/common.sh          Shared helpers (prompts, apt, logging)
-  modules/*.sh           One idempotent installer per tool
+  setup.sh               Interactive orchestrator: target OS + component
+                           selection (prompts, --os, --modules, per-component flags)
+  uninstall.sh           Mirror of the selection contract for removal
+                           (all components by default; --purge-data for data)
+  offline-bundle.sh      SBOM-driven packer for air-gapped installs
+  lib/common.sh          Shared helpers (prompts, apt/dnf, per-family installs)
+  lib/install-offline.sh Standalone installer shipped inside offline bundles
+  modules/*.sh           One idempotent installer + uninstaller per tool
 config/
   versions.env           Pinned versions for artifact-based installs
   elastic/               Docker Compose for Elasticsearch + Kibana (Basic license)
   opensearch/            Docker Compose for OpenSearch + Dashboards (Apache-2.0)
+sbom.cdx.json            CycloneDX SBOM of everything the installer delivers
+test/                    Container harness (fresh-install, GPU-path,
+                           uninstall round trip; CI in .github/)
 ```
 
 ## Testing

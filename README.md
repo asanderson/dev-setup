@@ -45,6 +45,13 @@ Air-gapped enclave? `./scripts/offline-bundle.sh --pack` uses the
 into one archive with a self-contained offline installer — see
 [offline installs](docs/dev-tools.md#offline--air-gapped-installs).
 
+Want the toolchain as a container instead? `./scripts/build.sh` runs the
+installer inside an image build and produces an OCI image of the selected
+components (everything except the container engines and the Docker-hosted
+stacks), and `./scripts/run.sh` runs it in Docker or Podman — prompting (or
+taking flags) for the user to run as and the local directories to mount —
+see [container image](docs/dev-tools.md#container-image).
+
 Removing things? `./scripts/uninstall.sh` mirrors the same selection
 contract (all components by default, per-component prompts, the same
 flags), keeps user data unless `--purge-data`, and never removes `python3`
@@ -68,7 +75,8 @@ its own documentation map.
 ```
 docs/
   dev-tools.md           Module table, selection flags, target OSes,
-                           uninstalling, offline installs, post-install checks
+                           uninstalling, offline installs, container image,
+                           post-install checks
   troubleshooting.md     Elastic / OpenSearch / Docker / Ollama fixes
 scripts/
   setup.sh               Interactive orchestrator: target OS + component
@@ -76,6 +84,9 @@ scripts/
   uninstall.sh           Mirror of the selection contract for removal
                            (all components by default; --purge-data for data)
   offline-bundle.sh      SBOM-driven packer for air-gapped installs
+  build.sh               Builds an OCI image of the selected components
+  run.sh                 Runs that image in Docker/Podman (user + mounts
+                           prompted or flagged)
   lib/common.sh          Shared helpers (prompts, apt/dnf, per-family installs)
   lib/install-offline.sh Standalone installer shipped inside offline bundles
   modules/*.sh           One idempotent installer + uninstaller per tool

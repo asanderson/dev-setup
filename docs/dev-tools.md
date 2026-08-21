@@ -66,6 +66,41 @@ images + compose configs), ollama. **Not packagable** — network services
 that cannot function in an enclave: claude-code (+ plugins) and the
 proton-* apps.
 
+## Container image
+
+`scripts/build.sh` runs the installer **inside an image build** and produces
+an OCI-compliant container image of the selected components — the same
+selection contract as the installer (`--modules LIST`, one `--<component>`
+flag each, everything imageable with no flags; `--list` prints the set).
+The image is Ubuntu 26.04 with the components installed by the same
+modules, as the non-root user `dev` (uid 1000). Build with Docker (default)
+or Podman via `--engine`, and name the result with `--tag`
+(default `dev-setup:latest`).
+
+Not imageable, by design: **docker and podman** (they are the engines that
+run this image, not image content) and **elastic/opensearch** (their
+installs need a running Docker daemon — run those stacks beside the
+container instead).
+
+`scripts/run.sh` runs the image. It prompts interactively — or takes flags
+for non-interactive runs — for **which user to run as** (the user who
+executed the script is the default; a local name resolves to its uid:gid,
+`dev` — the image's built-in user — maps to uid 1000, or pass `UID[:GID]`
+directly) and **which local directories to mount**
+(each appears at the same path inside the container). Anything after `--`
+runs instead of the default login shell.
+
+```bash
+./scripts/build.sh --modules git,python,cloud --tag dev-setup:cloud
+./scripts/run.sh --image dev-setup:cloud                # prompts for user + mounts
+DEV_SETUP_ASSUME_YES=1 ./scripts/run.sh --image dev-setup:cloud \
+  --user "$(id -un)" --mount ~/projects -- bash -lc 'git --version'
+```
+
+Corporate/CONNECT proxies: `https_proxy`/`no_proxy` pass through as build
+args, and `DEV_SETUP_CA_BUNDLE=<path>` injects a proxy CA for the build
+(removed from the final image).
+
 ## Target operating systems
 
 Interactive runs prompt for the target OS; non-interactive runs take

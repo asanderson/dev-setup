@@ -18,7 +18,7 @@ jobs:
         # only a fallback (it has hung on runner mirror flakiness).
         run: command -v shellcheck || (sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck)
       - name: Lint all shell scripts
-        run: shellcheck -x -S warning scripts/setup.sh scripts/offline-bundle.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
+        run: shellcheck -x -S warning scripts/setup.sh scripts/offline-bundle.sh scripts/build.sh scripts/run.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
 
   uninstall:
     name: install + uninstall round trip
@@ -51,6 +51,38 @@ jobs:
           bundle="$(ls -d /tmp/dev-setup-offline-*/ | head -1)"
           docker run --rm --network none -v "${bundle}:/bundle:ro" ubuntu:26.04 \
             bash -c "/bundle/install-offline.sh && git --version && git lfs version && python3 --version && pip3 --version && pipx --version && /opt/maven/bin/mvn -version | head -1"
+
+  image-build:
+    name: OCI image build + run
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build a scoped image (git, python)
+        # A full image installs every module (GB-scale); git+python
+        # exercises the whole mechanism — selection flags, generated
+        # Dockerfile, in-build setup.sh run as the dev user — at
+        # CI-friendly size.
+        run: ./scripts/build.sh --modules git,python --tag dev-setup:ci
+      - name: Run it with run.sh (non-interactive; user + mount flags)
+        # Asserts the components are present, the container runs as the
+        # requested uid, and a mounted local directory is visible at the
+        # same path inside.
+        run: |
+          mkdir -p /tmp/mnt-probe && echo hello >/tmp/mnt-probe/probe.txt
+          out="$(DEV_SETUP_ASSUME_YES=1 ./scripts/run.sh --image dev-setup:ci \
+            --user 1000 --mount /tmp/mnt-probe \
+            -- bash -lc 'git --version && python3 --version && pipx --version && id -u && cat /tmp/mnt-probe/probe.txt')"
+          echo "$out"
+          grep -q '^git version' <<<"$out"
+          grep -q '^Python 3'   <<<"$out"
+          grep -qx '1000'       <<<"$out"
+          grep -qx 'hello'      <<<"$out"
+      - name: Default user resolution (invoking user -> uid:gid)
+        # Without --user, run.sh defaults to whoever executed it.
+        run: |
+          uid="$(DEV_SETUP_ASSUME_YES=1 ./scripts/run.sh --image dev-setup:ci -- id -u)"
+          [ "$uid" = "$(id -u)" ] || { echo "expected uid $(id -u), got ${uid}"; exit 1; }
 
   fresh-install:
     name: fresh Ubuntu 26.04 install (unattended, twice)

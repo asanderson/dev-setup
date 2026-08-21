@@ -1,0 +1,85 @@
+name: publish-images
+
+# Builds the full-component OCI image for EVERY target OS and pushes each
+# to a container registry. Manual trigger (workflow_dispatch): publishing
+# multi-GB images on every push would be wasteful.
+#
+# Registry: defaults to GitHub's registry (ghcr.io) under this repo's
+# owner, which the workflow's own GITHUB_TOKEN can push to with no extra
+# setup. To push somewhere else (e.g. Google Artifact Registry), dispatch
+# with the `registry` input set to that namespace and replace the login
+# step with the matching auth action (for GAR:
+# google-github-actions/auth + docker login to the *-docker.pkg.dev host,
+# with a service-account key or workload identity configured as repo
+# secrets — none of which exist here today).
+
+on:
+  workflow_dispatch:
+    inputs:
+      registry:
+        description: "Registry namespace to push into (host/owner)"
+        default: "ghcr.io/asanderson"
+        required: false
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-images
+  cancel-in-progress: false
+
+jobs:
+  build-push:
+    name: build + push ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, debian, pureos, rocky, rhel]
+    env:
+      REGISTRY: ${{ inputs.registry || 'ghcr.io/asanderson' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        # Full-component images are multi-GB; the runner's preinstalled
+        # toolchains are dead weight for a docker build.
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          docker system prune -af >/dev/null 2>&1 || true
+          df -h /
+
+      - name: Log in to ghcr.io
+        if: startsWith(env.REGISTRY, 'ghcr.io/')
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the full-component ${{ matrix.os }} image
+        # All imageable components (everything except the engines, the
+        # daemon-dependent elastic/opensearch, and proton-vpn — its
+        # daemon's postinst needs a running systemd). pureos builds on
+        # the byzantium base, the only OCI image Purism publishes.
+        run: ./scripts/build.sh --os ${{ matrix.os }} --tag "$REGISTRY/dev-setup:${{ matrix.os }}"
+
+      - name: Smoke-test the image with run.sh
+        run: |
+          out="$(DEV_SETUP_ASSUME_YES=1 ./scripts/run.sh \
+            --image "$REGISTRY/dev-setup:${{ matrix.os }}" --user 1000 \
+            -- bash -lc 'id -un && git --version && python3 --version')"
+          echo "$out"
+          grep -qx 'dev' <<<"$out"
+          grep -q '^git version' <<<"$out"
+
+      - name: Push
+        run: docker push "$REGISTRY/dev-setup:${{ matrix.os }}"
+
+      - name: Tag and push :latest (ubuntu is the default target)
+        if: matrix.os == 'ubuntu'
+        run: |
+          docker tag "$REGISTRY/dev-setup:ubuntu" "$REGISTRY/dev-setup:latest"
+          docker push "$REGISTRY/dev-setup:latest"

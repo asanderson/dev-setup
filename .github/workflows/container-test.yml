@@ -18,7 +18,27 @@ jobs:
         # only a fallback (it has hung on runner mirror flakiness).
         run: command -v shellcheck || (sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck)
       - name: Lint all shell scripts
-        run: shellcheck -x -S warning scripts/setup.sh scripts/lib/common.sh scripts/modules/*.sh test/*.sh
+        run: shellcheck -x -S warning scripts/setup.sh scripts/offline-bundle.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
+
+  offline-bundle:
+    name: offline bundle (pack, then air-gapped install)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pack a scoped bundle (git, python, maven, jdk)
+        # Full packs include GB-scale images/toolchains; a scoped pack
+        # exercises every mechanism (fresh-container apt closure, pinned
+        # artifact fetch, manifest, archive) at CI-friendly size.
+        run: ./scripts/offline-bundle.sh --pack --modules git,python,maven,jdk --out /tmp
+      - name: Install it in a fresh container with NO network
+        # --network none is a real air-gap: the self-contained installer
+        # must verify the manifest and install everything from the bundle.
+        run: |
+          tar -C /tmp -xzf /tmp/dev-setup-offline-*.tar.gz
+          bundle="$(ls -d /tmp/dev-setup-offline-*/ | head -1)"
+          docker run --rm --network none -v "${bundle}:/bundle:ro" ubuntu:26.04 \
+            bash -c "/bundle/install-offline.sh && git --version && git lfs version && python3 --version && pip3 --version && pipx --version && /opt/maven/bin/mvn -version | head -1"
 
   fresh-install:
     name: fresh Ubuntu 26.04 install (unattended, twice)

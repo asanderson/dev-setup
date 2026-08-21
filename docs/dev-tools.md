@@ -20,6 +20,32 @@ DEV_SETUP_ASSUME_YES=1 ./scripts/setup.sh                    # install everythin
 Selection order never matters: components always install in dependency
 order (Docker before Elastic/OpenSearch, JDK before Maven).
 
+## Offline / air-gapped installs
+
+`scripts/offline-bundle.sh --pack` builds a **self-contained archive** for
+enclaves with no network (Ubuntu 26.04 amd64 targets). The
+[SBOM](../sbom.cdx.json) is the component manifest: pinned versions come
+from it, latest-resolved components are resolved once at pack time, and the
+bundle records exactly what was packed (`MANIFEST.sha256` + a copy of the
+SBOM as provenance). The apt dependency closure is computed in a **fresh
+container**, so the bundle is complete for a clean machine regardless of
+what the packing host has installed.
+
+```bash
+./scripts/offline-bundle.sh --pack                      # all offline-packagable components
+./scripts/offline-bundle.sh --pack --modules git,python,cloud
+# → dev-setup-offline-<date>.tar.gz  (transfer into the enclave, untar, then:)
+./dev-setup-offline-<date>/install-offline.sh           # verifies checksums, installs; no network, no repo
+```
+
+Offline-packagable: git (archive, no PPA), vscode + extensions (.vsix),
+docker, podman, jdk, maven, cpp (+ LLVM), golang, rust (standalone
+installer), python, cloud (k3s air-gap procedure with preloaded images,
+Helm, k9s, Ansible wheels, AWS CLI), elastic + opensearch (saved container
+images + compose configs), ollama. **Not packagable** — network services
+that cannot function in an enclave: claude-code (+ plugins) and the
+proton-* apps.
+
 ## Target operating systems
 
 Interactive runs prompt for the target OS; non-interactive runs take

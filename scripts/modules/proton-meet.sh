@@ -15,9 +15,5 @@ module_proton_meet_install() {
 
 module_proton_meet_uninstall() {
   section "Uninstall: Proton Meet"
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y proton-meet 2>/dev/null || true
-  else
-    sudo dnf remove -y proton-meet 2>/dev/null || true
-  fi
+  pkg_remove proton-meet
 }

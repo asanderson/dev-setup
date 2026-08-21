@@ -100,14 +100,10 @@ EOF
 module_docker_uninstall() {
   section "Uninstall: Docker Engine"
   sudo systemctl disable --now docker 2>/dev/null || true
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin nvidia-container-toolkit || true
-    sudo rm -f /etc/apt/sources.list.d/docker.sources /etc/apt/keyrings/docker.asc \
-      /etc/apt/sources.list.d/nvidia-container-toolkit.list /etc/apt/keyrings/nvidia-container-toolkit.gpg
-  else
-    sudo dnf remove -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin || true
-    sudo rm -f /etc/yum.repos.d/docker-ce.repo
-  fi
+  pkg_remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin nvidia-container-toolkit
+  sudo rm -f /etc/apt/sources.list.d/docker.sources /etc/apt/keyrings/docker.asc \
+    /etc/apt/sources.list.d/nvidia-container-toolkit.list /etc/apt/keyrings/nvidia-container-toolkit.gpg \
+    /etc/yum.repos.d/docker-ce.repo
   if [[ "${PURGE_DATA:-0}" == "1" ]]; then
     sudo rm -rf /var/lib/docker /var/lib/containerd
     log "Purged /var/lib/docker and /var/lib/containerd (images, volumes, containers)."

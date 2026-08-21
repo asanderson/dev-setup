@@ -17,9 +17,5 @@ module_proton_mail_install() {
 
 module_proton_mail_uninstall() {
   section "Uninstall: Proton Mail desktop"
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y proton-mail 2>/dev/null || true
-  else
-    sudo dnf remove -y proton-mail 2>/dev/null || true
-  fi
+  pkg_remove proton-mail
 }

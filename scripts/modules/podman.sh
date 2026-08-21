@@ -39,11 +39,7 @@ module_podman_install() {
 
 module_podman_uninstall() {
   section "Uninstall: Podman"
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y podman || true
-  else
-    sudo dnf remove -y podman || true
-  fi
+  pkg_remove podman
   if [[ "${PURGE_DATA:-0}" == "1" ]]; then
     rm -rf "$HOME/.local/share/containers" "$HOME/.config/containers"
     log "Purged rootless container storage (~/.local/share/containers)."

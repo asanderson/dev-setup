@@ -30,12 +30,8 @@ module_python_uninstall() {
   section "Uninstall: Python extras"
   # python3 itself is never removed — the OS depends on it. Only the dev
   # extras this module added go.
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y python3-venv python3-pip python3-dev pipx 2>/dev/null || true
-  else
-    sudo dnf remove -y python3-pip python3-devel 2>/dev/null || true
-    rm -f "$HOME/.local/bin/pipx"
-  fi
+  pkg_remove python3-venv python3-pip python3-dev python3-devel pipx
+  rm -f "$HOME/.local/bin/pipx"
   if [[ "${PURGE_DATA:-0}" == "1" ]]; then
     rm -rf "$HOME/.local/pipx"
     log "Purged ~/.local/pipx (pipx-installed tools)."

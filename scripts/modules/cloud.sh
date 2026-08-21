@@ -90,11 +90,7 @@ module_cloud_uninstall() {
     sudo rm -f /usr/local/bin/k3s
   fi
   sudo rm -f /usr/local/bin/helm
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y k9s 2>/dev/null || true
-  else
-    sudo dnf remove -y k9s 2>/dev/null || true
-  fi
+  pkg_remove k9s
   command_exists pipx && pipx uninstall ansible >/dev/null 2>&1 || true
   sudo rm -rf /usr/local/aws-cli /usr/local/bin/aws /usr/local/bin/aws_completer
   if [[ "${PURGE_DATA:-0}" == "1" ]]; then

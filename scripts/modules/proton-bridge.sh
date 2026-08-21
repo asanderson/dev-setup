@@ -51,9 +51,5 @@ module_proton_bridge_install() {
 
 module_proton_bridge_uninstall() {
   section "Uninstall: Proton Mail Bridge"
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y protonmail-bridge 2>/dev/null || true
-  else
-    sudo dnf remove -y protonmail-bridge 2>/dev/null || true
-  fi
+  pkg_remove protonmail-bridge
 }

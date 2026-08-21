@@ -15,9 +15,5 @@ module_proton_pass_install() {
 
 module_proton_pass_uninstall() {
   section "Uninstall: Proton Pass"
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y proton-pass 2>/dev/null || true
-  else
-    sudo dnf remove -y proton-pass 2>/dev/null || true
-  fi
+  pkg_remove proton-pass
 }

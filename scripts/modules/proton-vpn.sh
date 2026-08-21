@@ -30,7 +30,7 @@ module_proton_vpn_install() {
 
 module_proton_vpn_uninstall() {
   section "Uninstall: Proton VPN"
-  sudo apt-get remove -y proton-vpn-gnome-desktop proton-vpn-cli protonvpn-stable-release 2>/dev/null || true
+  pkg_remove proton-vpn-gnome-desktop proton-vpn-cli protonvpn-stable-release
   sudo rm -f /etc/apt/sources.list.d/protonvpn-stable.list \
     /usr/share/keyrings/protonvpn-stable-archive-keyring.gpg
 }

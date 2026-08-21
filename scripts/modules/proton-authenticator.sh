@@ -15,9 +15,5 @@ module_proton_authenticator_install() {
 
 module_proton_authenticator_uninstall() {
   section "Uninstall: Proton Authenticator"
-  if [[ "$(os_family)" == deb ]]; then
-    sudo apt-get remove -y proton-authenticator 2>/dev/null || true
-  else
-    sudo dnf remove -y proton-authenticator 2>/dev/null || true
-  fi
+  pkg_remove proton-authenticator
 }

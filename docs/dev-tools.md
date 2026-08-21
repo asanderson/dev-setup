@@ -37,9 +37,10 @@ about**: unattended runs never install them; interactive runs may force one
 
 | Supported on | Components | Why |
 |---|---|---|
-| Ubuntu only | Git, Docker, C/C++ | git-core PPA, Docker's Ubuntu apt repo, apt.llvm.org's Ubuntu suite |
-| Debian family (ubuntu, debian, pureos) | VS Code, JDK, Python, Cloud tools, all Proton apps, Elastic, OpenSearch | apt packages, vendor `.deb`s, or Debian-suite vendor repos |
-| + Enterprise Linux (rocky, rhel) | Claude Code (+ plugins), Maven, Go, Rust, Ollama | distro-agnostic vendor installers, tarballs, or rustup |
+| Ubuntu only | Git, C/C++ | git-core PPA and apt.llvm.org's Ubuntu suite |
+| Debian family (ubuntu, debian, pureos) | VS Code, JDK, Python, Cloud tools, all Proton apps | apt packages, vendor `.deb`s, or Debian-suite vendor repos |
+| Ubuntu, Debian, Rocky, RHEL (no PureOS) | Docker | Docker's official repos: apt suites for Ubuntu/Debian, dnf repos for centos(Rocky)/RHEL — no PureOS suite exists; use Podman there |
+| Everywhere (all five) | **Podman**, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch | EL-native/archive packages (Podman), distro-agnostic vendor installers, tarballs, rustup, or compose files that only need a container engine |
 
 > **GPU note:** if this machine has an NVIDIA GPU, install the driver first —
 > the NVIDIA Container Toolkit and Ollama acceleration key off it. For the
@@ -52,7 +53,8 @@ about**: unattended runs never install them; interactive runs may force one
 | Claude Code | Anthropic's coding CLI | Official native installer (auto-updating; npm route is deprecated) |
 | Claude Code plugins | superpowers, caveman, karpathy-skills, ecc, claude-mem, agentic-awesome-skills, gsd-core — latest releases | `claude plugin` marketplaces (each plugin's GitHub repo) |
 | VS Code | Visual Studio Code, stable channel + curated extensions (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Development/Explorer/SSH-edit, Kubernetes, Docker, AWS Toolkit, GitHub Repositories, GitLab, gitignore, GitLens) | Microsoft apt repo; extensions from the VS Code Marketplace at the newest compatible version |
-| Docker | Engine + Buildx + Compose v2, docker group, NVIDIA Container Toolkit | Official Docker apt repo |
+| Docker | Engine + Buildx + Compose v2, docker group, NVIDIA Container Toolkit | Official Docker repos (apt on Ubuntu/Debian; dnf on Rocky/RHEL) |
+| Podman | Rootless, daemonless containers **running as your user** — the Docker alternative; coexists with Docker (skip the `podman-docker` shim if both) | Ubuntu/Debian archives; native dnf package on Rocky/RHEL |
 | JDK | Java 25 LTS | Ubuntu OpenJDK **or** Eclipse Temurin (Adoptium repo) |
 | Maven | Pinned Apache Maven (see `config/versions.env`) | Apache dist tarball → `/opt/maven`, SHA-512 verified |
 | C/C++ | GCC, Clang/LLVM, CMake, Ninja, gdb, valgrind, ccache — plus the newest Clang/LLVM release as versioned `clang-N` packages | Ubuntu archive + official apt.llvm.org repo |

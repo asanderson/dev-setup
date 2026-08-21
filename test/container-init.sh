@@ -59,9 +59,9 @@ sudo -u dev -H bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os bogus' >/dev/n
 [[ $rc -eq 2 ]] || { echo "FAIL: --os bogus must exit 2 (got ${rc})"; exit 1; }
 rc=0
 out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
-  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os rocky --docker --claude-code' 2>&1)" || rc=$?
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os rocky --git --claude-code' 2>&1)" || rc=$?
 [[ $rc -ne 0 ]] || { echo "FAIL: --os rocky on an ubuntu machine must fail"; exit 1; }
-grep -q "docker: not supported on rocky" <<<"$out" \
+grep -q "git: not supported on rocky" <<<"$out" \
   || { echo "FAIL: missing unsupported-component warning"; exit 1; }
 grep -q "unattended runs never install unsupported" <<<"$out" \
   || { echo "FAIL: missing unattended skip notice"; exit 1; }
@@ -88,6 +88,7 @@ for m in ${MODULES_OVERRIDE}; do
     claude-code) probes=('$HOME/.local/bin/claude --version') ;;
     vscode)      probes=("code --version") ;;
     docker)      probes=("docker --version" "docker compose version") ;;
+    podman)      probes=("podman --version") ;;
     jdk)         probes=("java -version") ;;
     maven)       probes=("mvn -version") ;;
     cpp)         probes=("gcc --version" "clang --version" "cmake --version") ;;

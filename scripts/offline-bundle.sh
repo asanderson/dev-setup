@@ -108,10 +108,20 @@ done
 CA_ARGS=()
 [[ -f /root/.ccr/ca-bundle.crt ]] && CA_ARGS=(-v /root/.ccr/ca-bundle.crt:/ccr-ca.crt:ro)
 
+# Vendor repo keys are fetched HERE on the host (armored — apt accepts
+# armored files at Signed-By paths), so the resolver container stays nearly
+# pristine and the dependency closure isn't hidden by bootstrap installs.
+KEYS_DIR="$(mktemp -d)"
+trap 'rm -rf "$KEYS_DIR"' EXIT
+[[ "$enable_docker_repo" == 1 ]] && fetch https://download.docker.com/linux/ubuntu/gpg -o "${KEYS_DIR}/docker.asc"
+[[ "$enable_llvm_repo" == 1 ]] && fetch https://apt.llvm.org/llvm-snapshot.gpg.key -o "${KEYS_DIR}/llvm.asc"
+[[ "$enable_ms_repo" == 1 ]] && fetch https://packages.microsoft.com/keys/microsoft.asc -o "${KEYS_DIR}/microsoft.asc"
+
 section "apt dependency closure (fresh ubuntu:26.04 container)"
 # -i: the fetch script arrives on stdin (heredoc below).
 docker run --rm -i --network host \
   -v "${WORK}/debs:/out" \
+  -v "${KEYS_DIR}:/aptkeys:ro" \
   ${https_proxy:+-e https_proxy -e no_proxy} \
   ${CA_ARGS[@]+"${CA_ARGS[@]}"} \
   -e ENABLE_DOCKER_REPO="$enable_docker_repo" \
@@ -130,37 +140,48 @@ if [[ -n "${https_proxy:-}" ]]; then
   } >/etc/apt/apt.conf.d/95proxy
 fi
 export DEBIAN_FRONTEND=noninteractive
+# Snapshot the pristine package state: anything installed after this point
+# (the TLS bootstrap and its deps) is exactly what --download-only would
+# silently skip — it gets flat-downloaded at the end so the bundle repo is
+# complete for a stock target.
+dpkg-query -W -f '${binary:Package}\n' | sort > /tmp/pkgs.before
 apt-get update -qq
-apt-get install -y -qq curl ca-certificates gnupg >/dev/null
+apt-get install -y -qq ca-certificates >/dev/null
 [[ -f /ccr-ca.crt ]] && { cp /ccr-ca.crt /usr/local/share/ca-certificates/p.crt; update-ca-certificates >/dev/null 2>&1; }
 . /etc/os-release
 install -m 0755 -d /etc/apt/keyrings
+cp /aptkeys/*.asc /etc/apt/keyrings/ 2>/dev/null || true
 if [[ "$ENABLE_DOCKER_REPO" == 1 ]]; then
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   printf 'Types: deb\nURIs: https://download.docker.com/linux/ubuntu\nSuites: %s\nComponents: stable\nArchitectures: amd64\nSigned-By: /etc/apt/keyrings/docker.asc\n' \
     "${UBUNTU_CODENAME:-$VERSION_CODENAME}" >/etc/apt/sources.list.d/docker.sources
 fi
 if [[ "$ENABLE_LLVM_REPO" == 1 ]]; then
-  curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor -o /etc/apt/keyrings/llvm.gpg
-  echo "deb [signed-by=/etc/apt/keyrings/llvm.gpg] https://apt.llvm.org/${VERSION_CODENAME}/ llvm-toolchain-${VERSION_CODENAME}-${LLVM_VERSION} main" \
+  echo "deb [signed-by=/etc/apt/keyrings/llvm.asc] https://apt.llvm.org/${VERSION_CODENAME}/ llvm-toolchain-${VERSION_CODENAME}-${LLVM_VERSION} main" \
     >/etc/apt/sources.list.d/llvm.list
 fi
 if [[ "$ENABLE_MS_REPO" == 1 ]]; then
-  curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/vscode.gpg
-  echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/vscode.gpg] https://packages.microsoft.com/repos/code stable main" \
+  echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.asc] https://packages.microsoft.com/repos/code stable main" \
     >/etc/apt/sources.list.d/vscode.list
 fi
 apt-get update -qq
 # shellcheck disable=SC2086
 apt-get install -y --download-only -o Dir::Cache::archives=/out $APT_LIST
+# Flat-download the bootstrap diff (see snapshot above).
+dpkg-query -W -f '${binary:Package}\n' | sort > /tmp/pkgs.after
+boot_diff="$(comm -13 /tmp/pkgs.before /tmp/pkgs.after | tr '\n' ' ')"
+if [[ -n "${boot_diff// }" ]]; then
+  # shellcheck disable=SC2086
+  ( cd /out && apt-get download $boot_diff )
+fi
 # Index the download as a local apt repo, so the offline installer can let
 # apt resolve ordering from a file: source instead of raw dpkg ordering.
+# (dpkg-dev is index tooling only — installed after the diff, never shipped.)
 apt-get install -y -qq dpkg-dev >/dev/null
 ( cd /out && dpkg-scanpackages --multiversion . /dev/null 2>/dev/null | gzip > Packages.gz )
 # shellcheck disable=SC2086
 printf '%s\n' $APT_LIST | sort -u > /out/PACKAGES.list
 chmod -R a+r /out
-echo "debs: $(ls /out/*.deb | wc -l)"
+echo "debs: $(ls /out/*.deb | wc -l) (incl. bootstrap diff: ${boot_diff:-none})"
 INNER
 
 # ---- direct artifacts ------------------------------------------------------

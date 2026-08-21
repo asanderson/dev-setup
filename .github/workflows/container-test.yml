@@ -73,17 +73,23 @@ jobs:
         run: ./test/engines-test.sh ${{ matrix.os }}
 
   image-build:
-    name: OCI image build + run
+    name: OCI image build + run (${{ matrix.os }})
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, rocky]
     steps:
       - uses: actions/checkout@v4
       - name: Build a scoped image (git, python)
         # A full image installs every module (GB-scale); git+python
         # exercises the whole mechanism — selection flags, generated
-        # Dockerfile, in-build setup.sh run as the dev user — at
-        # CI-friendly size.
-        run: ./scripts/build.sh --modules git,python --tag dev-setup:ci
+        # Dockerfile per base image and package family, in-build setup.sh
+        # run as the dev user — at CI-friendly size. ubuntu covers the deb
+        # path, rocky the rpm path; full per-OS images are built and
+        # pushed by the publish-images workflow.
+        run: ./scripts/build.sh --os ${{ matrix.os }} --modules git,python --tag dev-setup:ci
       - name: Run it with run.sh (non-interactive; user + mount flags)
         # Asserts the components are present, the container runs as the
         # requested uid, and a mounted local directory is visible at the

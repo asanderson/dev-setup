@@ -40,6 +40,11 @@ unattended runs) and **defaults to Ubuntu**; components not supported on the
 target are warned about and skipped unattended — see the
 [support matrix](docs/dev-tools.md#target-operating-systems).
 
+Air-gapped enclave? `./scripts/offline-bundle.sh --pack` uses the
+[SBOM](sbom.cdx.json) to package everything the selected components need
+into one archive with a self-contained offline installer — see
+[offline installs](docs/dev-tools.md#offline--air-gapped-installs).
+
 ## Documentation
 
 | Doc | What's inside |

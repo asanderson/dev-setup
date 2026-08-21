@@ -1,16 +1,24 @@
 # shellcheck shell=bash
-# Module: Git — latest stable via the git-core PPA (falls back to Ubuntu archive).
+# Module: Git — every target OS: the git-core PPA offers the newest Git on
+# Ubuntu; Debian/PureOS install from their archives; Enterprise Linux via
+# dnf. git-lfs everywhere.
 
-module_git_describe() { echo "Git (latest stable, git-core PPA)"; }
+module_git_describe() { echo "Git (latest stable; git-core PPA on Ubuntu, distro package elsewhere)"; }
 
 module_git_install() {
   section "Git"
-  if confirm "Use the git-core PPA for the newest Git (recommended)?" y; then
-    apt_install software-properties-common
-    sudo add-apt-repository -y ppa:git-core/ppa
-    _APT_UPDATED=""
+  if [[ "$(os_family)" == deb ]]; then
+    # The PPA is an Ubuntu channel — never offered on Debian/PureOS.
+    if [[ "${TARGET_OS:-ubuntu}" == "ubuntu" ]] \
+        && confirm "Use the git-core PPA for the newest Git (recommended)?" y; then
+      apt_install software-properties-common
+      sudo add-apt-repository -y ppa:git-core/ppa
+      _APT_UPDATED=""
+    fi
+    apt_install git git-lfs
+  else
+    sudo dnf install -y git git-lfs
   fi
-  apt_install git git-lfs
   git lfs install --skip-repo
 
   ok "Installed: $(git --version)"

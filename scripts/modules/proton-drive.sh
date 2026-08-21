@@ -8,9 +8,14 @@ module_proton_drive_describe() { echo "Proton Drive CLI (official binary, latest
 
 module_proton_drive_install() {
   section "Proton Drive CLI"
-  command_exists jq || apt_install jq
   # Keyring integration: the CLI stores tokens via libsecret over D-Bus.
-  apt_install libsecret-1-0
+  if [[ "$(os_family)" == deb ]]; then
+    command_exists jq || apt_install jq
+    apt_install libsecret-1-0
+  else
+    command_exists jq || sudo dnf install -y jq
+    sudo dnf install -y libsecret
+  fi
 
   local feed url sha tmp
   feed="$(fetch https://proton.me/download/drive/cli/version.json)"

@@ -1,9 +1,10 @@
 # shellcheck shell=bash
-# Module: Visual Studio Code — Microsoft's official apt repository, stable
-# channel — plus a curated extension set. The 'code' package auto-updates
-# through apt; 'code --install-extension' resolves the newest extension
-# version compatible with the installed VS Code on its own, and --force
-# keeps already-installed extensions at their latest on re-runs.
+# Module: Visual Studio Code — Microsoft's official repositories on every
+# target OS (apt repo on the Debian family, yum repo on Enterprise Linux),
+# stable channel — plus a curated extension set. The 'code' package
+# auto-updates through the repo; 'code --install-extension' resolves the
+# newest extension version compatible with the installed VS Code on its
+# own, and --force keeps already-installed extensions at their latest.
 # https://code.visualstudio.com/docs/setup/linux
 
 VSCODE_EXTENSIONS=(
@@ -29,15 +30,29 @@ VSCODE_EXTENSIONS=(
   eamodio.gitlens                                # GitLens (GitKraken)
 )
 
-module_vscode_describe() { echo "Visual Studio Code (Microsoft apt repo, stable; curated extension set)"; }
+module_vscode_describe() { echo "Visual Studio Code (Microsoft repo, stable; curated extension set)"; }
 
 module_vscode_install() {
   section "Visual Studio Code"
 
-  add_apt_repo vscode \
-    "https://packages.microsoft.com/keys/microsoft.asc" \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/vscode.gpg] https://packages.microsoft.com/repos/code stable main"
-  apt_install code
+  if [[ "$(os_family)" == deb ]]; then
+    add_apt_repo vscode \
+      "https://packages.microsoft.com/keys/microsoft.asc" \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/vscode.gpg] https://packages.microsoft.com/repos/code stable main"
+    apt_install code
+  else
+    # Microsoft's official yum repo, per the VS Code Linux setup docs.
+    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    sudo tee /etc/yum.repos.d/vscode.repo >/dev/null <<'EOF'
+[code]
+name=Visual Studio Code
+baseurl=https://packages.microsoft.com/yumrepos/vscode
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+EOF
+    sudo dnf install -y code
+  fi
 
   ok "Installed: $(code --version 2>/dev/null | head -n1 || echo 'code (version check needs a non-root shell)')"
 

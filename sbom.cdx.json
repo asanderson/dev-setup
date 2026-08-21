@@ -2,7 +2,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 1,
+  "version": 2,
   "metadata": {
     "timestamp": "2026-08-21T10:46:11Z",
     "authors": [
@@ -166,6 +166,10 @@
         {
           "name": "resolution",
           "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "distro package on every target (apt/dnf); the git-core PPA extra applies on Ubuntu only"
         }
       ]
     },
@@ -580,7 +584,7 @@
         },
         {
           "name": "note",
-          "value": "alternative choice: temurin-25-jdk from the Eclipse Adoptium apt repo"
+          "value": "alternative choice: temurin-25-jdk (Adoptium apt repo); on Enterprise Linux: java-25-openjdk-devel from AppStream, newest available as fallback"
         }
       ]
     },
@@ -1030,6 +1034,10 @@
         {
           "name": "resolution",
           "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "Microsoft's apt repo on the Debian family; official yum repo (packages.microsoft.com/yumrepos/vscode) on Enterprise Linux"
         }
       ]
     },
@@ -1531,6 +1539,10 @@
         {
           "name": "resolution",
           "value": "latest GitHub release at install time; K9S_VERSION=v0.50.18 offline fallback"
+        },
+        {
+          "name": "note",
+          "value": "installed as .deb on the Debian family, .rpm on Enterprise Linux (same GitHub release)"
         }
       ]
     },
@@ -1613,6 +1625,10 @@
         {
           "name": "resolution",
           "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "Proton's official Linux VPN app has apt channels only \u2014 Debian-family targets; no Enterprise Linux channel exists"
         }
       ]
     },
@@ -1633,6 +1649,10 @@
         {
           "name": "resolution",
           "value": "latest via Proton's stable .deb URL"
+        },
+        {
+          "name": "note",
+          "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
       ]
     },
@@ -1653,6 +1673,10 @@
         {
           "name": "resolution",
           "value": "latest via Proton's version feed; GPG-signature verified"
+        },
+        {
+          "name": "note",
+          "value": "DebFile or RpmFile from Proton's version feed per target family; GPG-signature verified either way"
         }
       ]
     },
@@ -1666,6 +1690,10 @@
         {
           "name": "resolution",
           "value": "latest via Proton's version feed; SHA512 verified"
+        },
+        {
+          "name": "note",
+          "value": "static binary on every target; libsecret dependency via apt or dnf per family"
         }
       ]
     },
@@ -1686,6 +1714,10 @@
         {
           "name": "resolution",
           "value": "latest via Proton's stable .deb URL"
+        },
+        {
+          "name": "note",
+          "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
       ]
     },
@@ -1699,6 +1731,10 @@
         {
           "name": "resolution",
           "value": "latest via Proton's stable .deb URL"
+        },
+        {
+          "name": "note",
+          "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
       ]
     },
@@ -1719,6 +1755,10 @@
         {
           "name": "resolution",
           "value": "latest via Proton's stable .deb URL"
+        },
+        {
+          "name": "note",
+          "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
       ]
     },

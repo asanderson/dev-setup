@@ -59,9 +59,9 @@ sudo -u dev -H bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os bogus' >/dev/n
 [[ $rc -eq 2 ]] || { echo "FAIL: --os bogus must exit 2 (got ${rc})"; exit 1; }
 rc=0
 out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
-  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os rocky --git --claude-code' 2>&1)" || rc=$?
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os rocky --proton-vpn --claude-code' 2>&1)" || rc=$?
 [[ $rc -ne 0 ]] || { echo "FAIL: --os rocky on an ubuntu machine must fail"; exit 1; }
-grep -q "git: not supported on rocky" <<<"$out" \
+grep -q "proton-vpn: not supported on rocky" <<<"$out" \
   || { echo "FAIL: missing unsupported-component warning"; exit 1; }
 grep -q "unattended runs never install unsupported" <<<"$out" \
   || { echo "FAIL: missing unattended skip notice"; exit 1; }

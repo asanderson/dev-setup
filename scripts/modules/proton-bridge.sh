@@ -5,34 +5,46 @@
 # signature Proton publishes next to it. Requires a paid Proton Mail plan
 # to use; self-updates in place since 3.25.0.
 
-module_proton_bridge_describe() { echo "Proton Mail Bridge (official .deb, latest, GPG-verified — needs a paid plan)"; }
+module_proton_bridge_describe() { echo "Proton Mail Bridge (official package, latest, GPG-verified — needs a paid plan)"; }
 
 module_proton_bridge_install() {
   section "Proton Mail Bridge"
-  command_exists jq || apt_install jq
-  local feed deb_url tmp
+  if ! command_exists jq; then
+    if [[ "$(os_family)" == deb ]]; then apt_install jq; else sudo dnf install -y jq; fi
+  fi
+  local feed pkg_url tmp
   feed="$(fetch https://proton.me/download/current_version_linux.json)"
-  deb_url="$(jq -r '.DebFile // .stable.DebFile // empty' <<<"$feed")"
-  if [[ -z "$deb_url" ]]; then
-    err "Could not resolve the latest Bridge .deb from Proton's version feed."
+  if [[ "$(os_family)" == deb ]]; then
+    pkg_url="$(jq -r '.DebFile // .stable.DebFile // empty' <<<"$feed")"
+  else
+    pkg_url="$(jq -r '.RpmFile // .stable.RpmFile // empty' <<<"$feed")"
+  fi
+  if [[ -z "$pkg_url" ]]; then
+    err "Could not resolve the latest Bridge package from Proton's version feed."
     return 1
   fi
   tmp="$(mktemp -d)"
-  fetch "$deb_url" -o "${tmp}/bridge.deb"
-  fetch "${deb_url}.sig" -o "${tmp}/bridge.deb.sig"
+  fetch "$pkg_url" -o "${tmp}/bridge.pkg"
+  fetch "${pkg_url}.sig" -o "${tmp}/bridge.pkg.sig"
   fetch "https://proton.me/download/bridge/bridge_pubkey.gpg" -o "${tmp}/bridge_pubkey.gpg"
   gpg --no-default-keyring --keyring "${tmp}/keyring.gpg" \
     --import "${tmp}/bridge_pubkey.gpg" >/dev/null 2>&1
   if ! gpg --no-default-keyring --keyring "${tmp}/keyring.gpg" \
-      --verify "${tmp}/bridge.deb.sig" "${tmp}/bridge.deb" >/dev/null 2>&1; then
+      --verify "${tmp}/bridge.pkg.sig" "${tmp}/bridge.pkg" >/dev/null 2>&1; then
     rm -rf "$tmp"
     err "GPG signature verification FAILED for the Bridge package — not installing."
     return 1
   fi
   ok "Bridge package signature verified against Proton's published key."
-  apt_install "${tmp}/bridge.deb"
+  if [[ "$(os_family)" == deb ]]; then
+    mv "${tmp}/bridge.pkg" "${tmp}/bridge.deb"
+    apt_install "${tmp}/bridge.deb"
+  else
+    mv "${tmp}/bridge.pkg" "${tmp}/bridge.rpm"
+    sudo dnf install -y "${tmp}/bridge.rpm"
+  fi
   rm -rf "$tmp"
-  ok "Installed: $(dpkg-query -W -f='${binary:Package} ${Version}' protonmail-bridge)"
+  ok "Installed: protonmail-bridge $(command -v dpkg-query >/dev/null && dpkg-query -W -f='${Version}' protonmail-bridge 2>/dev/null || rpm -q --qf '%{VERSION}' protonmail-bridge 2>/dev/null || true)"
   log "Bridge requires a paid Proton Mail plan. First run: 'protonmail-bridge'"
   log "(or the CLI: 'protonmail-bridge --cli') to log in; it then self-updates."
 }

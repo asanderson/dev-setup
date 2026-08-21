@@ -130,6 +130,16 @@ add_apt_repo() {
   _APT_UPDATED=""   # force refresh after adding a source
 }
 
+# os_family — "deb" or "rpm", from the target OS (falling back to what the
+# machine has). Modules use it to pick per-family installers and packages.
+os_family() {
+  case "${TARGET_OS:-}" in
+    ubuntu|debian|pureos) echo deb; return ;;
+    rocky|rhel)           echo rpm; return ;;
+  esac
+  if command_exists apt-get; then echo deb; else echo rpm; fi
+}
+
 # Download a vendor .deb over HTTPS and install it (apt resolves its
 # dependencies). Used by modules whose vendor publishes a stable
 # latest-version .deb URL rather than an apt repository.
@@ -139,6 +149,26 @@ fetch_deb_install() {
   fetch "$url" -o "${tmp}/pkg.deb"
   apt_install "${tmp}/pkg.deb"
   rm -rf "$tmp"
+}
+
+# Same for vendor .rpm packages on Enterprise Linux targets.
+fetch_rpm_install() {
+  local url="$1" tmp
+  tmp="$(mktemp -d)"
+  fetch "$url" -o "${tmp}/pkg.rpm"
+  sudo dnf install -y "${tmp}/pkg.rpm"
+  rm -rf "$tmp"
+}
+
+# Family-dispatching vendor-package install: .deb URL on the Debian family,
+# .rpm URL on Enterprise Linux.
+fetch_pkg_install() {
+  local deb_url="$1" rpm_url="$2"
+  if [[ "$(os_family)" == deb ]]; then
+    fetch_deb_install "$deb_url"
+  else
+    fetch_rpm_install "$rpm_url"
+  fi
 }
 
 # ---------------------------------------------------------------------------

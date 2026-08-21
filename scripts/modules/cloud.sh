@@ -2,10 +2,11 @@
 # Module: Cloud development tools — k3s (lightweight Kubernetes, bundles
 # kubectl), Helm, k9s, Ansible, and the AWS CLI. k3s and Helm install via
 # their official scripts, each resolving the latest stable release; k9s
-# comes from its official GitHub releases (latest resolved at run time;
-# K9S_VERSION in versions.env is the offline fallback); Ansible installs
-# the latest community package from PyPI via pipx, the method its docs
-# recommend; the AWS CLI v2 bundle URL always serves the latest release.
+# comes from its official GitHub releases (latest resolved at run time,
+# .deb or .rpm per target family; K9S_VERSION in versions.env is the
+# offline fallback); Ansible installs the latest community package from
+# PyPI via pipx, the method its docs recommend; the AWS CLI v2 bundle URL
+# always serves the latest release. Works on every target OS.
 
 module_cloud_describe() { echo "Cloud dev tools (k3s + kubectl, Helm, k9s, Ansible, AWS CLI — latest stable)"; }
 
@@ -37,15 +38,24 @@ module_cloud_install() {
     warn "Could not resolve the latest k9s release from the GitHub API; using pinned ${K9S_VERSION}."
     k9s_ver="$K9S_VERSION"
   fi
-  local tmp; tmp="$(mktemp -d)"
-  fetch "https://github.com/derailed/k9s/releases/download/${k9s_ver}/k9s_linux_amd64.deb" \
-    -o "${tmp}/k9s.deb"
-  apt_install "${tmp}/k9s.deb"
+  if [[ "$(os_family)" == deb ]]; then
+    fetch_deb_install "https://github.com/derailed/k9s/releases/download/${k9s_ver}/k9s_linux_amd64.deb"
+  else
+    fetch_rpm_install "https://github.com/derailed/k9s/releases/download/${k9s_ver}/k9s_linux_amd64.rpm"
+  fi
   ok "k9s: $(k9s version --short 2>/dev/null | head -n1 || k9s version | head -n1)"
 
   # --- Ansible ---------------------------------------------------------------
   log "Installing Ansible (latest community release from PyPI, via pipx)..."
-  command_exists pipx || apt_install pipx
+  if ! command_exists pipx; then
+    if [[ "$(os_family)" == deb ]]; then
+      apt_install pipx
+    else
+      sudo dnf install -y python3-pip
+      python3 -m pip install --user --quiet pipx
+      export PATH="$HOME/.local/bin:$PATH"
+    fi
+  fi
   if pipx list --short 2>/dev/null | grep -q '^ansible '; then
     pipx upgrade --include-injected ansible >/dev/null
   else
@@ -58,7 +68,10 @@ module_cloud_install() {
   # The official bundle URL always serves the latest v2 release; --update
   # makes re-runs an in-place upgrade.
   log "Installing AWS CLI v2 (latest) from the official bundle..."
-  command_exists unzip || apt_install unzip
+  if ! command_exists unzip; then
+    if [[ "$(os_family)" == deb ]]; then apt_install unzip; else sudo dnf install -y unzip; fi
+  fi
+  local tmp; tmp="$(mktemp -d)"
   fetch "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "${tmp}/awscliv2.zip"
   ( cd "$tmp" && unzip -q awscliv2.zip && sudo ./aws/install --update )
   rm -rf "$tmp"

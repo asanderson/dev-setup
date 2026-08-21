@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run installer end-to-end in a fresh container
         # First asserts the target-OS contract (--os bogus exits 2; an
-        # unsupported component (git) on --os rocky warns and is skipped
+        # unsupported component (proton-vpn) on --os rocky warns and is skipped
         # unattended; the target/machine mismatch guard fires before
         # anything installs). Then the default module set (git claude-code
         # claude-plugins vscode docker podman

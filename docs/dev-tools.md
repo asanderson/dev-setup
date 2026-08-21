@@ -61,12 +61,15 @@ Components whose installer can't work on the target OS are **warned
 about**: unattended runs never install them; interactive runs may force one
 (default no). Support follows each module's package sources, as written:
 
-| Supported on | Components | Why |
+Almost every component now installs on **every target OS**, dispatching per
+family to the right installer and packages — apt vs dnf, vendor `.deb` vs
+`.rpm`, Microsoft's apt vs yum repos:
+
+| Supported on | Components | How |
 |---|---|---|
-| Ubuntu only | Git, C/C++ | git-core PPA and apt.llvm.org's Ubuntu suite |
-| Debian family (ubuntu, debian, pureos) | VS Code, JDK, Python, Cloud tools, all Proton apps | apt packages, vendor `.deb`s, or Debian-suite vendor repos |
+| Everywhere (all five) | Git, C/C++, VS Code, JDK, Python, Cloud tools, Podman, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch, Proton Mail/Bridge/Drive CLI/Pass/Meet/Authenticator | distro packages per family (git-core PPA extra on Ubuntu; newest-LLVM extra on Ubuntu/Debian, where apt.llvm.org has suites); Microsoft's apt/yum repos; Proton's `.deb`/`.rpm` builds; distro-agnostic installers and tarballs |
 | Ubuntu, Debian, Rocky, RHEL (no PureOS) | Docker | Docker's official repos: apt suites for Ubuntu/Debian, dnf repos for centos(Rocky)/RHEL — no PureOS suite exists; use Podman there |
-| Everywhere (all five) | **Podman**, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch | EL-native/archive packages (Podman), distro-agnostic vendor installers, tarballs, rustup, or compose files that only need a container engine |
+| Debian family only (ubuntu, debian, pureos) | Proton VPN | Proton's official Linux VPN app ships apt packages only — no Enterprise Linux channel exists |
 
 > **GPU note:** if this machine has an NVIDIA GPU, install the driver first —
 > the NVIDIA Container Toolkit and Ollama acceleration key off it. For the

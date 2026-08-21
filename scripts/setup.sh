@@ -45,36 +45,34 @@ MODULES=(git claude-code claude-plugins vscode docker podman jdk maven cpp golan
 OS_CATALOG=(ubuntu debian pureos rocky rhel qubes windows)
 TARGET_OS=""
 
-# Per-component OS support, exactly as the modules are written — decided by
-# their package sources: git (ubuntu PPA) and cpp (apt.llvm.org's ubuntu
-# suite) are Ubuntu-only; docker follows Docker's official repos (ubuntu,
-# debian, and the centos/rhel dnf repos — no PureOS suite exists); podman is
-# everywhere (EL-native, in every Debian-family archive); apt/.deb-based
-# modules cover the Debian family; pure binary/vendor-script installs
-# (rustup, go.dev tarball, Apache tarball, claude native installer, ollama
-# script) also cover Enterprise Linux, as do elastic/opensearch (their code
-# only needs a container engine). See docs/dev-tools.md#target-operating-systems.
+# Per-component OS support, exactly as the modules are written. Most
+# modules now dispatch per family (apt vs dnf, .deb vs .rpm, vendor apt vs
+# yum repos) and cover every target. The remaining gaps are vendor
+# channels that genuinely do not exist: Docker publishes no PureOS suite
+# (podman covers containers there), and Proton VPN's official Linux app
+# has no Enterprise Linux channel (the other Proton apps ship .rpms).
+# See docs/dev-tools.md#target-operating-systems.
 declare -A MODULE_SUPPORT=(
-  [git]="ubuntu"
+  [git]="ubuntu debian pureos rocky rhel"
   [claude-code]="ubuntu debian pureos rocky rhel"
   [claude-plugins]="ubuntu debian pureos rocky rhel"
-  [vscode]="ubuntu debian pureos"
+  [vscode]="ubuntu debian pureos rocky rhel"
   [docker]="ubuntu debian rocky rhel"
   [podman]="ubuntu debian pureos rocky rhel"
-  [jdk]="ubuntu debian pureos"
+  [jdk]="ubuntu debian pureos rocky rhel"
   [maven]="ubuntu debian pureos rocky rhel"
-  [cpp]="ubuntu"
+  [cpp]="ubuntu debian pureos rocky rhel"
   [golang]="ubuntu debian pureos rocky rhel"
   [rust]="ubuntu debian pureos rocky rhel"
-  [python]="ubuntu debian pureos"
-  [cloud]="ubuntu debian pureos"
+  [python]="ubuntu debian pureos rocky rhel"
+  [cloud]="ubuntu debian pureos rocky rhel"
   [proton-vpn]="ubuntu debian pureos"
-  [proton-mail]="ubuntu debian pureos"
-  [proton-bridge]="ubuntu debian pureos"
-  [proton-drive]="ubuntu debian pureos"
-  [proton-pass]="ubuntu debian pureos"
-  [proton-meet]="ubuntu debian pureos"
-  [proton-authenticator]="ubuntu debian pureos"
+  [proton-mail]="ubuntu debian pureos rocky rhel"
+  [proton-bridge]="ubuntu debian pureos rocky rhel"
+  [proton-drive]="ubuntu debian pureos rocky rhel"
+  [proton-pass]="ubuntu debian pureos rocky rhel"
+  [proton-meet]="ubuntu debian pureos rocky rhel"
+  [proton-authenticator]="ubuntu debian pureos rocky rhel"
   [elastic]="ubuntu debian pureos rocky rhel"
   [opensearch]="ubuntu debian pureos rocky rhel"
   [ollama]="ubuntu debian pureos rocky rhel"

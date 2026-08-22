@@ -94,10 +94,13 @@ those on a subscribed RHEL host with setup.sh directly.
 
 The **publish-images workflow** (`.github/workflows/publish-images.yml`,
 manual trigger) builds the full-component image for every target OS and
-pushes each to a container registry — `ghcr.io/asanderson/dev-setup:<os>`
-(plus `:latest` for ubuntu) by default, which the workflow's own token can
-push to; the `registry` input redirects to another namespace (e.g. Google
-Artifact Registry once its credentials are configured as repo secrets).
+pushes each to a container registry — by default
+`ghcr.io/asanderson/dev-setup:<os>` as the moving alias plus a
+version-specific `:<os>-<version>` tag read from the image's own
+os-release (e.g. `ubuntu-26.04`, `debian-13`, `rocky-9.3`), and `:latest`
+for ubuntu — which the workflow's own token can push to; the `registry`
+input redirects to another namespace (e.g. Google Artifact Registry once
+its credentials are configured as repo secrets).
 
 `scripts/run.sh` runs the image. It prompts interactively — or takes flags
 for non-interactive runs — for **which user to run as** (the user who

@@ -2,7 +2,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 4,
+  "version": 5,
   "metadata": {
     "timestamp": "2026-08-21T10:46:11Z",
     "authors": [
@@ -19,7 +19,8 @@
           "type": "vcs",
           "url": "https://github.com/asanderson/dev-setup"
         }
-      ]
+      ],
+      "bom-ref": "dev-setup"
     },
     "properties": [
       {
@@ -41,7 +42,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "curl"
     },
     {
       "type": "library",
@@ -55,7 +57,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "ca-certificates"
     },
     {
       "type": "library",
@@ -69,7 +72,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "gnupg"
     },
     {
       "type": "library",
@@ -83,7 +87,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "lsb-release"
     },
     {
       "type": "library",
@@ -97,7 +102,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "openssl"
     },
     {
       "type": "library",
@@ -111,7 +117,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "unzip"
     },
     {
       "type": "library",
@@ -125,7 +132,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "jq"
     },
     {
       "type": "library",
@@ -139,7 +147,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "zstd"
     },
     {
       "type": "library",
@@ -153,7 +162,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "software-properties-common"
     },
     {
       "type": "library",
@@ -171,7 +181,8 @@
           "name": "note",
           "value": "distro package on every target (apt/dnf); the git-core PPA extra applies on Ubuntu only"
         }
-      ]
+      ],
+      "bom-ref": "git"
     },
     {
       "type": "library",
@@ -189,7 +200,8 @@
           "name": "note",
           "value": "per-user under ~/.nvm on every target \u2014 no system packages; npm bundled, yarn+pnpm via corepack where Node ships it"
         }
-      ]
+      ],
+      "bom-ref": "nodejs"
     },
     {
       "type": "application",
@@ -207,7 +219,8 @@
           "name": "note",
           "value": "official install script, per-user under ~/.nvm; installs and manages the module's Node versions"
         }
-      ]
+      ],
+      "bom-ref": "nvm"
     },
     {
       "type": "application",
@@ -225,7 +238,8 @@
           "name": "note",
           "value": "official installer script (bun.sh/install) to ~/.bun as the invoking user, on every target; part of the nodejs module \u2014 Claude Code's JS tooling dependency"
         }
-      ]
+      ],
+      "bom-ref": "bun"
     },
     {
       "type": "library",
@@ -239,7 +253,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "git-lfs"
     },
     {
       "type": "library",
@@ -253,7 +268,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "podman"
     },
     {
       "type": "library",
@@ -267,7 +283,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "uidmap"
     },
     {
       "type": "library",
@@ -281,7 +298,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "python3"
     },
     {
       "type": "library",
@@ -295,7 +313,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "python3-venv"
     },
     {
       "type": "library",
@@ -309,7 +328,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "python3-pip"
     },
     {
       "type": "library",
@@ -323,7 +343,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "python3-dev"
     },
     {
       "type": "library",
@@ -337,7 +358,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "pipx"
     },
     {
       "type": "application",
@@ -355,7 +377,8 @@
           "name": "note",
           "value": "official installer (astral.sh/uv) to ~/.local/bin as the invoking user, on every target; part of the python module"
         }
-      ]
+      ],
+      "bom-ref": "uv"
     },
     {
       "type": "library",
@@ -369,7 +392,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "libsecret-1-0"
     },
     {
       "type": "library",
@@ -383,7 +407,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "build-essential"
     },
     {
       "type": "library",
@@ -397,7 +422,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "gcc"
     },
     {
       "type": "library",
@@ -411,7 +437,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "g++"
     },
     {
       "type": "library",
@@ -425,7 +452,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "gdb"
     },
     {
       "type": "library",
@@ -439,7 +467,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "clang"
     },
     {
       "type": "library",
@@ -453,7 +482,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "clangd"
     },
     {
       "type": "library",
@@ -467,7 +497,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "clang-format"
     },
     {
       "type": "library",
@@ -481,7 +512,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "clang-tidy"
     },
     {
       "type": "library",
@@ -495,7 +527,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "lldb"
     },
     {
       "type": "library",
@@ -509,7 +542,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "llvm"
     },
     {
       "type": "library",
@@ -523,7 +557,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "cmake"
     },
     {
       "type": "library",
@@ -537,7 +572,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "ninja-build"
     },
     {
       "type": "library",
@@ -551,7 +587,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "ccache"
     },
     {
       "type": "library",
@@ -565,7 +602,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "valgrind"
     },
     {
       "type": "library",
@@ -579,7 +617,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "pkg-config"
     },
     {
       "type": "library",
@@ -593,7 +632,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "autoconf"
     },
     {
       "type": "library",
@@ -607,7 +647,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "automake"
     },
     {
       "type": "library",
@@ -621,7 +662,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "libtool"
     },
     {
       "type": "library",
@@ -635,7 +677,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "manpages-dev"
     },
     {
       "type": "library",
@@ -658,7 +701,8 @@
           "name": "note",
           "value": "alternative choice: temurin-25-jdk (Adoptium apt repo); on Enterprise Linux: java-25-openjdk-devel from AppStream, newest available as fallback"
         }
-      ]
+      ],
+      "bom-ref": "openjdk-25-jdk"
     },
     {
       "type": "library",
@@ -678,7 +722,8 @@
           "name": "resolution",
           "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
         }
-      ]
+      ],
+      "bom-ref": "clang-22"
     },
     {
       "type": "library",
@@ -698,7 +743,8 @@
           "name": "resolution",
           "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
         }
-      ]
+      ],
+      "bom-ref": "clangd-22"
     },
     {
       "type": "library",
@@ -718,7 +764,8 @@
           "name": "resolution",
           "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
         }
-      ]
+      ],
+      "bom-ref": "clang-format-22"
     },
     {
       "type": "library",
@@ -738,7 +785,8 @@
           "name": "resolution",
           "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
         }
-      ]
+      ],
+      "bom-ref": "clang-tidy-22"
     },
     {
       "type": "library",
@@ -758,7 +806,8 @@
           "name": "resolution",
           "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
         }
-      ]
+      ],
+      "bom-ref": "lld-22"
     },
     {
       "type": "library",
@@ -778,7 +827,8 @@
           "name": "resolution",
           "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
         }
-      ]
+      ],
+      "bom-ref": "lldb-22"
     },
     {
       "type": "library",
@@ -798,7 +848,8 @@
           "name": "resolution",
           "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
         }
-      ]
+      ],
+      "bom-ref": "llvm-22"
     },
     {
       "type": "application",
@@ -819,7 +870,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "docker-ce"
     },
     {
       "type": "application",
@@ -840,7 +892,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "docker-ce-cli"
     },
     {
       "type": "application",
@@ -861,7 +914,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "containerd.io"
     },
     {
       "type": "application",
@@ -882,7 +936,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "docker-buildx-plugin"
     },
     {
       "type": "application",
@@ -903,7 +958,8 @@
           "name": "resolution",
           "value": "latest, resolved at install time"
         }
-      ]
+      ],
+      "bom-ref": "docker-compose-plugin"
     },
     {
       "type": "application",
@@ -927,7 +983,8 @@
           "name": "note",
           "value": "installed only when an NVIDIA driver is present"
         }
-      ]
+      ],
+      "bom-ref": "nvidia-container-toolkit"
     },
     {
       "type": "application",
@@ -953,7 +1010,8 @@
           "name": "resolution",
           "value": "latest (self-updating native installer)"
         }
-      ]
+      ],
+      "bom-ref": "Claude Code"
     },
     {
       "type": "library",
@@ -972,7 +1030,8 @@
           "name": "resolution",
           "value": "latest from the marketplace repo at install time"
         }
-      ]
+      ],
+      "bom-ref": "superpowers@superpowers-dev"
     },
     {
       "type": "library",
@@ -991,7 +1050,8 @@
           "name": "resolution",
           "value": "latest from the marketplace repo at install time"
         }
-      ]
+      ],
+      "bom-ref": "caveman@caveman"
     },
     {
       "type": "library",
@@ -1010,7 +1070,8 @@
           "name": "resolution",
           "value": "latest from the marketplace repo at install time"
         }
-      ]
+      ],
+      "bom-ref": "andrej-karpathy-skills@karpathy-skills"
     },
     {
       "type": "library",
@@ -1029,7 +1090,8 @@
           "name": "resolution",
           "value": "latest from the marketplace repo at install time"
         }
-      ]
+      ],
+      "bom-ref": "ecc@ecc"
     },
     {
       "type": "library",
@@ -1048,7 +1110,8 @@
           "name": "resolution",
           "value": "latest from the marketplace repo at install time"
         }
-      ]
+      ],
+      "bom-ref": "claude-mem@thedotmack"
     },
     {
       "type": "library",
@@ -1067,7 +1130,8 @@
           "name": "resolution",
           "value": "latest from the marketplace repo at install time"
         }
-      ]
+      ],
+      "bom-ref": "agentic-awesome-skills@agentic-awesome-skills"
     },
     {
       "type": "library",
@@ -1086,7 +1150,8 @@
           "name": "resolution",
           "value": "latest from the marketplace repo at install time"
         }
-      ]
+      ],
+      "bom-ref": "gsd-core@gsd-core"
     },
     {
       "type": "application",
@@ -1111,7 +1176,8 @@
           "name": "note",
           "value": "Microsoft's apt repo on the Debian family; official yum repo (packages.microsoft.com/yumrepos/vscode) on Enterprise Linux"
         }
-      ]
+      ],
+      "bom-ref": "code (Visual Studio Code)"
     },
     {
       "type": "library",
@@ -1130,7 +1196,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "anthropic.claude-code"
     },
     {
       "type": "library",
@@ -1149,7 +1216,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "openai.chatgpt"
     },
     {
       "type": "library",
@@ -1168,7 +1236,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "ms-python.python"
     },
     {
       "type": "library",
@@ -1187,7 +1256,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "ms-vscode.cpptools-extension-pack"
     },
     {
       "type": "library",
@@ -1206,7 +1276,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "vscjava.vscode-java-pack"
     },
     {
       "type": "library",
@@ -1225,7 +1296,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "rust-lang.rust-analyzer"
     },
     {
       "type": "library",
@@ -1244,7 +1316,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "redhat.ansible"
     },
     {
       "type": "library",
@@ -1263,7 +1336,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "redhat.vscode-yaml"
     },
     {
       "type": "library",
@@ -1282,7 +1356,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "golang.go"
     },
     {
       "type": "library",
@@ -1301,7 +1376,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "vadimcn.vscode-lldb"
     },
     {
       "type": "library",
@@ -1320,7 +1396,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "ms-vscode-remote.vscode-remote-extensionpack"
     },
     {
       "type": "library",
@@ -1339,7 +1416,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "ms-vscode.remote-explorer"
     },
     {
       "type": "library",
@@ -1358,7 +1436,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "ms-vscode-remote.remote-ssh-edit"
     },
     {
       "type": "library",
@@ -1377,7 +1456,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "ms-kubernetes-tools.vscode-kubernetes-tools"
     },
     {
       "type": "library",
@@ -1396,7 +1476,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "ms-azuretools.vscode-docker"
     },
     {
       "type": "library",
@@ -1415,7 +1496,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "amazonwebservices.aws-toolkit-vscode"
     },
     {
       "type": "library",
@@ -1434,7 +1516,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "github.remotehub"
     },
     {
       "type": "library",
@@ -1453,7 +1536,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "gitlab.gitlab-workflow"
     },
     {
       "type": "library",
@@ -1472,7 +1556,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "codezombiech.gitignore"
     },
     {
       "type": "library",
@@ -1491,7 +1576,8 @@
           "name": "resolution",
           "value": "newest version compatible with the installed VS Code"
         }
-      ]
+      ],
+      "bom-ref": "eamodio.gitlens"
     },
     {
       "type": "application",
@@ -1513,7 +1599,8 @@
           "name": "note",
           "value": "MAVEN_VERSION pin; SHA-512 verified"
         }
-      ]
+      ],
+      "bom-ref": "Apache Maven"
     },
     {
       "type": "application",
@@ -1533,7 +1620,8 @@
           "name": "resolution",
           "value": "latest stable, resolved via go.dev/VERSION"
         }
-      ]
+      ],
+      "bom-ref": "Go toolchain"
     },
     {
       "type": "application",
@@ -1551,7 +1639,8 @@
           "name": "resolution",
           "value": "latest stable via rustup"
         }
-      ]
+      ],
+      "bom-ref": "Rust toolchain (rustup)"
     },
     {
       "type": "application",
@@ -1571,7 +1660,8 @@
           "name": "resolution",
           "value": "latest stable channel via the official script"
         }
-      ]
+      ],
+      "bom-ref": "k3s (bundles kubectl)"
     },
     {
       "type": "application",
@@ -1591,7 +1681,8 @@
           "name": "resolution",
           "value": "latest via the official get-helm-4 script"
         }
-      ]
+      ],
+      "bom-ref": "Helm"
     },
     {
       "type": "application",
@@ -1616,7 +1707,8 @@
           "name": "note",
           "value": "installed as .deb on the Debian family, .rpm on Enterprise Linux (same GitHub release)"
         }
-      ]
+      ],
+      "bom-ref": "k9s"
     },
     {
       "type": "application",
@@ -1637,7 +1729,8 @@
           "name": "resolution",
           "value": "latest community release from PyPI via pipx"
         }
-      ]
+      ],
+      "bom-ref": "Ansible"
     },
     {
       "type": "application",
@@ -1657,7 +1750,8 @@
           "name": "resolution",
           "value": "latest v2 (the official bundle URL always serves it)"
         }
-      ]
+      ],
+      "bom-ref": "AWS CLI v2"
     },
     {
       "type": "application",
@@ -1678,7 +1772,8 @@
           "name": "note",
           "value": "sha256-pinned in versions.env against Proton's published checksum"
         }
-      ]
+      ],
+      "bom-ref": "protonvpn-stable-release (repo bootstrap)"
     },
     {
       "type": "application",
@@ -1702,7 +1797,8 @@
           "name": "note",
           "value": "Proton's official Linux VPN app has apt channels only \u2014 Debian-family targets; no Enterprise Linux channel exists"
         }
-      ]
+      ],
+      "bom-ref": "proton-vpn-gnome-desktop"
     },
     {
       "type": "application",
@@ -1726,7 +1822,8 @@
           "name": "note",
           "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
-      ]
+      ],
+      "bom-ref": "proton-mail (desktop, bundles Proton Calendar)"
     },
     {
       "type": "application",
@@ -1750,7 +1847,8 @@
           "name": "note",
           "value": "DebFile or RpmFile from Proton's version feed per target family; GPG-signature verified either way"
         }
-      ]
+      ],
+      "bom-ref": "protonmail-bridge"
     },
     {
       "type": "application",
@@ -1767,7 +1865,8 @@
           "name": "note",
           "value": "static binary on every target; libsecret dependency via apt or dnf per family"
         }
-      ]
+      ],
+      "bom-ref": "Proton Drive CLI"
     },
     {
       "type": "application",
@@ -1791,7 +1890,8 @@
           "name": "note",
           "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
-      ]
+      ],
+      "bom-ref": "proton-pass"
     },
     {
       "type": "application",
@@ -1808,7 +1908,8 @@
           "name": "note",
           "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
-      ]
+      ],
+      "bom-ref": "proton-meet"
     },
     {
       "type": "application",
@@ -1832,7 +1933,8 @@
           "name": "note",
           "value": "Proton ships .deb and .rpm builds at the same latest-version URLs \u2014 installed per target family"
         }
-      ]
+      ],
+      "bom-ref": "proton-authenticator"
     },
     {
       "type": "container",
@@ -1854,7 +1956,8 @@
           "name": "note",
           "value": "ELASTIC_VERSION pin"
         }
-      ]
+      ],
+      "bom-ref": "elasticsearch"
     },
     {
       "type": "container",
@@ -1870,7 +1973,8 @@
           }
         }
       ],
-      "purl": "pkg:docker/kibana@9.5.1?repository_url=docker.elastic.co"
+      "purl": "pkg:docker/kibana@9.5.1?repository_url=docker.elastic.co",
+      "bom-ref": "kibana"
     },
     {
       "type": "container",
@@ -1892,7 +1996,8 @@
           "name": "note",
           "value": "OPENSEARCH_VERSION pin (lockstep with Dashboards)"
         }
-      ]
+      ],
+      "bom-ref": "opensearchproject/opensearch"
     },
     {
       "type": "container",
@@ -1908,7 +2013,8 @@
           }
         }
       ],
-      "purl": "pkg:docker/opensearchproject/opensearch-dashboards@3.8.0"
+      "purl": "pkg:docker/opensearchproject/opensearch-dashboards@3.8.0",
+      "bom-ref": "opensearchproject/opensearch-dashboards"
     },
     {
       "type": "application",
@@ -1928,6 +2034,196 @@
           "name": "resolution",
           "value": "latest via the official install script"
         }
+      ],
+      "bom-ref": "Ollama"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "dev-setup",
+      "dependsOn": [
+        "Ansible",
+        "Apache Maven",
+        "autoconf",
+        "automake",
+        "AWS CLI v2",
+        "build-essential",
+        "ca-certificates",
+        "ccache",
+        "clang",
+        "clang-22",
+        "clang-format",
+        "clang-format-22",
+        "clang-tidy",
+        "clang-tidy-22",
+        "clangd",
+        "clangd-22",
+        "Claude Code",
+        "cmake",
+        "code (Visual Studio Code)",
+        "curl",
+        "docker-ce",
+        "g++",
+        "gcc",
+        "gdb",
+        "git",
+        "Go toolchain",
+        "Helm",
+        "k3s (bundles kubectl)",
+        "k9s",
+        "kibana",
+        "libsecret-1-0",
+        "libtool",
+        "lld-22",
+        "lldb",
+        "lldb-22",
+        "llvm",
+        "llvm-22",
+        "lsb-release",
+        "manpages-dev",
+        "ninja-build",
+        "nodejs",
+        "Ollama",
+        "opensearchproject/opensearch-dashboards",
+        "openssl",
+        "pkg-config",
+        "podman",
+        "Proton Drive CLI",
+        "proton-authenticator",
+        "proton-mail (desktop, bundles Proton Calendar)",
+        "proton-meet",
+        "proton-pass",
+        "proton-vpn-gnome-desktop",
+        "protonmail-bridge",
+        "python3",
+        "Rust toolchain (rustup)",
+        "software-properties-common",
+        "valgrind"
+      ]
+    },
+    {
+      "ref": "Ansible",
+      "dependsOn": [
+        "pipx"
+      ]
+    },
+    {
+      "ref": "Apache Maven",
+      "dependsOn": [
+        "openjdk-25-jdk"
+      ]
+    },
+    {
+      "ref": "bun",
+      "dependsOn": [
+        "unzip"
+      ]
+    },
+    {
+      "ref": "Claude Code",
+      "dependsOn": [
+        "agentic-awesome-skills@agentic-awesome-skills",
+        "andrej-karpathy-skills@karpathy-skills",
+        "caveman@caveman",
+        "claude-mem@thedotmack",
+        "ecc@ecc",
+        "gsd-core@gsd-core",
+        "superpowers@superpowers-dev"
+      ]
+    },
+    {
+      "ref": "code (Visual Studio Code)",
+      "dependsOn": [
+        "amazonwebservices.aws-toolkit-vscode",
+        "anthropic.claude-code",
+        "codezombiech.gitignore",
+        "eamodio.gitlens",
+        "github.remotehub",
+        "gitlab.gitlab-workflow",
+        "golang.go",
+        "ms-azuretools.vscode-docker",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "ms-python.python",
+        "ms-vscode-remote.remote-ssh-edit",
+        "ms-vscode-remote.vscode-remote-extensionpack",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.remote-explorer",
+        "openai.chatgpt",
+        "redhat.ansible",
+        "redhat.vscode-yaml",
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb",
+        "vscjava.vscode-java-pack"
+      ]
+    },
+    {
+      "ref": "docker-ce",
+      "dependsOn": [
+        "containerd.io",
+        "docker-buildx-plugin",
+        "docker-ce-cli",
+        "docker-compose-plugin",
+        "nvidia-container-toolkit"
+      ]
+    },
+    {
+      "ref": "git",
+      "dependsOn": [
+        "git-lfs"
+      ]
+    },
+    {
+      "ref": "kibana",
+      "dependsOn": [
+        "elasticsearch"
+      ]
+    },
+    {
+      "ref": "nodejs",
+      "dependsOn": [
+        "bun",
+        "nvm"
+      ]
+    },
+    {
+      "ref": "Ollama",
+      "dependsOn": [
+        "zstd"
+      ]
+    },
+    {
+      "ref": "opensearchproject/opensearch-dashboards",
+      "dependsOn": [
+        "opensearchproject/opensearch"
+      ]
+    },
+    {
+      "ref": "podman",
+      "dependsOn": [
+        "uidmap"
+      ]
+    },
+    {
+      "ref": "proton-vpn-gnome-desktop",
+      "dependsOn": [
+        "protonvpn-stable-release (repo bootstrap)"
+      ]
+    },
+    {
+      "ref": "protonmail-bridge",
+      "dependsOn": [
+        "gnupg",
+        "jq"
+      ]
+    },
+    {
+      "ref": "python3",
+      "dependsOn": [
+        "pipx",
+        "python3-dev",
+        "python3-pip",
+        "python3-venv",
+        "uv"
       ]
     }
   ]

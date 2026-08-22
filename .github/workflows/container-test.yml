@@ -19,6 +19,8 @@ jobs:
         run: command -v shellcheck || (sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck)
       - name: Lint all shell scripts
         run: shellcheck -x -S warning scripts/setup.sh scripts/offline-bundle.sh scripts/build.sh scripts/run.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
+      - name: SBOM.md is in sync with sbom.cdx.json
+        run: python3 scripts/sbom-md.py --check
 
   uninstall:
     name: install + uninstall round trip

@@ -75,8 +75,17 @@ jobs:
           grep -qx 'dev' <<<"$out"
           grep -q '^git version' <<<"$out"
 
-      - name: Push
-        run: docker push "$REGISTRY/dev-setup:${{ matrix.os }}"
+      - name: Push (:os alias + :os-version tag)
+        # The version-specific tag (ubuntu-26.04, debian-13, rocky-9.x, ...)
+        # comes from the built image's own /etc/os-release, so it can never
+        # drift from what is actually inside; the plain :os tag stays as
+        # the moving alias for that OS.
+        run: |
+          IMAGE="$REGISTRY/dev-setup:${{ matrix.os }}"
+          docker push "$IMAGE"
+          ver="$(docker run --rm "$IMAGE" sh -c '. /etc/os-release && printf %s "$VERSION_ID"')"
+          docker tag "$IMAGE" "$REGISTRY/dev-setup:${{ matrix.os }}-${ver}"
+          docker push "$REGISTRY/dev-setup:${{ matrix.os }}-${ver}"
 
       - name: Tag and push :latest (ubuntu is the default target)
         if: matrix.os == 'ubuntu'

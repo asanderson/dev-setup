@@ -50,7 +50,11 @@ done
 DOCKER_ARGS=(--rm --network host -v "${REPO_ROOT}:/repo:ro")
 if [[ -n "${https_proxy:-}" ]]; then
   DOCKER_ARGS+=(-e https_proxy -e no_proxy)
-  [[ -f /root/.ccr/ca-bundle.crt ]] && DOCKER_ARGS+=(-v /root/.ccr/ca-bundle.crt:/ccr-ca.crt:ro)
+fi
+# CA mount is independent of the proxy env: a transparently-intercepting
+# proxy MITMs outbound TLS with no proxy variable set at all.
+if [[ -f /root/.ccr/ca-bundle.crt ]]; then
+  DOCKER_ARGS+=(-v /root/.ccr/ca-bundle.crt:/ccr-ca.crt:ro)
 fi
 
 if [[ -n "$GPU_PATH" ]]; then

@@ -85,7 +85,7 @@ verify_rc=0
 for m in ${MODULES_OVERRIDE}; do
   case "$m" in
     git)         probes=("git --version") ;;
-    nodejs)      probes=("node --version" "npm --version" '$HOME/.bun/bin/bun --version') ;;
+    nodejs)      probes=('. $HOME/.nvm/nvm.sh && nvm --version' "node --version" "npm --version" '$HOME/.bun/bin/bun --version') ;;
     claude-code) probes=('$HOME/.local/bin/claude --version') ;;
     vscode)      probes=("code --version") ;;
     docker)      probes=("docker --version" "docker compose version") ;;
@@ -95,7 +95,7 @@ for m in ${MODULES_OVERRIDE}; do
     cpp)         probes=("gcc --version" "clang --version" "cmake --version") ;;
     golang)      probes=("go version") ;;
     rust)        probes=("rustc --version" "cargo --version") ;;
-    python)      probes=("python3 --version" "pip3 --version" "pipx --version") ;;
+    python)      probes=("python3 --version" "pip3 --version" "pipx --version" '$HOME/.local/bin/uv --version') ;;
     cloud)       probes=("k3s --version" "helm version --short" "k9s version" "ansible --version" "aws --version") ;;
     claude-plugins) probes=('$HOME/.local/bin/claude plugin list') ;;
     proton-vpn)  probes=("dpkg -s proton-vpn-gnome-desktop") ;;

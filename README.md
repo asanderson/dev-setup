@@ -4,7 +4,7 @@ Development environment setup: an **interactive, idempotent installer** for a
 full dev toolchain on Ubuntu 26.04 — each tool individually prompted, every
 module safe to re-run.
 
-Tools covered: Git, the Node.js toolchain (Active-LTS Node + npm,
+Tools covered: Git, the Node.js toolchain (nvm-managed Node LTS + npm,
 corepack-managed yarn/pnpm, and Bun — Claude Code's JS tooling runs on
 these), Claude Code (+ a curated plugin set), VS Code (+ a
 curated extension set), Docker (+ NVIDIA Container Toolkit), Podman

@@ -2,7 +2,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 3,
+  "version": 4,
   "metadata": {
     "timestamp": "2026-08-21T10:46:11Z",
     "authors": [
@@ -177,17 +177,35 @@
       "type": "library",
       "name": "nodejs",
       "supplier": {
-        "name": "NodeSource (Node.js binary distributions)"
+        "name": "Node.js (OpenJS Foundation), via nvm"
       },
       "purl": "pkg:generic/nodejs",
       "properties": [
         {
           "name": "resolution",
-          "value": "latest of the Active-LTS line (NODE_MAJOR in versions.env), resolved at install time"
+          "value": "latest LTS, resolved at install time by 'nvm install --lts'"
         },
         {
           "name": "note",
-          "value": "NodeSource distro-agnostic repos on every target: deb 'nodistro' suite (apt) / rpm nodistro tree (dnf), GPG-verified; npm bundled, yarn+pnpm via corepack where Node ships it"
+          "value": "per-user under ~/.nvm on every target \u2014 no system packages; npm bundled, yarn+pnpm via corepack where Node ships it"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "nvm",
+      "supplier": {
+        "name": "nvm-sh (Node Version Manager)"
+      },
+      "purl": "pkg:github/nvm-sh/nvm",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest release resolved at install time (NVM_VERSION in versions.env is the offline fallback)"
+        },
+        {
+          "name": "note",
+          "value": "official install script, per-user under ~/.nvm; installs and manages the module's Node versions"
         }
       ]
     },
@@ -318,6 +336,24 @@
         {
           "name": "resolution",
           "value": "latest, resolved at install time"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "uv",
+      "supplier": {
+        "name": "Astral"
+      },
+      "purl": "pkg:github/astral-sh/uv",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "official installer (astral.sh/uv) to ~/.local/bin as the invoking user, on every target; part of the python module"
         }
       ]
     },

@@ -18,12 +18,23 @@ module_cpp_install() {
       pkg-config autoconf automake libtool \
       manpages-dev
   else
+    # ccache and ninja-build live in EPEL/CRB on Enterprise Linux: enable
+    # both best-effort (unentitled UBI containers can't reach CRB), then
+    # treat those two as optional extras so the core toolchain always lands.
+    sudo dnf install -y epel-release 2>/dev/null \
+      || sudo dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm" 2>/dev/null \
+      || true
+    sudo dnf config-manager --set-enabled crb 2>/dev/null \
+      || sudo dnf config-manager setopt crb.enabled=1 2>/dev/null \
+      || true
     sudo dnf install -y \
       gcc gcc-c++ gdb make \
       clang clang-tools-extra lldb lld llvm \
-      cmake ninja-build ccache \
+      cmake \
       valgrind \
       pkgconf autoconf automake libtool
+    sudo dnf install -y ninja-build ccache \
+      || warn "ninja-build/ccache unavailable in this EL repo set (EPEL/CRB needed) — skipped."
   fi
 
   ok "GCC:   $(gcc --version | head -n1)"

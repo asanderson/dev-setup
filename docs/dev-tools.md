@@ -85,6 +85,13 @@ need a running Docker daemon — run those stacks beside the container
 instead), and **proton-vpn** (its daemon's postinst needs a running
 systemd, and a VPN belongs on the host, not in a container image).
 
+Per-OS image exclusions (base-image realities, not module choices):
+**proton-authenticator** drops out of the rocky/rhel/pureos images (its
+webkit dependency is absent from EL9 repos and the byzantium base), and
+the **rhel** image — built on Red Hat's UBI, whose unentitled repos carry
+no GUI stacks — also drops vscode and the Proton desktop apps; install
+those on a subscribed RHEL host with setup.sh directly.
+
 The **publish-images workflow** (`.github/workflows/publish-images.yml`,
 manual trigger) builds the full-component image for every target OS and
 pushes each to a container registry — `ghcr.io/asanderson/dev-setup:<os>`
@@ -132,9 +139,10 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 
 | Supported on | Components | How |
 |---|---|---|
-| Everywhere (all five) | Git, C/C++, VS Code, JDK, Python, Cloud tools, Podman, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch, Proton Mail/Bridge/Drive CLI/Pass/Meet/Authenticator | distro packages per family (git-core PPA extra on Ubuntu; newest-LLVM extra on Ubuntu/Debian, where apt.llvm.org has suites); Microsoft's apt/yum repos; Proton's `.deb`/`.rpm` builds; distro-agnostic installers and tarballs |
+| Everywhere (all five) | Git, C/C++, VS Code, JDK, Python, Cloud tools, Podman, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch, Proton Mail/Bridge/Drive CLI/Pass/Meet | distro packages per family (git-core PPA extra on Ubuntu; newest-LLVM extra on Ubuntu/Debian, where apt.llvm.org has suites); Microsoft's apt/yum repos; Proton's `.deb`/`.rpm` builds; distro-agnostic installers and tarballs |
 | Ubuntu, Debian, Rocky, RHEL (no PureOS) | Docker | Docker's official repos: apt suites for Ubuntu/Debian, dnf repos for centos(Rocky)/RHEL — no PureOS suite exists; use Podman there |
 | Debian family only (ubuntu, debian, pureos) | Proton VPN | Proton's official Linux VPN app ships apt packages only — no Enterprise Linux channel exists |
+| Debian family only (ubuntu, debian, pureos) | Proton Authenticator | its package needs libwebkit2gtk-4.1, which EL9 repos don't provide (verified against Rocky 9's full repo set) |
 
 > **GPU note:** if this machine has an NVIDIA GPU, install the driver first —
 > the NVIDIA Container Toolkit and Ollama acceleration key off it. For the

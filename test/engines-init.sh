@@ -78,7 +78,7 @@ fi
 echo "### [init] create test user 'dev' with passwordless sudo"
 useradd -m -s /bin/bash dev
 echo 'dev ALL=(ALL) NOPASSWD:ALL' >/etc/sudoers.d/dev
-echo 'Defaults env_keep += "https_proxy no_proxy HTTPS_PROXY NO_PROXY DEBIAN_FRONTEND"' >/etc/sudoers.d/proxy-env
+echo 'Defaults env_keep += "https_proxy no_proxy HTTPS_PROXY NO_PROXY DEBIAN_FRONTEND PIP_CERT"' >/etc/sudoers.d/proxy-env
 # /usr/local/bin first so the systemctl stub wins under sudo (EL's default
 # secure_path omits it; this matches the Debian-family default).
 echo 'Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"' >/etc/sudoers.d/secure-path
@@ -101,8 +101,13 @@ fi
 
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
 set +e
+# PIP_CERT: pip inside pipx venvs trusts only its bundled certifi, not the
+# system store — point it at the intercepting proxy's CA when one is here.
+PIP_CERT=""
+if [[ -f /ccr-ca.crt ]]; then PIP_CERT=/ccr-ca.crt; fi
 sudo -u dev -H env \
   https_proxy="${https_proxy:-}" no_proxy="${no_proxy:-}" \
+  PIP_CERT="${PIP_CERT}" \
   DEV_SETUP_ASSUME_YES=1 \
   bash -c "cd ~/dev-setup && ./scripts/setup.sh --os ${TARGET} --modules ${MODULES_OVERRIDE// /,}"
 rc=$?

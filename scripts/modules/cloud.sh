@@ -49,7 +49,12 @@ module_cloud_install() {
   log "Installing Ansible (latest community release from PyPI, via pipx)..."
   if ! command_exists pipx; then
     if [[ "$(os_family)" == deb ]]; then
-      apt_install pipx
+      # pipx entered the Debian archive at bookworm — older derivatives
+      # (e.g. PureOS byzantium) fall back to pip --user.
+      apt_install pipx 2>/dev/null \
+        || { apt_install python3-pip python3-venv
+             python3 -m pip install --user --quiet pipx; }
+      export PATH="$HOME/.local/bin:$PATH"
     else
       sudo dnf install -y python3-pip
       python3 -m pip install --user --quiet pipx

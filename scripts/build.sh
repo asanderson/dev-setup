@@ -101,9 +101,32 @@ for _m in ${SELECTED[@]+"${SELECTED[@]}"}; do
     || { err "'${_m}' is not imageable (see --list)"; exit 2; }
 done
 
-# The imageable set is uniform across all five targets: every module in
-# IMAGE_MODULES supports all of them, per setup.sh's MODULE_SUPPORT.
-[[ ${#SELECTED[@]} -eq 0 ]] && SELECTED=("${IMAGE_MODULES[@]}")
+# Per-OS exclusions from the default set, with the reasons:
+# - proton-authenticator needs libwebkit2gtk-4.1 — absent from EL9's repos
+#   (rocky/rhel) and from the byzantium base PureOS builds on (real PureOS
+#   crimson has it, but Purism publishes no crimson OCI image).
+# - The rhel base is Red Hat's UBI, whose unentitled repos carry no GUI
+#   stacks: vscode and the Proton desktop apps need libraries (xdg-utils,
+#   libnotify, libxkbcommon-x11, ...) only a subscribed RHEL host has —
+#   install those with setup.sh on the real machine instead.
+declare -A OS_IMAGE_EXCLUDE=(
+  [rocky]="proton-authenticator"
+  [rhel]="proton-authenticator vscode proton-mail proton-bridge proton-pass proton-meet"
+  [pureos]="proton-authenticator"
+)
+EXCLUDED="${OS_IMAGE_EXCLUDE[$TARGET_OS]:-}"
+for _m in ${SELECTED[@]+"${SELECTED[@]}"}; do
+  if [[ " ${EXCLUDED} " == *" ${_m} "* ]]; then
+    err "'${_m}' cannot be imaged on ${TARGET_OS} (see the exclusion notes in this script)."
+    exit 2
+  fi
+done
+if [[ ${#SELECTED[@]} -eq 0 ]]; then
+  for _m in "${IMAGE_MODULES[@]}"; do
+    [[ " ${EXCLUDED} " == *" ${_m} "* ]] || SELECTED+=("$_m")
+  done
+  if [[ -n "$EXCLUDED" ]]; then log "Excluded on ${TARGET_OS}: ${EXCLUDED}"; fi
+fi
 
 command_exists "$ENGINE" || die "${ENGINE} not found — install it (or pass the other --engine)."
 

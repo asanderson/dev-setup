@@ -14,7 +14,11 @@ module_ollama_install() {
 
   # The vendor installer extracts a zstd-compressed bundle and exits if
   # zstd is missing — fresh Ubuntu installs don't ship it.
-  apt_install zstd
+  if [[ "$(os_family)" == deb ]]; then
+    apt_install zstd
+  else
+    sudo dnf install -y zstd
+  fi
 
   fetch https://ollama.com/install.sh | sh
 

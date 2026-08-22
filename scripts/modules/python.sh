@@ -8,7 +8,12 @@ module_python_describe() { echo "Python 3 (venv, pip, dev headers, pipx)"; }
 module_python_install() {
   section "Python 3 toolchain"
   if [[ "$(os_family)" == deb ]]; then
-    apt_install python3 python3-venv python3-pip python3-dev pipx
+    apt_install python3 python3-venv python3-pip python3-dev
+    # pipx entered the Debian archive at bookworm — older derivatives
+    # (e.g. PureOS byzantium) fall back to pip --user.
+    apt_install pipx 2>/dev/null \
+      || { command_exists pipx || python3 -m pip install --user --quiet pipx; }
+    export PATH="$HOME/.local/bin:$PATH"
   else
     sudo dnf install -y python3 python3-pip python3-devel
     # pipx: EL packages it in EPEL, not BaseOS/AppStream — pip --user is the

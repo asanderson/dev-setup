@@ -72,7 +72,9 @@ declare -A MODULE_SUPPORT=(
   [proton-drive]="ubuntu debian pureos rocky rhel"
   [proton-pass]="ubuntu debian pureos rocky rhel"
   [proton-meet]="ubuntu debian pureos rocky rhel"
-  [proton-authenticator]="ubuntu debian pureos rocky rhel"
+  # authenticator's package needs libwebkit2gtk-4.1, which EL9 repos do
+  # not provide (verified against Rocky 9's full repo set).
+  [proton-authenticator]="ubuntu debian pureos"
   [elastic]="ubuntu debian pureos rocky rhel"
   [opensearch]="ubuntu debian pureos rocky rhel"
   [ollama]="ubuntu debian pureos rocky rhel"

@@ -2,7 +2,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 5,
+  "version": 6,
   "metadata": {
     "timestamp": "2026-08-21T10:46:11Z",
     "authors": [
@@ -2036,6 +2036,104 @@
         }
       ],
       "bom-ref": "Ollama"
+    },
+    {
+      "type": "machine-learning-model",
+      "bom-ref": "gpt-oss-20b",
+      "name": "gpt-oss-20b",
+      "supplier": {
+        "name": "OpenAI"
+      },
+      "purl": "pkg:generic/gpt-oss@20b",
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest of the 20b tag, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "MXFP4 \u2014 OpenAI's native release quantization, so the local artifact matches the benchmarked one. Pulled via `ollama pull gpt-oss:20b`; the module also creates a num_ctx-131072 variant."
+        }
+      ]
+    },
+    {
+      "type": "machine-learning-model",
+      "bom-ref": "gemma4-26b-a4b-it-qat",
+      "name": "gemma4-26b-a4b-it-qat",
+      "supplier": {
+        "name": "Google"
+      },
+      "purl": "pkg:generic/gemma4@26b-a4b-it-qat",
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest of the 26b-a4b-it-qat tag, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "Quantization-aware-trained 26B MoE (3.8B active). Chosen over the 31B dense, whose sliding-window KV cost caps usable context near 32-40K on a 24GB GPU. Variant pinned at num_ctx 131072."
+        }
+      ]
+    },
+    {
+      "type": "machine-learning-model",
+      "bom-ref": "laguna-xs-2.1",
+      "name": "laguna-xs-2.1",
+      "supplier": {
+        "name": "Poolside, Inc. (Delaware, US)"
+      },
+      "purl": "pkg:generic/laguna-xs@2.1",
+      "licenses": [
+        {
+          "expression": "OpenMDW-1.1"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest of the laguna-xs-2.1 tag, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "Post-trained for agentic coding; 33B total / 3B active. 20GB of weights is tight on a 24GB card, so the module pins it at a conservative num_ctx 32768 to walk up."
+        }
+      ]
+    },
+    {
+      "type": "machine-learning-model",
+      "bom-ref": "Nemotron-3-Nano-30B-A3B (IQ4_XS GGUF)",
+      "name": "Nemotron-3-Nano-30B-A3B (IQ4_XS GGUF)",
+      "supplier": {
+        "name": "NVIDIA (quant by Unsloth)"
+      },
+      "purl": "pkg:huggingface/unsloth/Nemotron-3-Nano-30B-A3B-GGUF",
+      "licenses": [
+        {
+          "license": {
+            "name": "NVIDIA Open Model License"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "opt-in (DEV_SETUP_OLLAMA_NEMOTRON=1); latest IQ4_XS shard at install time"
+        },
+        {
+          "name": "note",
+          "value": "Hybrid Mamba-2/MoE with only 6 attention layers, so KV cost is near-flat with context depth. Fetched from Hugging Face rather than the Ollama library because the library tag is Q4_K_M (24GB), which cannot fit a 24GB GPU; IQ4_XS (18.2GB) can."
+        }
+      ]
     }
   ],
   "dependencies": [
@@ -2188,6 +2286,10 @@
     {
       "ref": "Ollama",
       "dependsOn": [
+        "gemma4-26b-a4b-it-qat",
+        "gpt-oss-20b",
+        "laguna-xs-2.1",
+        "Nemotron-3-Nano-30B-A3B (IQ4_XS GGUF)",
         "zstd"
       ]
     },

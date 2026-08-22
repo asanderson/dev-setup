@@ -24,8 +24,9 @@ module_ollama_install() {
 
   sudo systemctl enable --now ollama 2>/dev/null || true
   ok "Installed: $(ollama --version 2>/dev/null || echo 'ollama (service starting)')"
-  log "Try it: 'ollama run llama3.2' — with the RTX 5090's 24GB VRAM, larger models like"
-  log "'ollama run qwen3:32b' are practical. Models are stored under /usr/share/ollama."
+  log "Models are stored under /usr/share/ollama. For a vetted coding set sized"
+  log "for a 24GB GPU — with pinned context windows — select the ollama-models"
+  log "module (./scripts/setup.sh --ollama --ollama-models)."
 }
 
 module_ollama_uninstall() {

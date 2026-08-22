@@ -1,9 +1,11 @@
 # shellcheck shell=bash
 # Module: Python toolchain — the distro's default Python 3 with venv, pip,
-# dev headers, and pipx for isolated CLI tools, on every target OS (apt or
-# dnf). Per-project interpreters/deps belong in venvs, not system pip.
+# dev headers, pipx for isolated CLI tools, and uv (Astral's fast package
+# and project manager, official installer, latest) on every target OS
+# (apt or dnf). Per-project interpreters/deps belong in venvs, not
+# system pip.
 
-module_python_describe() { echo "Python 3 (venv, pip, dev headers, pipx)"; }
+module_python_describe() { echo "Python 3 (venv, pip, dev headers, pipx, uv)"; }
 
 module_python_install() {
   section "Python 3 toolchain"
@@ -26,9 +28,14 @@ module_python_install() {
   # idempotent — pipx skips shells it already configured.
   pipx ensurepath >/dev/null 2>&1
 
+  # uv — Astral's fast package/project manager (official installer,
+  # latest release, per-user under ~/.local/bin).
+  fetch https://astral.sh/uv/install.sh | sh >/dev/null
   ok "Python: $(python3 --version)"
   ok "pip:    $(pip3 --version)"
-  log "Use 'python3 -m venv' for project environments and 'pipx install' for CLI tools."
+  ok "uv:     $("$HOME/.local/bin/uv" --version)"
+  log "Use 'python3 -m venv' or 'uv venv' for project environments and"
+  log "'pipx install' (or 'uv tool install') for CLI tools."
 }
 
 module_python_uninstall() {
@@ -36,10 +43,10 @@ module_python_uninstall() {
   # python3 itself is never removed — the OS depends on it. Only the dev
   # extras this module added go.
   pkg_remove python3-venv python3-pip python3-dev python3-devel pipx
-  rm -f "$HOME/.local/bin/pipx"
+  rm -f "$HOME/.local/bin/pipx" "$HOME/.local/bin/uv" "$HOME/.local/bin/uvx"
   if [[ "${PURGE_DATA:-0}" == "1" ]]; then
-    rm -rf "$HOME/.local/pipx"
-    log "Purged ~/.local/pipx (pipx-installed tools)."
+    rm -rf "$HOME/.local/pipx" "$HOME/.local/share/uv" "$HOME/.cache/uv"
+    log "Purged ~/.local/pipx (pipx-installed tools) and uv's tool/cache dirs."
   else
     log "Kept: python3 (OS dependency) and ~/.local/pipx (--purge-data removes the latter)."
   fi

@@ -155,7 +155,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 | Module | What you get | Method |
 |---|---|---|
 | Git | Latest stable git + git-lfs | git-core PPA (optional) |
-| Node.js | Active-LTS Node + npm, yarn/pnpm via corepack, Bun (latest) — Claude Code's JS tooling runs on these | NodeSource distro-agnostic repos (deb nodistro / rpm nodistro); Bun's official installer |
+| Node.js | nvm (latest) managing Node — latest LTS + npm installed via `nvm install --lts` — plus yarn/pnpm via corepack and Bun (latest); Claude Code's JS tooling runs on these | nvm + Bun official installers, per-user (~/.nvm, ~/.bun) — no system packages, identical on every target |
 | Claude Code | Anthropic's coding CLI | Official native installer (auto-updating; npm route is deprecated) |
 | Claude Code plugins | superpowers, caveman, karpathy-skills, ecc, claude-mem, agentic-awesome-skills, gsd-core — latest releases | `claude plugin` marketplaces (each plugin's GitHub repo) |
 | VS Code | Visual Studio Code, stable channel + curated extensions (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Development/Explorer/SSH-edit, Kubernetes, Docker, AWS Toolkit, GitHub Repositories, GitLab, gitignore, GitLens) | Microsoft apt repo; extensions from the VS Code Marketplace at the newest compatible version |

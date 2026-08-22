@@ -34,7 +34,7 @@ source "${REPO_ROOT}/config/versions.env"
 
 # Module order matters: claude-code before claude-plugins, docker before
 # elastic/opensearch, jdk before maven, nvidia-dependent modules (ollama) last.
-MODULES=(git claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
+MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
          proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
          elastic opensearch ollama)
 
@@ -54,6 +54,7 @@ TARGET_OS=""
 # See docs/dev-tools.md#target-operating-systems.
 declare -A MODULE_SUPPORT=(
   [git]="ubuntu debian pureos rocky rhel"
+  [nodejs]="ubuntu debian pureos rocky rhel"
   [claude-code]="ubuntu debian pureos rocky rhel"
   [claude-plugins]="ubuntu debian pureos rocky rhel"
   [vscode]="ubuntu debian pureos rocky rhel"

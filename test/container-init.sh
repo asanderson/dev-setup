@@ -85,6 +85,7 @@ verify_rc=0
 for m in ${MODULES_OVERRIDE}; do
   case "$m" in
     git)         probes=("git --version") ;;
+    nodejs)      probes=("node --version" "npm --version" '$HOME/.bun/bin/bun --version') ;;
     claude-code) probes=('$HOME/.local/bin/claude --version') ;;
     vscode)      probes=("code --version") ;;
     docker)      probes=("docker --version" "docker compose version") ;;

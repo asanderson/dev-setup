@@ -42,6 +42,7 @@ usage() {
   echo "                   ${OFFLINE_MODULES[*]})"
   echo "  --out DIR        output directory (default: current directory)"
   echo "  Not packagable (network services): claude-code claude-plugins proton-*"
+  echo "  Not yet packaged: nodejs (NodeSource repo + Bun artifact support pending)"
 }
 
 MODE=""

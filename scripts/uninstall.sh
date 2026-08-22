@@ -26,7 +26,7 @@ source "${REPO_ROOT}/config/versions.env"
 
 # Same canonical order as setup.sh (kept in sync — the guard below catches
 # drift); uninstalls run in REVERSE of it.
-MODULES=(git claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
+MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
          proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
          elastic opensearch ollama)
 

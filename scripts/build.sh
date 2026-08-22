@@ -36,7 +36,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 # shellcheck source=lib/common.sh
 source "${SCRIPT_DIR}/lib/common.sh"
 
-IMAGE_MODULES=(git claude-code claude-plugins vscode jdk maven cpp golang rust python cloud
+IMAGE_MODULES=(git nodejs claude-code claude-plugins vscode jdk maven cpp golang rust python cloud
                proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
                ollama)
 

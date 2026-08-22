@@ -64,7 +64,7 @@ if [[ -n "$GPU_PATH" ]]; then
     bash /repo/test/gpu-path-init.sh
 fi
 
-[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
+[[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
   proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator)
 
 echo ">>> image: ${IMAGE}"

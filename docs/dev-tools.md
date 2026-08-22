@@ -142,7 +142,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 
 | Supported on | Components | How |
 |---|---|---|
-| Everywhere (all five) | Git, C/C++, VS Code, JDK, Python, Cloud tools, Podman, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch, Proton Mail/Bridge/Drive CLI/Pass/Meet | distro packages per family (git-core PPA extra on Ubuntu; newest-LLVM extra on Ubuntu/Debian, where apt.llvm.org has suites); Microsoft's apt/yum repos; Proton's `.deb`/`.rpm` builds; distro-agnostic installers and tarballs |
+| Everywhere (all five) | Git, Node.js (+ Bun), C/C++, VS Code, JDK, Python, Cloud tools, Podman, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch, Proton Mail/Bridge/Drive CLI/Pass/Meet | distro packages per family (git-core PPA extra on Ubuntu; newest-LLVM extra on Ubuntu/Debian, where apt.llvm.org has suites); Microsoft's apt/yum repos; Proton's `.deb`/`.rpm` builds; distro-agnostic installers and tarballs |
 | Ubuntu, Debian, Rocky, RHEL (no PureOS) | Docker | Docker's official repos: apt suites for Ubuntu/Debian, dnf repos for centos(Rocky)/RHEL — no PureOS suite exists; use Podman there |
 | Debian family only (ubuntu, debian, pureos) | Proton VPN | Proton's official Linux VPN app ships apt packages only — no Enterprise Linux channel exists |
 | Debian family only (ubuntu, debian, pureos) | Proton Authenticator | its package needs libwebkit2gtk-4.1, which EL9 repos don't provide (verified against Rocky 9's full repo set) |
@@ -155,6 +155,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 | Module | What you get | Method |
 |---|---|---|
 | Git | Latest stable git + git-lfs | git-core PPA (optional) |
+| Node.js | Active-LTS Node + npm, yarn/pnpm via corepack, Bun (latest) — Claude Code's JS tooling runs on these | NodeSource distro-agnostic repos (deb nodistro / rpm nodistro); Bun's official installer |
 | Claude Code | Anthropic's coding CLI | Official native installer (auto-updating; npm route is deprecated) |
 | Claude Code plugins | superpowers, caveman, karpathy-skills, ecc, claude-mem, agentic-awesome-skills, gsd-core — latest releases | `claude plugin` marketplaces (each plugin's GitHub repo) |
 | VS Code | Visual Studio Code, stable channel + curated extensions (Claude Code, Codex, Python, C/C++, Java, rust-analyzer, Ansible, YAML, Go, CodeLLDB, Remote Development/Explorer/SSH-edit, Kubernetes, Docker, AWS Toolkit, GitHub Repositories, GitLab, gitignore, GitLens) | Microsoft apt repo; extensions from the VS Code Marketplace at the newest compatible version |

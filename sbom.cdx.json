@@ -2,7 +2,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 2,
+  "version": 3,
   "metadata": {
     "timestamp": "2026-08-21T10:46:11Z",
     "authors": [
@@ -170,6 +170,42 @@
         {
           "name": "note",
           "value": "distro package on every target (apt/dnf); the git-core PPA extra applies on Ubuntu only"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "nodejs",
+      "supplier": {
+        "name": "NodeSource (Node.js binary distributions)"
+      },
+      "purl": "pkg:generic/nodejs",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest of the Active-LTS line (NODE_MAJOR in versions.env), resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "NodeSource distro-agnostic repos on every target: deb 'nodistro' suite (apt) / rpm nodistro tree (dnf), GPG-verified; npm bundled, yarn+pnpm via corepack where Node ships it"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "name": "bun",
+      "supplier": {
+        "name": "Oven (bun.sh)"
+      },
+      "purl": "pkg:generic/bun",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "official installer script (bun.sh/install) to ~/.bun as the invoking user, on every target; part of the nodejs module \u2014 Claude Code's JS tooling dependency"
         }
       ]
     },

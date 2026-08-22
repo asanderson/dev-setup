@@ -64,7 +64,8 @@ installer), python, cloud (k3s air-gap procedure with preloaded images,
 Helm, k9s, Ansible wheels, AWS CLI), elastic + opensearch (saved container
 images + compose configs), ollama. **Not packagable** — network services
 that cannot function in an enclave: claude-code (+ plugins) and the
-proton-* apps.
+proton-* apps; and ollama-models, whose ~50GB of weights are better moved
+by copying the Ollama model store across directly.
 
 ## Container image
 
@@ -142,7 +143,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 
 | Supported on | Components | How |
 |---|---|---|
-| Everywhere (all five) | Git, Node.js (+ Bun), C/C++, VS Code, JDK, Python, Cloud tools, Podman, Claude Code (+ plugins), Maven, Go, Rust, Ollama, Elastic, OpenSearch, Proton Mail/Bridge/Drive CLI/Pass/Meet | distro packages per family (git-core PPA extra on Ubuntu; newest-LLVM extra on Ubuntu/Debian, where apt.llvm.org has suites); Microsoft's apt/yum repos; Proton's `.deb`/`.rpm` builds; distro-agnostic installers and tarballs |
+| Everywhere (all five) | Git, Node.js (+ Bun), C/C++, VS Code, JDK, Python, Cloud tools, Podman, Claude Code (+ plugins), Maven, Go, Rust, Ollama (+ its coding models), Elastic, OpenSearch, Proton Mail/Bridge/Drive CLI/Pass/Meet | distro packages per family (git-core PPA extra on Ubuntu; newest-LLVM extra on Ubuntu/Debian, where apt.llvm.org has suites); Microsoft's apt/yum repos; Proton's `.deb`/`.rpm` builds; distro-agnostic installers and tarballs |
 | Ubuntu, Debian, Rocky, RHEL (no PureOS) | Docker | Docker's official repos: apt suites for Ubuntu/Debian, dnf repos for centos(Rocky)/RHEL — no PureOS suite exists; use Podman there |
 | Debian family only (ubuntu, debian, pureos) | Proton VPN | Proton's official Linux VPN app ships apt packages only — no Enterprise Linux channel exists |
 | Debian family only (ubuntu, debian, pureos) | Proton Authenticator | its package needs libwebkit2gtk-4.1, which EL9 repos don't provide (verified against Rocky 9's full repo set) |
@@ -178,6 +179,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 | Elastic Stack | Elasticsearch + Kibana, **Basic license**, single node | Docker Compose (`~/elastic`), generated credentials |
 | OpenSearch | OpenSearch + Dashboards, **Apache-2.0, no license tiers** — the Elastic alternative (OpenSearch Software Foundation / Linux Foundation), single node | Docker Compose (`~/opensearch`), generated credentials |
 | Ollama | Local LLM runtime, GPU-accelerated | Official install script |
+| Ollama coding models | The verified local coding stack — gpt-oss 20B (MXFP4), Gemma 4 26B MoE (QAT), Laguna XS 2.1 — each pulled and given a **pinned-context variant**, plus the serving config (flash attention, q8_0 KV) those contexts depend on. ~50GB. `DEV_SETUP_OLLAMA_NEMOTRON=1` adds Nemotron 3 Nano at IQ4_XS from Hugging Face | `ollama pull` + generated Modelfiles |
 
 Pick Elastic, OpenSearch, or both — the OpenSearch stack's ports are offset
 (9201 REST, 5602 Dashboards) so the two dev stacks coexist.

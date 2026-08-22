@@ -69,6 +69,15 @@ grep -q "the installer configures the system it runs on" <<<"$out" \
   || { echo "FAIL: missing target/machine mismatch guard"; exit 1; }
 echo "  PASS: --os validation (exit 2), unsupported-component warn+skip, mismatch guard"
 
+echo "### [flags] ollama-models refuses cleanly without Ollama"
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --modules ollama-models' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] || { echo "FAIL: ollama-models must fail when Ollama is absent"; exit 1; }
+grep -q "Ollama is not installed" <<<"$out" \
+  || { echo "FAIL: missing the run-with---ollama-first guidance"; exit 1; }
+echo "  PASS: ollama-models dependency contract"
+
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
 set +e; run_setup; rc=$?; set -e
 echo "### [run] setup.sh exit code: ${rc}"
@@ -105,7 +114,7 @@ for m in ${MODULES_OVERRIDE}; do
     proton-pass)   probes=("dpkg -s proton-pass") ;;
     proton-meet)   probes=("dpkg -s proton-meet") ;;
     proton-authenticator) probes=("dpkg -s proton-authenticator") ;;
-    elastic|opensearch|ollama) echo "  SKIP ${m} (no probe in container)"; continue ;;
+    elastic|opensearch|ollama|ollama-models) echo "  SKIP ${m} (no probe in container)"; continue ;;
     *)           echo "  SKIP ${m} (unknown module)"; continue ;;
   esac
   for probe in "${probes[@]}"; do

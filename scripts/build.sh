@@ -13,9 +13,10 @@
 # 'dev' (uid 1000). Excluded by design: docker and podman (they are the
 # engines that RUN this image, not image content), elastic/opensearch
 # (their installs need a running Docker daemon — run those stacks beside
-# the container instead), and proton-vpn (its daemon's postinst needs a
-# running systemd, and a VPN belongs on the host anyway). Run the result
-# with scripts/run.sh.
+# the container instead), proton-vpn (its daemon's postinst needs a
+# running systemd, and a VPN belongs on the host anyway), and
+# ollama-models (~50GB of GPU-bound weights; pull them on the host). Run
+# the result with scripts/run.sh.
 #
 # PureOS note: Purism publishes OCI images only for byzantium (PureOS 10),
 # so --os pureos builds on that base.
@@ -56,7 +57,8 @@ usage() {
   echo "  ${IMAGE_MODULES[*]}"
   echo "  Not imageable: docker, podman (the engines), elastic, opensearch"
   echo "  (need a running daemon at install time), proton-vpn (daemon needs"
-  echo "  running systemd — install it on the host)."
+  echo "  running systemd), ollama-models (~50GB of weights that need a GPU"
+  echo "  and a running Ollama daemon — pull them on the host)."
   echo "  --os             target OS: ${!OS_BASE[*]} (default ubuntu)"
   echo "  --engine         docker (default) or podman"
   echo "  Component flags: $(printf -- '--%s ' "${IMAGE_MODULES[@]}")"

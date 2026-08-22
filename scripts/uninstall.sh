@@ -28,7 +28,7 @@ source "${REPO_ROOT}/config/versions.env"
 # drift); uninstalls run in REVERSE of it.
 MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
          proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
-         elastic opensearch ollama)
+         elastic opensearch ollama ollama-models)
 
 for m in "${MODULES[@]}"; do
   # shellcheck disable=SC1090

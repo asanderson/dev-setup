@@ -14,7 +14,9 @@ cloud dev tools (k3s, Helm, k9s, Ansible, AWS CLI), the Proton apps with
 Linux support (VPN, Mail + bundled Calendar, Bridge, Drive CLI, Pass, Meet,
 Authenticator — one module and flag each), Elastic Stack (Basic license, in
 Docker), OpenSearch Platform (the Apache-2.0 Elastic alternative, in
-Docker), and Ollama. See [docs/dev-tools.md](docs/dev-tools.md) for the
+Docker), Ollama, and a verified set of **local coding models** for it
+(gpt-oss 20B, Gemma 4 26B, Laguna XS 2.1, each with a pinned-context
+variant tuned for a 24GB GPU). See [docs/dev-tools.md](docs/dev-tools.md) for the
 full module table.
 
 > **Setting up the dual-boot laptop first?** The OS-level runbook — Windows

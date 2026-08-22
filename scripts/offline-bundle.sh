@@ -43,6 +43,8 @@ usage() {
   echo "  --out DIR        output directory (default: current directory)"
   echo "  Not packagable (network services): claude-code claude-plugins proton-*"
   echo "  Not yet packaged: nodejs (NodeSource repo + Bun artifact support pending)"
+  echo "  Not packagable: ollama-models (~50GB of weights; copy the Ollama"
+  echo "                 model store across separately if you need them offline)"
 }
 
 MODE=""

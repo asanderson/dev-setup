@@ -33,10 +33,11 @@ source "${SCRIPT_DIR}/lib/common.sh"
 source "${REPO_ROOT}/config/versions.env"
 
 # Module order matters: claude-code before claude-plugins, docker before
-# elastic/opensearch, jdk before maven, nvidia-dependent modules (ollama) last.
+# elastic/opensearch, jdk before maven, nvidia-dependent modules (ollama,
+# then ollama-models which pulls into it) last.
 MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
          proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
-         elastic opensearch ollama)
+         elastic opensearch ollama ollama-models)
 
 # Target operating systems. The installer configures the machine it runs on;
 # the target names the intent so component support is checked up front.
@@ -79,6 +80,7 @@ declare -A MODULE_SUPPORT=(
   [elastic]="ubuntu debian pureos rocky rhel"
   [opensearch]="ubuntu debian pureos rocky rhel"
   [ollama]="ubuntu debian pureos rocky rhel"
+  [ollama-models]="ubuntu debian pureos rocky rhel"
 )
 
 for m in "${MODULES[@]}"; do

@@ -109,9 +109,100 @@ if compgen -G "${HERE}/artifacts/ansible/*.whl" >/dev/null; then
 fi
 
 # ---- Ollama ----------------------------------------------------------------
-if [[ -f "${HERE}/artifacts/ollama/ollama-linux-amd64.tgz" ]]; then
-  log "Ollama (documented manual install: untar into /usr)"
-  $SUDO tar -C /usr -xzf "${HERE}/artifacts/ollama/ollama-linux-amd64.tgz"
+if compgen -G "${HERE}/artifacts/ollama/ollama-linux-amd64.*" >/dev/null; then
+  log "Ollama (documented manual install: unpack into /usr)"
+  if [[ -f "${HERE}/artifacts/ollama/ollama-linux-amd64.tar.zst" ]]; then
+    command -v zstd >/dev/null 2>&1 \
+      || die "zstd is needed to unpack Ollama but is not installed (it ships in this bundle's debs/)."
+    zstd -dc "${HERE}/artifacts/ollama/ollama-linux-amd64.tar.zst" | $SUDO tar -xf - -C /usr
+  else
+    # Bundles packed before upstream retired the .tgz.
+    $SUDO tar -C /usr -xzf "${HERE}/artifacts/ollama/ollama-linux-amd64.tgz"
+  fi
+
+  # The tarball ships binaries only. Create the service user and unit the
+  # official installer would have, so `ollama serve` runs headless and its
+  # model store is at a deterministic path for the model section below.
+  if [[ -d /run/systemd/system ]]; then
+    id ollama >/dev/null 2>&1 || \
+      $SUDO useradd -r -s /bin/false -U -m -d /usr/share/ollama ollama
+    if [[ ! -f /etc/systemd/system/ollama.service ]]; then
+      $SUDO tee /etc/systemd/system/ollama.service >/dev/null <<'UNITEOF'
+[Unit]
+Description=Ollama Service
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/ollama serve
+User=ollama
+Group=ollama
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+UNITEOF
+    fi
+    $SUDO systemctl daemon-reload 2>/dev/null || true
+    $SUDO systemctl enable --now ollama 2>/dev/null || true
+  else
+    warn "No running systemd — start Ollama manually with: ollama serve"
+  fi
+fi
+
+# ---- Ollama models ---------------------------------------------------------
+# The bundle carries a portable model store (blobs + manifests) built at pack
+# time, including the pinned-context variants — so no daemon is needed here to
+# recreate them, only a copy into whichever store this machine's Ollama reads.
+if [[ -d "${HERE}/models/ollama/models" ]]; then
+  if id ollama >/dev/null 2>&1; then
+    # Service install (the usual case): the daemon runs as the ollama user.
+    OLLAMA_STORE=/usr/share/ollama/.ollama/models
+    OLLAMA_OWNER="ollama:ollama"
+  else
+    # Tarball-only install with no service user — fall back to the per-user
+    # store, which a foreground `ollama serve` reads.
+    OLLAMA_STORE="${HOME}/.ollama/models"
+    OLLAMA_OWNER=""
+    warn "No 'ollama' service user — installing models into ${OLLAMA_STORE} instead."
+    warn "They are visible to 'ollama serve' run as $(id -un), not to a system service."
+  fi
+
+  OLLAMA_PACK_SIZE="$(du -sh "${HERE}/models/ollama/models" 2>/dev/null | cut -f1)"
+  log "Installing bundled Ollama models into ${OLLAMA_STORE} (copying ${OLLAMA_PACK_SIZE:-the packed store})..."
+  $SUDO mkdir -p "${OLLAMA_STORE}"
+  # -a preserves the tree; blobs and manifests merge with anything already there.
+  $SUDO cp -a "${HERE}/models/ollama/models/." "${OLLAMA_STORE}/"
+  [[ -n "$OLLAMA_OWNER" ]] && $SUDO chown -R "$OLLAMA_OWNER" "$(dirname "${OLLAMA_STORE}")"
+
+  # The serving config the pinned context sizes depend on (same values the
+  # ollama-models module writes on a networked install).
+  if [[ -d /etc/systemd/system ]] && systemctl list-unit-files ollama.service >/dev/null 2>&1; then
+    $SUDO mkdir -p /etc/systemd/system/ollama.service.d
+    $SUDO tee /etc/systemd/system/ollama.service.d/10-dev-setup-kv.conf >/dev/null <<'KVEOF'
+# Written by dev-setup (offline bundle).
+# q8_0 KV roughly halves cache memory, which is what makes the pinned
+# context sizes fit. If output quality degrades on a given model, drop
+# OLLAMA_KV_CACHE_TYPE and lower that model's num_ctx instead.
+[Service]
+Environment="OLLAMA_FLASH_ATTENTION=1"
+Environment="OLLAMA_KV_CACHE_TYPE=q8_0"
+Environment="OLLAMA_KEEP_ALIVE=30m"
+Environment="OLLAMA_MAX_LOADED_MODELS=1"
+KVEOF
+    $SUDO systemctl daemon-reload 2>/dev/null || true
+    $SUDO systemctl restart ollama 2>/dev/null || true
+  else
+    warn "No ollama systemd unit — set these yourself before serving:"
+    warn "  OLLAMA_FLASH_ATTENTION=1 OLLAMA_KV_CACHE_TYPE=q8_0"
+  fi
+
+  if [[ -f "${HERE}/models/ollama/PACKED_MODELS" ]]; then
+    log "Models in this bundle:"
+    while read -r m; do [[ -n "$m" ]] && log "  ${m}"; done < "${HERE}/models/ollama/PACKED_MODELS"
+  fi
+  log "Run the pinned -<ctx> variants above rather than the bare tags — they carry"
+  log "the fixed num_ctx. Check 'ollama ps' shows 100% GPU on the first run of each."
 fi
 
 # ---- Container images + compose stacks -------------------------------------

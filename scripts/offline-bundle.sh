@@ -19,7 +19,9 @@
 # this repo nor a network. Unpack in the enclave and run it.
 #
 # Offline-packagable components: git vscode docker podman jdk maven cpp
-# golang rust python cloud elastic opensearch ollama. Excluded by design:
+# golang rust python cloud elastic opensearch ollama ollama-models.
+# ollama-models adds ~50GB — the model weights themselves — so scope the
+# pack with --modules when you don't need them. Excluded by design:
 # claude-code and claude-plugins (the CLI is a network service — it cannot
 # log in or reach the API from an enclave) and the proton-* apps (network
 # services). git is packaged from the Ubuntu archive (no PPA offline).
@@ -32,8 +34,12 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${SCRIPT_DIR}/lib/common.sh"
 # shellcheck source=../config/versions.env
 source "${REPO_ROOT}/config/versions.env"
+# The model pick list lives in the module (single source of truth); the file
+# defines functions only, so sourcing it here has no side effects.
+# shellcheck source=modules/ollama-models.sh
+source "${SCRIPT_DIR}/modules/ollama-models.sh"
 
-OFFLINE_MODULES=(git vscode docker podman jdk maven cpp golang rust python cloud elastic opensearch ollama)
+OFFLINE_MODULES=(git vscode docker podman jdk maven cpp golang rust python cloud elastic opensearch ollama ollama-models)
 
 usage() {
   echo "Usage: $0 --pack [--modules LIST] [--out DIR]"
@@ -43,8 +49,7 @@ usage() {
   echo "  --out DIR        output directory (default: current directory)"
   echo "  Not packagable (network services): claude-code claude-plugins proton-*"
   echo "  Not yet packaged: nodejs (NodeSource repo + Bun artifact support pending)"
-  echo "  Not packagable: ollama-models (~50GB of weights; copy the Ollama"
-  echo "                 model store across separately if you need them offline)"
+  echo "  Size note: ollama-models packs ~50GB of model weights"
 }
 
 MODE=""
@@ -68,6 +73,11 @@ for m in "${SELECTED[@]}"; do
   [[ " ${OFFLINE_MODULES[*]} " == *" $m "* ]] \
     || die "'$m' is not offline-packagable (choose from: ${OFFLINE_MODULES[*]})"
 done
+
+if [[ " ${SELECTED[*]} " == *" ollama-models "* && " ${SELECTED[*]} " != *" ollama "* ]]; then
+  warn "ollama-models needs the Ollama runtime in the enclave — adding 'ollama' to the pack."
+  SELECTED+=(ollama)
+fi
 
 command_exists docker || die "Packing needs Docker (fresh-container apt resolution + image saves)."
 command_exists jq || die "Packing needs jq (SBOM parsing)."
@@ -247,8 +257,61 @@ fi
 
 if sel ollama; then
   art ollama
+  # Upstream retired the .tgz: install.sh now fetches .tar.zst and only falls
+  # back to .tgz for old versions, so the .tgz URL 404s and any pack including
+  # ollama failed here. zstd is already in the bundle's base apt closure.
   log "Ollama standalone bundle (latest; the documented manual-install artifact)"
-  fetch "https://ollama.com/download/ollama-linux-amd64.tgz" -o "${WORK}/artifacts/ollama/ollama-linux-amd64.tgz"
+  fetch "https://ollama.com/download/ollama-linux-amd64.tar.zst" \
+    -o "${WORK}/artifacts/ollama/ollama-linux-amd64.tar.zst"
+fi
+
+# ---- Ollama models ---------------------------------------------------------
+# Pulled inside the official Ollama container with its model store bind-mounted
+# into the bundle, so the pack host needs no Ollama install and the result is a
+# portable blobs+manifests tree. The pinned-context variants are created here
+# too, so the enclave gets them without needing a running daemon at install
+# time. Mirrors the module's picks exactly (same _ollama_model_picks).
+if sel ollama-models; then
+  section "Ollama models (~50GB — weights + pinned-context variants)"
+  mkdir -p "${WORK}/models/ollama"
+  log "Starting a throwaway ollama server to pull into the bundle..."
+  OLLAMA_CID="$(docker run -d --network host \
+    -v "${WORK}/models/ollama:/root/.ollama" \
+    ${https_proxy:+-e https_proxy -e no_proxy} \
+    ollama/ollama)"
+  # shellcheck disable=SC2064
+  trap "docker rm -f ${OLLAMA_CID} >/dev/null 2>&1 || true; rm -rf '${KEYS_DIR}'" EXIT
+  ollama_up=0
+  for _ in $(seq 1 60); do
+    if docker exec "$OLLAMA_CID" ollama list >/dev/null 2>&1; then ollama_up=1; break; fi
+    sleep 1
+  done
+  [[ "$ollama_up" == 1 ]] || die "The packing ollama server did not start (docker logs ${OLLAMA_CID})."
+
+  while IFS='|' read -r mtag mvariant mctx mgb mdesc; do
+    [[ -n "$mtag" ]] || continue
+    log "${mtag} (~${mgb}GB) — ${mdesc}"
+    docker exec "$OLLAMA_CID" ollama pull "$mtag" \
+      || die "Failed to pull ${mtag} while packing."
+    docker exec "$OLLAMA_CID" sh -c \
+      "printf 'FROM %s\nPARAMETER num_ctx %s\nPARAMETER num_gpu 999\n' '${mtag}' '${mctx}' >/tmp/mf && ollama create '${mvariant}' -f /tmp/mf" \
+      >/dev/null || die "Failed to create the pinned variant ${mvariant} while packing."
+    log "  packed ${mvariant} (num_ctx ${mctx})"
+  done < <(_ollama_model_picks)
+
+  # The manifests record what the enclave installer should find afterwards.
+  docker exec "$OLLAMA_CID" ollama list | tail -n +2 | awk '{print $1}' \
+    > "${WORK}/models/ollama/PACKED_MODELS" || true
+  docker exec "$OLLAMA_CID" sh -c 'chmod -R a+rX /root/.ollama' || true
+  docker rm -f "$OLLAMA_CID" >/dev/null 2>&1 || true
+  # Ollama generates a registry keypair on first run. It is a throwaway for
+  # this container, but a private key has no business in a distributable
+  # archive — and the enclave generates its own on first start.
+  rm -f "${WORK}/models/ollama/id_ed25519" "${WORK}/models/ollama/id_ed25519.pub"
+  rm -rf "${WORK}/models/ollama/cache"
+  # shellcheck disable=SC2064
+  trap "rm -rf '${KEYS_DIR}'" EXIT
+  ok "Packed model store: $(du -sh "${WORK}/models/ollama" | cut -f1)"
 fi
 
 # ---- container images ------------------------------------------------------

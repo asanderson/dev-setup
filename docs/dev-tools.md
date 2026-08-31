@@ -62,10 +62,14 @@ Offline-packagable: git (archive, no PPA), vscode + extensions (.vsix),
 docker, podman, jdk, maven, cpp (+ LLVM), golang, rust (standalone
 installer), python, cloud (k3s air-gap procedure with preloaded images,
 Helm, k9s, Ansible wheels, AWS CLI), elastic + opensearch (saved container
-images + compose configs), ollama. **Not packagable** — network services
-that cannot function in an enclave: claude-code (+ plugins) and the
-proton-* apps; and ollama-models, whose ~50GB of weights are better moved
-by copying the Ollama model store across directly.
+images + compose configs), ollama, and ollama-models — the model weights
+themselves, pulled at pack time inside the official Ollama container and
+shipped as a portable blobs+manifests store, **with the pinned-context
+variants already built** so the enclave needs no daemon to recreate them.
+That adds ~50GB, so scope the pack with `--modules` when you don't need
+them; selecting it automatically pulls in `ollama` for the runtime.
+**Not packagable** — network services that cannot function in an enclave:
+claude-code (+ plugins) and the proton-* apps.
 
 ## Container image
 

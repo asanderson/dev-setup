@@ -96,6 +96,8 @@ scripts/
   modules/*.sh           One idempotent installer + uninstaller per tool
 config/
   versions.env           Pinned versions for artifact-based installs
+                           (checked nightly against upstream by
+                           scripts/upstream-versions.py, which opens a PR)
   elastic/               Docker Compose for Elasticsearch + Kibana (Basic license)
   opensearch/            Docker Compose for OpenSearch + Dashboards (Apache-2.0)
 sbom.cdx.json            CycloneDX SBOM of everything the installer delivers
@@ -128,5 +130,17 @@ them locally with Docker: `./test/container-test.sh --rerun`,
 - Artifact-based installs (Maven, Elastic, OpenSearch) are **pinned** in
   `config/versions.env`; apt/rustup/go-based installs track their official
   channels. Bump the pins deliberately and re-run the module.
+- **Nightly version checks**: `scripts/upstream-versions.py` resolves the
+  newest upstream release for every pin (from the source each module
+  installs from), and the `upstream-versions` workflow runs it each night,
+  applying the bumps together with the matching `sbom.cdx.json`/`SBOM.md`
+  changes in a single `auto/upstream-versions` pull request (report-only
+  pins such as `JDK_MAJOR` go to the PR body or a tracking issue). GitHub
+  Actions versions are kept current by Dependabot on the same cadence
+  (`.github/dependabot.yml`). Run `python3 scripts/upstream-versions.py`
+  locally for a report, `--apply` to bump. For CI to run on the bot's PRs,
+  add a fine-grained PAT (contents, pull requests, issues: write) as the
+  `UPSTREAM_BUMP_TOKEN` repository secret — the default `GITHUB_TOKEN`
+  can open the PR but cannot trigger workflows on it.
 - Everything third-party comes from **official sources only**: vendor apt
   repos with GPG keyrings, checksummed tarballs, or vendor install scripts.

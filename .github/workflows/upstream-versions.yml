@@ -1,0 +1,99 @@
+name: upstream-versions
+
+# Nightly: resolve the newest upstream release for every pin in
+# config/versions.env (Maven, Elastic, OpenSearch, LLVM, k9s, nvm, the
+# Proton VPN repo package), apply the bumps together with the matching
+# sbom.cdx.json / SBOM.md updates, and open (or refresh) one pull request
+# with the result. Report-only pins (JDK_MAJOR) land in the PR body, or in
+# a tracking issue when nothing else changed. Dependencies that live in
+# ecosystem manifests (GitHub Actions here) are handled by Dependabot
+# (.github/dependabot.yml) on the same nightly cadence.
+#
+# Token: the default GITHUB_TOKEN can push the branch and open the PR, but
+# pull requests it creates do not trigger the container-test workflow. Add
+# a fine-grained PAT (contents + pull-requests + issues: write) as the
+# UPSTREAM_BUMP_TOKEN secret so CI runs on the bump PR automatically.
+
+on:
+  schedule:
+    - cron: "23 6 * * *"   # 06:23 UTC every night
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: upstream-versions
+  cancel-in-progress: false
+
+env:
+  BRANCH: auto/upstream-versions
+  PR_TITLE: "Bump pinned upstream versions"
+  ISSUE_TITLE: "Upstream versions needing a manual bump"
+
+jobs:
+  check:
+    name: resolve upstream versions + open PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve latest upstream versions and apply the bumps
+        id: resolve
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # authenticated GitHub API rate limit
+        run: |
+          python3 scripts/upstream-versions.py --apply --summary /tmp/summary.md --github-output
+          cat /tmp/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run the same lint checks CI would
+        if: steps.resolve.outputs.changed == 'true'
+        run: |
+          python3 scripts/sbom-md.py --check
+          python3 scripts/upstream-versions.py --selftest
+
+      - name: Open or refresh the bump pull request
+        if: steps.resolve.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.UPSTREAM_BUMP_TOKEN || secrets.GITHUB_TOKEN }}
+          BASE: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git commit -am "$PR_TITLE"
+          # Skip the push when the open PR already carries exactly this content.
+          if git fetch -q origin "$BRANCH" 2>/dev/null \
+             && [ "$(git rev-parse "origin/$BRANCH^{tree}")" = "$(git rev-parse 'HEAD^{tree}')" ]; then
+            echo "PR branch already up to date."
+          else
+            git push --force origin "$BRANCH"
+          fi
+          gh label create dependencies --description "Dependency and version-pin updates" --color 0366d6 --force >/dev/null
+          existing="$(gh pr list --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number')"
+          if [ -n "$existing" ]; then
+            gh pr edit "$existing" --title "$PR_TITLE" --body-file /tmp/summary.md
+            echo "Refreshed PR #$existing"
+          else
+            gh pr create --head "$BRANCH" --base "$BASE" --title "$PR_TITLE" --body-file /tmp/summary.md --label dependencies
+          fi
+
+      - name: Track report-only drift in an issue when there is no PR to carry it
+        if: steps.resolve.outputs.changed == 'false' && steps.resolve.outputs.manual == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.UPSTREAM_BUMP_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh label create dependencies --description "Dependency and version-pin updates" --color 0366d6 --force >/dev/null
+          existing="$(gh issue list --search "\"$ISSUE_TITLE\" in:title" --state open --json number,title \
+                      --jq ".[] | select(.title == \"$ISSUE_TITLE\") | .number" | head -1)"
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --body-file /tmp/summary.md
+            echo "Refreshed issue #$existing"
+          else
+            gh issue create --title "$ISSUE_TITLE" --body-file /tmp/summary.md --label dependencies
+          fi

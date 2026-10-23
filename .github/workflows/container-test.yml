@@ -21,6 +21,8 @@ jobs:
         run: shellcheck -x -S warning scripts/setup.sh scripts/offline-bundle.sh scripts/build.sh scripts/run.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
       - name: SBOM.md is in sync with sbom.cdx.json
         run: python3 scripts/sbom-md.py --check
+      - name: Upstream version resolver parses its sources (offline self-test)
+        run: python3 scripts/upstream-versions.py --selftest
 
   uninstall:
     name: install + uninstall round trip

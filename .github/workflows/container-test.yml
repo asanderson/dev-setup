@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install shellcheck
         # ubuntu-latest runners ship shellcheck preinstalled; the apt path is
         # only a fallback (it has hung on runner mirror flakiness).
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install a scoped set, then uninstall it and verify removal
         # git+python+maven+jdk+golang install unattended, probe green, then
         # uninstall.sh --modules removes them; asserts each tool is gone
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Pack a scoped bundle (git, python, maven, jdk)
         # Full packs include GB-scale images/toolchains; a scoped pack
         # exercises every mechanism (fresh-container apt closure, pinned
@@ -65,7 +65,7 @@ jobs:
       matrix:
         os: [ubuntu, debian, pureos, rocky, rhel]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install the engine modules in a fresh ${{ matrix.os }} container
         # Per the support matrix: docker everywhere Docker has an official
         # repo path (ubuntu, debian, rocky via Docker's centos repo, rhel);
@@ -85,7 +85,7 @@ jobs:
       matrix:
         os: [ubuntu, rocky]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build a scoped image (git, python)
         # A full image installs every module (GB-scale); git+python
         # exercises the whole mechanism — selection flags, generated
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run installer end-to-end in a fresh container
         # First asserts the target-OS contract (--os bogus exits 2; an
         # unsupported component (proton-vpn) on --os rocky warns and is skipped
@@ -142,7 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run GPU-path test in a fresh container
         # An nvidia-smi stub simulates the MSI Raider 18's RTX 5090 so the
         # branches the GPU-less fresh-install job can never reach get

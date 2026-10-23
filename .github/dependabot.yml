@@ -1,0 +1,17 @@
+# Nightly dependency checks for everything that lives in an ecosystem
+# manifest. The pins in config/versions.env (tarballs, container image tags,
+# vendor .debs) are outside Dependabot's reach; the upstream-versions
+# workflow covers those on the same cadence.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: cron
+      cronjob: "23 6 * * *"   # nightly, 06:23 UTC
+    labels: [dependencies]
+    commit-message:
+      prefix: "ci"
+    groups:
+      github-actions:
+        patterns: ["*"]

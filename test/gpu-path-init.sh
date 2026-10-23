@@ -40,6 +40,21 @@ if [[ -f /ccr-ca.crt ]]; then
   update-ca-certificates >/dev/null
 fi
 
+if [[ ! -d /run/systemd/system ]]; then
+  # No running systemd in a container, and the docker module's service steps
+  # (enable --now, the restart after nvidia-ctk) must not decide the test:
+  # Ubuntu's systemctl used to no-op here but newer builds refuse outright,
+  # which aborted the module before the toolkit branch. Same no-op stub as
+  # test/engines-init.sh; phase 2 starts dockerd by hand regardless.
+  cat >/usr/local/bin/systemctl <<'EOF'
+#!/bin/sh
+echo "systemctl stub (container test): ignoring: $*"
+exit 0
+EOF
+  chmod +x /usr/local/bin/systemctl
+  echo "### [init] installed a no-op systemctl stub (no running systemd here)"
+fi
+
 echo "### [init] create test user 'dev' with passwordless sudo"
 useradd -m -s /bin/bash dev
 echo 'dev ALL=(ALL) NOPASSWD:ALL' >/etc/sudoers.d/dev
@@ -75,7 +90,8 @@ set +e; p1="$(run_setup docker 2>&1)"; rc=$?; set -e
 grep -q "GPU:.*RTX 5090" <<<"$p1" || fail "setup.sh did not print the GPU banner"
 grep -q "NVIDIA driver not active" <<<"$p1" && fail "GPU-absent warning fired despite GPU present"
 grep -q "skipping NVIDIA Container Toolkit" <<<"$p1" && fail "toolkit branch was skipped despite GPU present"
-grep -q "NVIDIA driver detected — install NVIDIA Container Toolkit" <<<"$p1" || fail "toolkit prompt did not fire"
+grep -q "NVIDIA driver detected — install NVIDIA Container Toolkit" <<<"$p1" \
+  || { echo "$p1" | tail -40; fail "toolkit prompt did not fire (module exit ${rc}; output tail above)"; }
 dpkg -s nvidia-container-toolkit >/dev/null 2>&1 || { echo "$p1" | tail -25; fail "nvidia-container-toolkit package not installed"; }
 grep -q '"nvidia"' /etc/docker/daemon.json 2>/dev/null || fail "nvidia-ctk did not configure the nvidia runtime in daemon.json"
 if [[ $rc -ne 0 ]]; then

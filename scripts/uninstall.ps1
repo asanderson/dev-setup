@@ -89,3 +89,6 @@ foreach ($name in $selected) {
 }
 if ($failed.Count -gt 0) { exit 1 }
 Write-Log 'Done. Open a new terminal so removed PATH entries disappear.'
+# Explicit: a script that just ends hands its caller the last native
+# command's exit code (e.g. winget's "no upgrade available").
+exit 0

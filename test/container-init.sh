@@ -115,6 +115,19 @@ out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
 [[ $rc -ne 0 ]] && grep -q "installs VMware Workstation Pro 26H1 or newer" <<<"$out" \
   && ! grep -q SHOULD-NOT-RUN <<<"$out" \
   || { echo "FAIL: vmware-workstation must refuse a 17.x bundle without running it (rc=${rc})"; exit 1; }
+# A 26H1 bundle runs only with its portal SHA-256: missing -> refused,
+# wrong -> refused, never executed either way.
+sudo -u dev -H bash -c 'printf "#!/bin/sh\necho SHOULD-NOT-RUN\n" >/tmp/VMware-Workstation-Full-26H1-25388281.x86_64.bundle'
+for sha in "" 0000000000000000000000000000000000000000000000000000000000000000; do
+  rc=0
+  out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+    DEV_SETUP_VMWARE_BUNDLE=/tmp/VMware-Workstation-Full-26H1-25388281.x86_64.bundle \
+    DEV_SETUP_VMWARE_BUNDLE_SHA256="$sha" \
+    bash -c 'cd ~/dev-setup && ./scripts/setup.sh --vmware-workstation' 2>&1)" || rc=$?
+  want="SHA-256 mismatch"; [[ -z "$sha" ]] && want="DEV_SETUP_VMWARE_BUNDLE_SHA256 is required"
+  [[ $rc -ne 0 ]] && grep -q "$want" <<<"$out" && ! grep -q SHOULD-NOT-RUN <<<"$out" \
+    || { echo "FAIL: vmware-workstation must refuse a bundle with ${sha:-no} SHA-256 without running it (rc=${rc})"; exit 1; }
+done
 rc=0
 out="$(sudo -u dev -H bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os windows' 2>&1)" || rc=$?
 [[ $rc -ne 0 ]] && grep -q "setup.ps1" <<<"$out" \
@@ -128,7 +141,7 @@ out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
 # publishes a resolute suite.
 [[ $rc -ne 0 ]] && grep -q "Amazon publishes no WorkSpaces client for" <<<"$out" \
   || { echo "FAIL: amazon-workspaces must refuse cleanly on a release without an Amazon suite (rc=${rc})"; exit 1; }
-echo "  PASS: nvidia-driver no-GPU skip, vmware bundle guidance + pre-26H1 refusal, windows -> setup.ps1, workspaces no-suite refusal"
+echo "  PASS: nvidia-driver no-GPU skip, vmware bundle guidance + pre-26H1 refusal + required SHA-256, windows -> setup.ps1, workspaces no-suite refusal"
 
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
 set +e; run_setup; rc=$?; set -e

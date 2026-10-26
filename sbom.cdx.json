@@ -2523,11 +2523,11 @@
       "properties": [
         {
           "name": "resolution",
-          "value": "user-supplied installer (Broadcom support-portal download): 17.x as requested, or a successor bundle"
+          "value": "user-supplied installer (Broadcom support-portal download), release 26H1 or newer (VMWARE_WORKSTATION_MIN_RELEASE)"
         },
         {
           "name": "note",
-          "value": "Linux .bundle run with --console --eulas-agreed --required, then vmware-modconfig builds vmmon/vmnet; Windows .exe run silently (EULAS_AGREED=1). 17.6.4 is the final 17.x (end of service Nov 2025)"
+          "value": "Linux .bundle run with --console --eulas-agreed --required (explicit DEV_SETUP_VMWARE_BUNDLE path, optional SHA-256 check), then vmware-modconfig builds vmmon/vmnet; Windows .exe (explicit DEV_SETUP_VMWARE_INSTALLER, Authenticode-checked) run silently (EULAS_AGREED=1). Older releases (17.x, 25H2) are refused"
         }
       ],
       "bom-ref": "VMware Workstation Pro"

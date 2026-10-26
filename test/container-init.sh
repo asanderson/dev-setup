@@ -106,6 +106,15 @@ out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
 [[ $rc -ne 0 ]] || { echo "FAIL: vmware-workstation must fail without a downloaded bundle"; exit 1; }
 grep -q "Broadcom requires a (free) support-portal login" <<<"$out" \
   || { echo "FAIL: missing the download-the-bundle guidance"; exit 1; }
+# A pre-26H1 bundle (17.x) is refused before anything runs it.
+sudo -u dev -H bash -c 'printf "#!/bin/sh\necho SHOULD-NOT-RUN\n" >/tmp/VMware-Workstation-Full-17.6.4-24832109.x86_64.bundle'
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  DEV_SETUP_VMWARE_BUNDLE=/tmp/VMware-Workstation-Full-17.6.4-24832109.x86_64.bundle \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --vmware-workstation' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] && grep -q "installs VMware Workstation Pro 26H1 or newer" <<<"$out" \
+  && ! grep -q SHOULD-NOT-RUN <<<"$out" \
+  || { echo "FAIL: vmware-workstation must refuse a 17.x bundle without running it (rc=${rc})"; exit 1; }
 rc=0
 out="$(sudo -u dev -H bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os windows' 2>&1)" || rc=$?
 [[ $rc -ne 0 ]] && grep -q "setup.ps1" <<<"$out" \
@@ -119,7 +128,7 @@ out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
 # publishes a resolute suite.
 [[ $rc -ne 0 ]] && grep -q "Amazon publishes no WorkSpaces client for" <<<"$out" \
   || { echo "FAIL: amazon-workspaces must refuse cleanly on a release without an Amazon suite (rc=${rc})"; exit 1; }
-echo "  PASS: nvidia-driver no-GPU skip, vmware bundle guidance, windows -> setup.ps1, workspaces no-suite refusal"
+echo "  PASS: nvidia-driver no-GPU skip, vmware bundle guidance + pre-26H1 refusal, windows -> setup.ps1, workspaces no-suite refusal"
 
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
 set +e; run_setup; rc=$?; set -e

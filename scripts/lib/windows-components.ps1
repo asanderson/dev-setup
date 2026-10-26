@@ -149,7 +149,7 @@ $script:Components = [ordered]@{
     Winget   = 'TheDocumentFoundation.LibreOffice'
   }
   'vmware-workstation' = @{
-    Describe  = 'VMware Workstation 17 Pro (Broadcom installer you download; unattended install)'
+    Describe  = "VMware Workstation Pro $($script:Pins['VMWARE_WORKSTATION_MIN_RELEASE'])+ (Broadcom installer you download; unattended install)"
     Install   = { Install-VMwareWorkstation }
     Uninstall = {
       $apps = Get-InstalledApp 'VMware Workstation*'
@@ -201,17 +201,28 @@ $script:WindowsUnsupported = [ordered]@{
   'vllm'          = 'vLLM runs only on Linux — use WSL2 Ubuntu with scripts/setup.sh.'
 }
 
+# YYHn[uN] releases (26H1, 26H1u1, 26H2): is Release at least Minimum?
+# Pre-2025 version numbers (17.6.4) do not match the scheme and fail.
+function Test-VMwareRelease {
+  param([string]$Release, [string]$Minimum)
+  if ("$Release" -notmatch '^(\d{2})H([12])') { return $false }
+  $have = [int]$Matches[1] * 10 + [int]$Matches[2]
+  if ("$Minimum" -notmatch '^(\d{2})H([12])') { return $false }
+  return ($have -ge ([int]$Matches[1] * 10 + [int]$Matches[2]))
+}
+
 # VMware Workstation: Broadcom serves the installer only behind a (free)
 # support-portal login, so it cannot be fetched — use the one you saved.
 # It runs elevated, so it is never picked up on its own (a file dropped
 # into Downloads must not become admin code): the path must be given, and
 # the installer must carry a valid VMware/Broadcom Authenticode signature.
 function Install-VMwareWorkstation {
+  $min = $script:Pins['VMWARE_WORKSTATION_MIN_RELEASE']
   $exe = $env:DEV_SETUP_VMWARE_INSTALLER
   if (-not $exe -or -not (Test-Path -LiteralPath $exe)) {
     throw ('No VMware Workstation Pro installer given (DEV_SETUP_VMWARE_INSTALLER). Broadcom requires a (free) ' +
       'support-portal login: sign in at https://support.broadcom.com, open My Downloads > VMware Workstation Pro > ' +
-      '17.x for Windows, download the .exe, then set DEV_SETUP_VMWARE_INSTALLER to its path and re-run with --vmware-workstation.')
+      "$min for Windows (latest update), download the .exe, then set DEV_SETUP_VMWARE_INSTALLER to its path and re-run with --vmware-workstation.")
   }
   $sig = Get-AuthenticodeSignature -FilePath $exe
   if ($sig.Status -ne 'Valid' -or -not $sig.SignerCertificate -or
@@ -219,11 +230,12 @@ function Install-VMwareWorkstation {
     throw "$exe is not a validly signed VMware/Broadcom installer (signature: $($sig.Status)) — not running it."
   }
   Write-Ok "Installer signature valid: $($sig.SignerCertificate.Subject)"
-  $name = [IO.Path]::GetFileNameWithoutExtension($exe)   # VMware-Workstation-Full-17.6.4-24832109
+  $name = [IO.Path]::GetFileNameWithoutExtension($exe)   # VMware-Workstation-Full-26H1-25388281
   $version = ($name -split '-')[3]
   $build = ($name -split '-')[4]
-  if ($version -like '17.*') {
-    Write-Warn 'Workstation 17.x reached end of service in Nov 2025 and receives no more security fixes (VMSA-2026-0007 is fixed only in 26H1u1+).'
+  if (-not (Test-VMwareRelease -Release $version -Minimum $min)) {
+    throw ("This installs VMware Workstation Pro $min or newer; the installer is '$version' (17.x is end of service and " +
+      "lacks the VMSA-2026-0007 fix). Download $min (latest update) from Broadcom's portal.")
   }
   $installed = @(Get-InstalledApp 'VMware Workstation*' | Where-Object { $_.PSObject.Properties['DisplayVersion'] })
   if ($installed | Where-Object { $_.DisplayVersion -eq $version -or ($build -and $_.DisplayVersion -like "*$build*") }) {

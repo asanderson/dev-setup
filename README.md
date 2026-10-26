@@ -20,8 +20,8 @@ variant tuned for a 24GB GPU). The local-LLM and GPU stack adds the
 **NVIDIA GPU driver**, the **CUDA Toolkit**, **llama.cpp**, **ik_llama.cpp**,
 **KoboldCpp**, **KTransformers**, **vLLM** and **Strata**; the agent CLIs
 **Codex**, **OpenCode**, **Oh My Pi**, **Hermes Agent** and **OpenClaw**;
-and the desktop set **7-Zip**, **LibreOffice**, **VMware Workstation 17
-Pro** (from your Broadcom download) and the **Amazon WorkSpaces** client.
+and the desktop set **7-Zip**, **LibreOffice**, **VMware Workstation Pro
+26H1** (from your Broadcom download) and the **Amazon WorkSpaces** client.
 See [docs/dev-tools.md](docs/dev-tools.md) for the full module table.
 
 **On Windows**, `scripts\setup.ps1` is a native, winget-based installer

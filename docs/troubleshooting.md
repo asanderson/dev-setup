@@ -64,10 +64,12 @@ rebinds GPU support, then `sudo systemctl restart ollama`.
 - `vmware-modconfig` failing to build **vmmon/vmnet** right after a kernel
   update: re-run `./scripts/setup.sh --vmware-workstation` — it installs
   the headers for the running kernel and rebuilds the modules.
-- Workstation **17.x predates the Ubuntu 26.04 kernel**; its modules may
-  not compile there at all. 26H1 is the first release that supports
-  Ubuntu 26.04 hosts — download it from Broadcom's portal and point the
-  module at that bundle (`DEV_SETUP_VMWARE_BUNDLE=...`).
+- Modules still failing on a **brand-new kernel**: 26H1 is the first
+  Workstation release that supports Ubuntu 26.04 hosts, and its later
+  updates track newer kernels — download the latest 26H1 update from
+  Broadcom's portal and point the module at it (`DEV_SETUP_VMWARE_BUNDLE=...`).
+  (The module refuses releases older than 26H1, such as 17.x, which predate
+  the 26.04 kernel and are out of support.)
 - **Secure Boot**: unsigned vmmon/vmnet refuse to load ("Could not open
   /dev/vmmon"). Sign them with a MOK you enroll (Broadcom KB 2146460):
   `sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 MOK.priv MOK.der $(modinfo -n vmmon)`

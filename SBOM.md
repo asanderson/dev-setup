@@ -142,7 +142,7 @@ Every component, sorted — each links to its entry (details and dependencies) i
 | [vadimcn.vscode-lldb](#vadimcnvscode-lldb) | library | newest version compatible with the installed VS Code | CodeLLDB |
 | [valgrind](#valgrind) | library | latest, resolved at install time | Ubuntu archive |
 | [vLLM](#vllm) | application | latest from PyPI at install time | vLLM project (github.com/vllm-project/vllm) |
-| [VMware Workstation Pro](#vmware-workstation-pro) | application | user-supplied installer (Broadcom support-portal download): 17.x as requested, or a successor bundle | Broadcom |
+| [VMware Workstation Pro](#vmware-workstation-pro) | application | user-supplied installer (Broadcom support-portal download), release 26H1 or newer (VMWARE_WORKSTATION_MIN_RELEASE) | Broadcom |
 | [vscjava.vscode-java-pack](#vscjavavscode-java-pack) | library | newest version compatible with the installed VS Code | Microsoft |
 | [WinSCP](#winscp) | application | latest via winget (WinSCP.WinSCP) | Martin Přikryl (winscp.net) |
 | [workspacesclient](#workspacesclient) | application | latest in Amazon's apt repo at install time | Amazon Web Services |
@@ -1344,8 +1344,8 @@ Every component, sorted — each links to its entry (details and dependencies) i
 - **Type:** application
 - **Supplier:** Broadcom
 - **License:** Broadcom VMware General Terms
-- **Resolution:** user-supplied installer (Broadcom support-portal download): 17.x as requested, or a successor bundle
-- **Note:** Linux .bundle run with --console --eulas-agreed --required, then vmware-modconfig builds vmmon/vmnet; Windows .exe run silently (EULAS_AGREED=1). 17.6.4 is the final 17.x (end of service Nov 2025)
+- **Resolution:** user-supplied installer (Broadcom support-portal download), release 26H1 or newer (VMWARE_WORKSTATION_MIN_RELEASE)
+- **Note:** Linux .bundle run with --console --eulas-agreed --required (explicit DEV_SETUP_VMWARE_BUNDLE path, optional SHA-256 check), then vmware-modconfig builds vmmon/vmnet; Windows .exe (explicit DEV_SETUP_VMWARE_INSTALLER, Authenticode-checked) run silently (EULAS_AGREED=1). Older releases (17.x, 25H2) are refused
 - **Depends on / installs with it:** [build-essential](#build-essential), [linux-headers (running kernel)](#linux-headers-running-kernel)
 
 ### vscjava.vscode-java-pack

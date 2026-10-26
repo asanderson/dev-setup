@@ -26,9 +26,12 @@ source "${REPO_ROOT}/config/versions.env"
 
 # Same canonical order as setup.sh (kept in sync — the guard below catches
 # drift); uninstalls run in REVERSE of it.
-MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
+MODULES=(nvidia-driver cuda-toolkit
+         git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
+         codex opencode oh-my-pi hermes-agent openclaw strata
+         7zip libreoffice vmware-workstation amazon-workspaces
          proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
-         elastic opensearch ollama ollama-models)
+         elastic opensearch ollama ollama-models llama-cpp ik-llama-cpp koboldcpp ktransformers vllm)
 
 for m in "${MODULES[@]}"; do
   # shellcheck disable=SC1090

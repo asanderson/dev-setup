@@ -18,7 +18,18 @@ jobs:
         # only a fallback (it has hung on runner mirror flakiness).
         run: command -v shellcheck || (sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck)
       - name: Lint all shell scripts
-        run: shellcheck -x -S warning scripts/setup.sh scripts/offline-bundle.sh scripts/build.sh scripts/run.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
+        run: shellcheck -x -S warning scripts/setup.sh scripts/uninstall.sh scripts/offline-bundle.sh scripts/build.sh scripts/run.sh scripts/lib/*.sh scripts/modules/*.sh test/*.sh
+      - name: PowerShell installer parses (Windows installer; pwsh ships on the runner)
+        shell: pwsh
+        run: |
+          $bad = 0
+          foreach ($f in @(Get-ChildItem scripts/*.ps1, scripts/lib/*.ps1)) {
+            $errs = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$null, [ref]$errs)
+            foreach ($e in $errs) { Write-Host "$($f.Name):$($e.Extent.StartLineNumber): $($e.Message)"; $bad++ }
+          }
+          if ($bad) { exit 1 }
+          ./scripts/setup.ps1 -List
       - name: SBOM.md is in sync with sbom.cdx.json
         run: python3 scripts/sbom-md.py --check
       - name: Upstream version resolver parses its sources (offline self-test)
@@ -117,16 +128,21 @@ jobs:
   fresh-install:
     name: fresh Ubuntu 26.04 install (unattended, twice)
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - name: Run installer end-to-end in a fresh container
         # First asserts the target-OS contract (--os bogus exits 2; an
         # unsupported component (proton-vpn) on --os rocky warns and is skipped
         # unattended; the target/machine mismatch guard fires before
-        # anything installs). Then the default module set (git claude-code
-        # claude-plugins vscode docker podman
-        # jdk maven cpp golang rust python cloud + six proton-* modules;
+        # anything installs; runtime-dependent modules (openclaw, vllm)
+        # refuse without nodejs/python; nvidia-driver skips cleanly with no
+        # GPU; vmware-workstation refuses without a Broadcom download;
+        # --os windows points at setup.ps1). Then the default module set
+        # (git nodejs claude-code claude-plugins vscode docker podman
+        # jdk maven cpp golang rust python cloud, the agent CLIs, 7zip,
+        # libreoffice, amazon-workspaces, llama-cpp (CPU build), koboldcpp
+        # + six proton-* modules;
         # proton-vpn is excluded because its daemon's postinst needs
         # systemd, absent in containers), scoped via
         # setup.sh --modules (which doubles as the CI test
@@ -153,3 +169,51 @@ jobs:
         # Validates branching and toolkit machinery — not CUDA execution,
         # which still needs real hardware.
         run: ./test/container-test.sh --gpu-path
+
+  windows:
+    name: native Windows installer (winget, unattended, twice + uninstall)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - name: Ensure winget (App Installer) is present
+        shell: pwsh
+        run: |
+          if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+            Install-Module -Name Microsoft.WinGet.Client -Force -Scope CurrentUser -Repository PSGallery
+            Repair-WinGetPackageManager -AllUsers -Latest
+          }
+          winget --version
+      - name: Selection contract (unknown component exits 2; Linux-only warns + skips)
+        shell: pwsh
+        run: |
+          ./scripts/setup.ps1 --bogus
+          if ($LASTEXITCODE -ne 2) { throw "--bogus must exit 2 (got $LASTEXITCODE)" }
+          $out = ./scripts/setup.ps1 -AssumeYes --vllm *>&1 | Out-String
+          if ($out -notmatch 'vllm: not supported on windows') { throw "missing the Linux-only warning: $out" }
+          exit 0   # the runner's pwsh wrapper would otherwise exit with --bogus's expected 2
+      - name: Install a scoped set unattended, twice (idempotency), and verify
+        # Small winget packages that exercise the install path, the
+        # already-installed/no-upgrade exit codes on the second pass, and
+        # the summary.
+        shell: pwsh
+        run: |
+          ./scripts/setup.ps1 -AssumeYes --7zip --notepad-plus-plus --winscp
+          if ($LASTEXITCODE -ne 0) { throw "first pass failed ($LASTEXITCODE)" }
+          ./scripts/setup.ps1 -AssumeYes -Modules 7zip,notepad-plus-plus,winscp
+          if ($LASTEXITCODE -ne 0) { throw "second pass failed ($LASTEXITCODE)" }
+          foreach ($id in '7zip.7zip', 'Notepad++.Notepad++', 'WinSCP.WinSCP') {
+            winget list --id $id --exact --accept-source-agreements | Out-Host
+            if ($LASTEXITCODE -ne 0) { throw "$id not installed" }
+          }
+          exit 0
+      - name: Uninstall the same set and verify removal
+        shell: pwsh
+        run: |
+          ./scripts/uninstall.ps1 -AssumeYes --7zip --notepad-plus-plus --winscp
+          if ($LASTEXITCODE -ne 0) { throw "uninstall failed ($LASTEXITCODE)" }
+          foreach ($id in '7zip.7zip', 'Notepad++.Notepad++', 'WinSCP.WinSCP') {
+            winget list --id $id --exact --accept-source-agreements | Out-Null
+            if ($LASTEXITCODE -eq 0) { throw "$id still installed" }
+          }
+          exit 0   # the last winget list is expected to fail (nothing found)

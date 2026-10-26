@@ -48,7 +48,10 @@ usage() {
   echo "                   ${OFFLINE_MODULES[*]})"
   echo "  --out DIR        output directory (default: current directory)"
   echo "  Not packagable (network services): claude-code claude-plugins proton-*"
-  echo "  Not yet packaged: nodejs (NodeSource repo + Bun artifact support pending)"
+  echo "    codex opencode oh-my-pi hermes-agent openclaw amazon-workspaces"
+  echo "  Not yet packaged: nodejs (NodeSource repo + Bun artifact support pending),"
+  echo "    nvidia-driver cuda-toolkit 7zip libreoffice vmware-workstation strata"
+  echo "    llama-cpp ik-llama-cpp koboldcpp ktransformers vllm"
   echo "  Size note: ollama-models packs ~50GB of model weights"
 }
 

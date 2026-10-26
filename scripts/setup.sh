@@ -18,8 +18,10 @@
 # pre-scope the menu); non-interactive runs install exactly the selected
 # components — or everything when no selection flags are given.
 #
-# NVIDIA driver and kernel setup are separate, reboot-heavy steps that live
-# in the dual-boot repo: https://github.com/asanderson/dual-boot
+# The nvidia-driver module installs the GPU driver per distro (reboot
+# afterwards); the MSI Raider dual-boot laptop's full OS runbook (kernel,
+# Secure Boot) lives in https://github.com/asanderson/dual-boot. Native
+# Windows components come from scripts/setup.ps1.
 
 set -euo pipefail
 
@@ -32,17 +34,24 @@ source "${SCRIPT_DIR}/lib/common.sh"
 # shellcheck source=../config/versions.env
 source "${REPO_ROOT}/config/versions.env"
 
-# Module order matters: claude-code before claude-plugins, docker before
-# elastic/opensearch, jdk before maven, nvidia-dependent modules (ollama,
-# then ollama-models which pulls into it) last.
-MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
+# Module order matters: the NVIDIA driver and CUDA Toolkit first (docker's
+# container toolkit, ollama and the llama.cpp builds key off them),
+# claude-code before claude-plugins, nodejs/python before the agent CLIs
+# that run on Node, Bun or uv, docker before elastic/opensearch, jdk before
+# maven, and the local-LLM runtimes (ollama, then ollama-models which pulls
+# into it, then the llama.cpp family and the Python serving stacks) last.
+MODULES=(nvidia-driver cuda-toolkit
+         git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
+         codex opencode oh-my-pi hermes-agent openclaw strata
+         7zip libreoffice vmware-workstation amazon-workspaces
          proton-vpn proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
-         elastic opensearch ollama ollama-models)
+         elastic opensearch ollama ollama-models llama-cpp ik-llama-cpp koboldcpp ktransformers vllm)
 
 # Target operating systems. The installer configures the machine it runs on;
 # the target names the intent so component support is checked up front.
-# qubes and windows are in the catalog to give honest guidance (template VM /
-# WSL2) instead of "unknown argument".
+# qubes is in the catalog to give honest guidance (template VM) instead of
+# "unknown argument"; windows points at the native Windows installer
+# (scripts/setup.ps1, winget-based) and WSL2 for the Linux toolchain.
 OS_CATALOG=(ubuntu debian pureos rocky rhel qubes windows)
 TARGET_OS=""
 
@@ -52,8 +61,14 @@ TARGET_OS=""
 # channels that genuinely do not exist: Docker publishes no PureOS suite
 # (podman covers containers there), and Proton VPN's official Linux app
 # has no Enterprise Linux channel (the other Proton apps ship .rpms).
+# NVIDIA publishes no driver/CUDA channel for PureOS (a free-software-only
+# distro), so the GPU-bound stack skips it; Amazon WorkSpaces ships an
+# Ubuntu client only. Windows-only components (Git Bash, Notepad++,
+# WinSCP, Cygwin) live in scripts/setup.ps1.
 # See docs/dev-tools.md#target-operating-systems.
 declare -A MODULE_SUPPORT=(
+  [nvidia-driver]="ubuntu debian rocky rhel"
+  [cuda-toolkit]="ubuntu debian rocky rhel"
   [git]="ubuntu debian pureos rocky rhel"
   [nodejs]="ubuntu debian pureos rocky rhel"
   [claude-code]="ubuntu debian pureos rocky rhel"
@@ -68,6 +83,16 @@ declare -A MODULE_SUPPORT=(
   [rust]="ubuntu debian pureos rocky rhel"
   [python]="ubuntu debian pureos rocky rhel"
   [cloud]="ubuntu debian pureos rocky rhel"
+  [codex]="ubuntu debian pureos rocky rhel"
+  [opencode]="ubuntu debian pureos rocky rhel"
+  [oh-my-pi]="ubuntu debian pureos rocky rhel"
+  [hermes-agent]="ubuntu debian pureos rocky rhel"
+  [openclaw]="ubuntu debian pureos rocky rhel"
+  [strata]="ubuntu debian pureos rocky rhel"
+  [7zip]="ubuntu debian pureos rocky rhel"
+  [libreoffice]="ubuntu debian pureos rocky rhel"
+  [vmware-workstation]="ubuntu debian pureos rocky rhel"
+  [amazon-workspaces]="ubuntu"
   [proton-vpn]="ubuntu debian pureos"
   [proton-mail]="ubuntu debian pureos rocky rhel"
   [proton-bridge]="ubuntu debian pureos rocky rhel"
@@ -81,6 +106,13 @@ declare -A MODULE_SUPPORT=(
   [opensearch]="ubuntu debian pureos rocky rhel"
   [ollama]="ubuntu debian pureos rocky rhel"
   [ollama-models]="ubuntu debian pureos rocky rhel"
+  [llama-cpp]="ubuntu debian pureos rocky rhel"
+  [ik-llama-cpp]="ubuntu debian pureos rocky rhel"
+  [koboldcpp]="ubuntu debian pureos rocky rhel"
+  # CUDA-only serving stacks: no NVIDIA driver channel on PureOS, and
+  # KTransformers' wheels need glibc 2.35+ (EL9 ships 2.34).
+  [ktransformers]="ubuntu debian"
+  [vllm]="ubuntu debian rocky rhel"
 )
 
 for m in "${MODULES[@]}"; do
@@ -142,7 +174,7 @@ main() {
   if command_exists nvidia-smi; then
     log "GPU:     $(nvidia-smi --query-gpu=name,driver_version --format=csv,noheader 2>/dev/null || echo 'NVIDIA (driver loading)')"
   else
-    warn "NVIDIA driver not active. Install it first for GPU support (see github.com/asanderson/dual-boot), then reboot."
+    warn "NVIDIA driver not active. Install it first for GPU support (the nvidia-driver module, or github.com/asanderson/dual-boot), then reboot."
   fi
 
   # ---- target operating system ----------------------------------------------
@@ -166,7 +198,7 @@ main() {
     qubes)
       die "Qubes OS: dev tools belong in a template VM, not dom0 — run this inside a Debian-template qube with --os debian." ;;
     windows)
-      die "Windows: this is a Linux installer — use WSL2 with Ubuntu and run it there with --os ubuntu." ;;
+      die "Windows: run the native Windows installer from PowerShell instead — scripts\\setup.ps1 (winget-based: Git Bash, 7-Zip, Notepad++, WinSCP, Cygwin, ...; see docs/dev-tools.md#windows). For this Linux toolchain use WSL2 with Ubuntu and --os ubuntu." ;;
   esac
 
   # ---- component selection --------------------------------------------------

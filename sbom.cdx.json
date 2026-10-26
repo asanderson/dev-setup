@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 6,
+  "version": 7,
   "metadata": {
-    "timestamp": "2026-08-21T10:46:11Z",
+    "timestamp": "2026-10-26T00:30:51Z",
     "authors": [
       {
         "name": "asanderson/dev-setup"
@@ -13,7 +13,7 @@
     "component": {
       "type": "application",
       "name": "dev-setup",
-      "description": "Interactive, idempotent dev-toolchain installer for Ubuntu 26.04 (with target-OS selection)",
+      "description": "Interactive, idempotent dev-toolchain installer for Ubuntu 26.04 (with target-OS selection), plus a native winget-based Windows installer",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2134,12 +2134,743 @@
           "value": "Hybrid Mamba-2/MoE with only 6 attention layers, so KV cost is near-flat with context depth. Fetched from Hugging Face rather than the Ollama library because the library tag is Q4_K_M (24GB), which cannot fit a 24GB GPU; IQ4_XS (18.2GB) can."
         }
       ]
+    },
+    {
+      "type": "application",
+      "name": "NVIDIA GPU driver (open kernel modules)",
+      "supplier": {
+        "name": "NVIDIA"
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "NVIDIA proprietary (user space); MIT/GPL-2.0 (open kernel modules)"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "recommended branch at install time"
+        },
+        {
+          "name": "note",
+          "value": "Ubuntu: `ubuntu-drivers install` (Canonical archive, signed modules); Debian/Rocky/RHEL: `nvidia-open` from NVIDIA's CUDA repo (open-dkms stream on EL9). Skipped when no NVIDIA GPU is present; not offered on PureOS or Windows (no channel)."
+        }
+      ],
+      "bom-ref": "NVIDIA GPU driver (open kernel modules)"
+    },
+    {
+      "type": "library",
+      "name": "ubuntu-drivers-common",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/ubuntu-drivers-common",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "Ubuntu only; selects and installs the recommended NVIDIA driver"
+        }
+      ],
+      "bom-ref": "ubuntu-drivers-common"
+    },
+    {
+      "type": "library",
+      "name": "linux-headers (running kernel)",
+      "supplier": {
+        "name": "distro archive"
+      },
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "matching the running kernel at install time"
+        },
+        {
+          "name": "note",
+          "value": "linux-headers-$(uname -r) on the Debian family, kernel-devel/kernel-headers on Enterprise Linux \u2014 DKMS/vmmon build prerequisites"
+        }
+      ],
+      "bom-ref": "linux-headers (running kernel)"
+    },
+    {
+      "type": "library",
+      "name": "cuda-keyring",
+      "version": "1.1-1",
+      "supplier": {
+        "name": "NVIDIA"
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "NVIDIA Software License"
+          }
+        }
+      ],
+      "purl": "pkg:generic/cuda-keyring@1.1-1",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://developer.download.nvidia.com/compute/cuda/repos/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "note",
+          "value": "CUDA network-repo bootstrap on the Debian family (ubuntuNNNN/debianNN directory per target, newest existing release as fallback); cuda-rhelN.repo file on Enterprise Linux"
+        }
+      ],
+      "bom-ref": "cuda-keyring"
+    },
+    {
+      "type": "application",
+      "name": "cuda-toolkit",
+      "supplier": {
+        "name": "NVIDIA"
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "NVIDIA CUDA EULA"
+          }
+        }
+      ],
+      "purl": "pkg:generic/cuda-toolkit",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest release in NVIDIA's CUDA repo at install time"
+        },
+        {
+          "name": "note",
+          "value": "installs under /usr/local/cuda (PATH via /etc/profile.d/cuda.sh); Windows: winget Nvidia.CUDA"
+        }
+      ],
+      "bom-ref": "cuda-toolkit"
+    },
+    {
+      "type": "application",
+      "name": "Codex CLI",
+      "supplier": {
+        "name": "OpenAI"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:github/openai/codex",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://chatgpt.com/codex/install.sh"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via OpenAI's standalone installer"
+        },
+        {
+          "name": "note",
+          "value": "static musl build to ~/.local/bin/codex; falls back to the latest GitHub release asset (codex-x86_64-unknown-linux-musl.tar.gz); Windows: install.ps1"
+        }
+      ],
+      "bom-ref": "Codex CLI"
+    },
+    {
+      "type": "application",
+      "name": "OpenCode",
+      "supplier": {
+        "name": "Anomaly (github.com/anomalyco/opencode)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:github/anomalyco/opencode",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://opencode.ai/v2/install"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via the official v2 install script"
+        },
+        {
+          "name": "note",
+          "value": "binary in ~/.opencode/bin, linked into ~/.local/bin; Windows: npm @opencode/cli"
+        }
+      ],
+      "bom-ref": "OpenCode"
+    },
+    {
+      "type": "application",
+      "name": "Oh My Pi (omp)",
+      "supplier": {
+        "name": "Can B\u00f6l\u00fck / Stencil Labs (github.com/can1357/oh-my-pi)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40oh-my-pi/pi-coding-agent",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://omp.sh/install"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via the official install script"
+        },
+        {
+          "name": "note",
+          "value": "`bun install -g @oh-my-pi/pi-coding-agent` when Bun >= 1.3.14 is present, else a SHA-256-verified standalone binary; Windows: install.ps1"
+        }
+      ],
+      "bom-ref": "Oh My Pi (omp)"
+    },
+    {
+      "type": "application",
+      "name": "Hermes Agent",
+      "supplier": {
+        "name": "Nous Research"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:github/NousResearch/hermes-agent",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://hermes-agent.nousresearch.com/install.sh"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest stable channel via the official install script (--non-interactive)"
+        },
+        {
+          "name": "note",
+          "value": "clones to ~/.hermes/hermes-agent with its own pinned uv/Python; launcher ~/.local/bin/hermes; Windows: install.ps1 -NonInteractive"
+        }
+      ],
+      "bom-ref": "Hermes Agent"
+    },
+    {
+      "type": "application",
+      "name": "OpenClaw",
+      "supplier": {
+        "name": "OpenClaw (github.com/openclaw/openclaw)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/openclaw",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://openclaw.ai/install.sh"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via the official install script (npm method, --no-onboard)"
+        },
+        {
+          "name": "note",
+          "value": "global npm package in the nvm-managed Node; onboarding left to the user; Windows: install.ps1 -NoOnboard"
+        }
+      ],
+      "bom-ref": "OpenClaw"
+    },
+    {
+      "type": "application",
+      "name": "Strata",
+      "supplier": {
+        "name": "Niko1221 (github.com/Niko1221/Strata)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:github/Niko1221/Strata",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/Niko1221/Strata/releases/latest/download/install.sh"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest GitHub release via the official installer"
+        },
+        {
+          "name": "note",
+          "value": "Terminal archive SHA-256-checked against the release manifest; per-user under ~/.local/share/strata; `strata launch` fetches the engine and models later"
+        }
+      ],
+      "bom-ref": "Strata"
+    },
+    {
+      "type": "application",
+      "name": "7-Zip",
+      "version": "26.05",
+      "supplier": {
+        "name": "Igor Pavlov (github.com/ip7z/7zip)"
+      },
+      "licenses": [
+        {
+          "expression": "LGPL-2.1-or-later AND BSD-3-Clause"
+        }
+      ],
+      "purl": "pkg:github/ip7z/7zip@26.05",
+      "properties": [
+        {
+          "name": "note",
+          "value": "SEVENZIP_VERSION pin; SHA-256 verified (SEVENZIP_SHA256); the static 7zzs build installed as /usr/local/bin/7zz; Windows: winget 7zip.7zip"
+        }
+      ],
+      "bom-ref": "7-Zip"
+    },
+    {
+      "type": "library",
+      "name": "xz-utils",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/xz-utils",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "unpacks the 7-Zip tarball (xz on Enterprise Linux)"
+        }
+      ],
+      "bom-ref": "xz-utils"
+    },
+    {
+      "type": "application",
+      "name": "libreoffice",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:deb/ubuntu/libreoffice",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "distro package on every target (AppStream on Enterprise Linux \u2014 deprecated in RHEL 9.5, supported through RHEL 9); Windows: winget TheDocumentFoundation.LibreOffice"
+        }
+      ],
+      "bom-ref": "libreoffice"
+    },
+    {
+      "type": "application",
+      "name": "VMware Workstation Pro",
+      "supplier": {
+        "name": "Broadcom"
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "Broadcom VMware General Terms"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "user-supplied installer (Broadcom support-portal download): 17.x as requested, or a successor bundle"
+        },
+        {
+          "name": "note",
+          "value": "Linux .bundle run with --console --eulas-agreed --required, then vmware-modconfig builds vmmon/vmnet; Windows .exe run silently (EULAS_AGREED=1). 17.6.4 is the final 17.x (end of service Nov 2025)"
+        }
+      ],
+      "bom-ref": "VMware Workstation Pro"
+    },
+    {
+      "type": "application",
+      "name": "workspacesclient",
+      "supplier": {
+        "name": "Amazon Web Services"
+      },
+      "licenses": [
+        {
+          "license": {
+            "name": "AWS Customer Agreement"
+          }
+        }
+      ],
+      "purl": "pkg:deb/amazon/workspacesclient",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://clients.amazonworkspaces.com/linux-install"
+        }
+      ],
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest in Amazon's apt repo at install time"
+        },
+        {
+          "name": "note",
+          "value": "Ubuntu only (suite per release; noble as the fallback for newer releases); Windows: winget Amazon.WorkspacesClient"
+        }
+      ],
+      "bom-ref": "workspacesclient"
+    },
+    {
+      "type": "library",
+      "name": "libssl-dev",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/libssl-dev",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "llama.cpp-family build dependency (openssl-devel on Enterprise Linux)"
+        }
+      ],
+      "bom-ref": "libssl-dev"
+    },
+    {
+      "type": "library",
+      "name": "libcurl4-openssl-dev",
+      "supplier": {
+        "name": "Ubuntu archive"
+      },
+      "purl": "pkg:deb/ubuntu/libcurl4-openssl-dev",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest, resolved at install time"
+        },
+        {
+          "name": "note",
+          "value": "ik_llama.cpp build dependency (libcurl-devel on Enterprise Linux)"
+        }
+      ],
+      "bom-ref": "libcurl4-openssl-dev"
+    },
+    {
+      "type": "application",
+      "name": "llama.cpp",
+      "supplier": {
+        "name": "ggml-org (github.com/ggml-org/llama.cpp)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:github/ggml-org/llama.cpp",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest release, resolved at install time (LLAMA_CPP_VERSION pins a tag)"
+        },
+        {
+          "name": "note",
+          "value": "built from source (static, CUDA when the toolkit is present) under ~/.local/opt/llama.cpp; Windows: winget ggml.llamacpp (Vulkan build)"
+        }
+      ],
+      "bom-ref": "llama.cpp"
+    },
+    {
+      "type": "application",
+      "name": "ik_llama.cpp",
+      "supplier": {
+        "name": "ikawrakow (github.com/ikawrakow/ik_llama.cpp)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:github/ikawrakow/ik_llama.cpp",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "head of IK_LLAMA_CPP_REF (main) at install time \u2014 the project publishes no releases"
+        },
+        {
+          "name": "note",
+          "value": "built from source under ~/.local/opt/ik_llama.cpp; binaries linked as ik-llama-*"
+        }
+      ],
+      "bom-ref": "ik_llama.cpp"
+    },
+    {
+      "type": "application",
+      "name": "KoboldCpp",
+      "supplier": {
+        "name": "LostRuins (github.com/LostRuins/koboldcpp)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "purl": "pkg:github/LostRuins/koboldcpp",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "newest release, resolved at install time (KOBOLDCPP_VERSION pins a tag)"
+        },
+        {
+          "name": "note",
+          "value": "single-file release binary: koboldcpp-linux-x64 (CUDA) with an NVIDIA GPU, koboldcpp-linux-x64-nocuda otherwise; Windows: koboldcpp.exe / koboldcpp-nocuda.exe"
+        }
+      ],
+      "bom-ref": "KoboldCpp"
+    },
+    {
+      "type": "application",
+      "name": "KTransformers (kt-kernel + sglang-kt)",
+      "supplier": {
+        "name": "kvcache-ai (github.com/kvcache-ai/ktransformers)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:pypi/ktransformers",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from PyPI at install time"
+        },
+        {
+          "name": "note",
+          "value": "uv virtualenv ~/.local/opt/ktransformers (Python 3.12); manylinux_2_35 wheels \u2014 Ubuntu 26.04 and Debian 13 only"
+        }
+      ],
+      "bom-ref": "KTransformers (kt-kernel + sglang-kt)"
+    },
+    {
+      "type": "application",
+      "name": "vLLM",
+      "supplier": {
+        "name": "vLLM project (github.com/vllm-project/vllm)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:pypi/vllm",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest from PyPI at install time"
+        },
+        {
+          "name": "note",
+          "value": "uv virtualenv ~/.local/opt/vllm (Python 3.12), PyTorch CUDA build picked by --torch-backend=auto; needs an NVIDIA driver (R580+ for the CUDA 13 wheels)"
+        }
+      ],
+      "bom-ref": "vLLM"
+    },
+    {
+      "type": "application",
+      "name": "Git for Windows (Git Bash)",
+      "supplier": {
+        "name": "Git for Windows project"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "purl": "pkg:winget/Git.Git",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via winget (Git.Git)"
+        },
+        {
+          "name": "note",
+          "value": "Windows only (scripts/setup.ps1 --git-bash)"
+        }
+      ],
+      "bom-ref": "Git for Windows (Git Bash)"
+    },
+    {
+      "type": "application",
+      "name": "Notepad++",
+      "supplier": {
+        "name": "Notepad++ (Don Ho)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "purl": "pkg:winget/Notepad%2B%2B.Notepad%2B%2B",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via winget (Notepad++.Notepad++)"
+        },
+        {
+          "name": "note",
+          "value": "Windows only \u2014 no official Linux build"
+        }
+      ],
+      "bom-ref": "Notepad++"
+    },
+    {
+      "type": "application",
+      "name": "WinSCP",
+      "supplier": {
+        "name": "Martin P\u0159ikryl (winscp.net)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "purl": "pkg:winget/WinSCP.WinSCP",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest via winget (WinSCP.WinSCP)"
+        },
+        {
+          "name": "note",
+          "value": "Windows only"
+        }
+      ],
+      "bom-ref": "WinSCP"
+    },
+    {
+      "type": "application",
+      "name": "Cygwin",
+      "supplier": {
+        "name": "Cygwin project (Red Hat)"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "purl": "pkg:winget/Cygwin.Cygwin",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest base install via winget (Cygwin.Cygwin)"
+        },
+        {
+          "name": "note",
+          "value": "Windows only; root C:\\cygwin64"
+        }
+      ],
+      "bom-ref": "Cygwin"
+    },
+    {
+      "type": "application",
+      "name": "Node.js LTS (Windows)",
+      "supplier": {
+        "name": "OpenJS Foundation"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:winget/OpenJS.NodeJS.LTS",
+      "properties": [
+        {
+          "name": "resolution",
+          "value": "latest LTS via winget (OpenJS.NodeJS.LTS)"
+        },
+        {
+          "name": "note",
+          "value": "Windows only, pulled in on demand by the npm-based components (opencode)"
+        }
+      ],
+      "bom-ref": "Node.js LTS (Windows)"
     }
   ],
   "dependencies": [
     {
       "ref": "dev-setup",
       "dependsOn": [
+        "7-Zip",
         "Ansible",
         "Apache Maven",
         "autoconf",
@@ -2159,19 +2890,29 @@
         "Claude Code",
         "cmake",
         "code (Visual Studio Code)",
+        "Codex CLI",
+        "cuda-toolkit",
         "curl",
+        "Cygwin",
         "docker-ce",
         "g++",
         "gcc",
         "gdb",
         "git",
+        "Git for Windows (Git Bash)",
         "Go toolchain",
         "Helm",
+        "Hermes Agent",
+        "ik_llama.cpp",
         "k3s (bundles kubectl)",
         "k9s",
         "kibana",
+        "KoboldCpp",
+        "KTransformers (kt-kernel + sglang-kt)",
+        "libreoffice",
         "libsecret-1-0",
         "libtool",
+        "llama.cpp",
         "lld-22",
         "lldb",
         "lldb-22",
@@ -2181,7 +2922,12 @@
         "manpages-dev",
         "ninja-build",
         "nodejs",
+        "Notepad++",
+        "NVIDIA GPU driver (open kernel modules)",
+        "Oh My Pi (omp)",
         "Ollama",
+        "OpenClaw",
+        "OpenCode",
         "opensearchproject/opensearch-dashboards",
         "openssl",
         "pkg-config",
@@ -2196,7 +2942,12 @@
         "python3",
         "Rust toolchain (rustup)",
         "software-properties-common",
-        "valgrind"
+        "Strata",
+        "valgrind",
+        "vLLM",
+        "VMware Workstation Pro",
+        "WinSCP",
+        "workspacesclient"
       ]
     },
     {
@@ -2325,6 +3076,85 @@
         "python3-dev",
         "python3-pip",
         "python3-venv",
+        "uv"
+      ]
+    },
+    {
+      "ref": "NVIDIA GPU driver (open kernel modules)",
+      "dependsOn": [
+        "cuda-keyring",
+        "linux-headers (running kernel)",
+        "ubuntu-drivers-common"
+      ]
+    },
+    {
+      "ref": "cuda-toolkit",
+      "dependsOn": [
+        "cuda-keyring"
+      ]
+    },
+    {
+      "ref": "OpenClaw",
+      "dependsOn": [
+        "nodejs"
+      ]
+    },
+    {
+      "ref": "Oh My Pi (omp)",
+      "dependsOn": [
+        "bun"
+      ]
+    },
+    {
+      "ref": "OpenCode",
+      "dependsOn": [
+        "Node.js LTS (Windows)"
+      ]
+    },
+    {
+      "ref": "7-Zip",
+      "dependsOn": [
+        "xz-utils"
+      ]
+    },
+    {
+      "ref": "VMware Workstation Pro",
+      "dependsOn": [
+        "build-essential",
+        "linux-headers (running kernel)"
+      ]
+    },
+    {
+      "ref": "llama.cpp",
+      "dependsOn": [
+        "build-essential",
+        "cmake",
+        "cuda-toolkit",
+        "git",
+        "libcurl4-openssl-dev",
+        "libssl-dev"
+      ]
+    },
+    {
+      "ref": "ik_llama.cpp",
+      "dependsOn": [
+        "build-essential",
+        "cmake",
+        "cuda-toolkit",
+        "git",
+        "libcurl4-openssl-dev",
+        "libssl-dev"
+      ]
+    },
+    {
+      "ref": "KTransformers (kt-kernel + sglang-kt)",
+      "dependsOn": [
+        "uv"
+      ]
+    },
+    {
+      "ref": "vLLM",
+      "dependsOn": [
         "uv"
       ]
     }

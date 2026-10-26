@@ -26,9 +26,13 @@ installs from, so a bump here is what the installer would fetch:
   PROTON_VPN_RELEASE_DEB (+_SHA256)
                        newest protonvpn-stable-release .deb in Proton's repo
                        listing; the sha256 is computed from the download
+  SEVENZIP_VERSION (+_SHA256)
+                       newest ip7z/7zip GitHub release (Igor Pavlov's own
+                       channel); the sha256 is computed from the download
   JDK_MAJOR            REPORT ONLY: Adoptium's most recent LTS (distro packaging
                        lags a new LTS; bump by hand once openjdk-N-jdk exists)
-  GO_VERSION           "latest" resolves at install time; not checked
+  GO_VERSION, LLAMA_CPP_VERSION, KOBOLDCPP_VERSION, IK_LLAMA_CPP_REF
+                       "latest"/a branch resolve at install time; not checked
 
 A resolver that fails (network, format change) is reported and skipped; it
 never blocks the other pins. Exit status is 0 unless --strict is given and a
@@ -138,6 +142,17 @@ def parse_adoptium_lts(payload: str) -> str:
     return str(json.loads(payload)["most_recent_lts"])
 
 
+def parse_sevenzip_tag(tag: str) -> str:
+    if not re.fullmatch(r"\d+\.\d+", tag):
+        raise ValueError(f"unexpected 7-Zip release tag {tag!r}")
+    return tag
+
+
+def sevenzip_url(version: str) -> str:
+    return (f"https://github.com/ip7z/7zip/releases/download/{version}/"
+            f"7z{version.replace('.', '')}-linux-x64.tar.xz")
+
+
 # --------------------------------------------------------------------------- #
 # resolvers: each returns (latest_value, extra_env_updates)
 # --------------------------------------------------------------------------- #
@@ -187,6 +202,14 @@ def resolve_proton_vpn(pins):
     return url, {"PROTON_VPN_RELEASE_DEB_SHA256": sha}
 
 
+def resolve_sevenzip(pins):
+    version = parse_sevenzip_tag(github_latest_tag("ip7z/7zip"))
+    if version == pins["SEVENZIP_VERSION"]:
+        return version, {}
+    sha = hashlib.sha256(fetch(sevenzip_url(version), binary=True)).hexdigest()
+    return version, {"SEVENZIP_SHA256": sha}
+
+
 def resolve_jdk(pins):
     return parse_adoptium_lts(fetch("https://api.adoptium.net/v3/info/available_releases")), {}
 
@@ -200,6 +223,7 @@ PINS = [
     ("K9S_VERSION", resolve_k9s, True, "derailed/k9s GitHub releases"),
     ("NVM_VERSION", resolve_nvm, True, "nvm-sh/nvm GitHub releases"),
     ("PROTON_VPN_RELEASE_DEB", resolve_proton_vpn, True, "repo.protonvpn.com stable listing (sha256 computed)"),
+    ("SEVENZIP_VERSION", resolve_sevenzip, True, "ip7z/7zip GitHub releases (sha256 computed)"),
     ("JDK_MAJOR", resolve_jdk, False, "Adoptium most_recent_lts (manual: archive packaging lags)"),
 ]
 
@@ -264,6 +288,8 @@ def sync_sbom(changes: dict, pins: dict) -> None:
             m_new = re.search(r"_(\d+(?:\.\d+)+)_all\.deb", new)
             if m_old and m_new:
                 bom_component(bom, "protonvpn-stable-release (repo bootstrap)")["version"] = m_new.group(1)
+        elif key == "SEVENZIP_VERSION":
+            bom_set_version(bom_component(bom, "7-Zip"), old, new)
         # NVM_VERSION: the SBOM entry records the resolution text only.
     bom["version"] = int(bom.get("version", 1)) + 1
     bom["metadata"]["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -304,6 +330,9 @@ def markdown_summary(rows, changes, manual, failures, stale) -> str:
             out.append(f"- `{key}`: `{old}` → `{new}`")
         out += ["", "`sbom.cdx.json` (document version +1) and `SBOM.md` were regenerated to match.",
                 "The nightly job only runs the lint checks; the container suites run on this PR as usual."]
+    if "SEVENZIP_VERSION" in changes:
+        out += ["", "> `SEVENZIP_SHA256` was computed from the download. Cross-check it against the digest",
+                "> listed on the https://github.com/ip7z/7zip/releases release page before merging."]
     if "PROTON_VPN_RELEASE_DEB" in changes:
         out += ["", "> `PROTON_VPN_RELEASE_DEB_SHA256` was computed from the download. Cross-check it against the",
                 "> checksum on https://protonvpn.com/support/official-linux-vpn-ubuntu/ before merging."]
@@ -336,6 +365,13 @@ def selftest() -> int:
     listing = '<a href="protonvpn-stable-release_1.0.8_all.deb">x</a> <a href="protonvpn-stable-release_1.0.10_all.deb">y</a> <a href="protonvpn-stable-release_1.0.9_all.deb">z</a>'
     assert parse_proton_listing(listing) == "protonvpn-stable-release_1.0.10_all.deb"
     assert parse_adoptium_lts('{"most_recent_lts": 25}') == "25"
+    assert parse_sevenzip_tag("26.05") == "26.05"
+    assert sevenzip_url("26.05").endswith("/26.05/7z2605-linux-x64.tar.xz")
+    try:
+        parse_sevenzip_tag("26.05-beta")
+        raise AssertionError("pre-release 7-Zip tag accepted")
+    except ValueError:
+        pass
     assert newest(["v0.50.18", "v0.50.9", "v0.49.99"]) == "v0.50.18"
     # SBOM rename keeps dependency refs consistent.
     bom = {"components": [{"name": "clang-22", "bom-ref": "clang-22", "purl": "pkg:deb/llvm/clang-22",

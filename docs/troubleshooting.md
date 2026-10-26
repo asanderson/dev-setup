@@ -42,3 +42,33 @@ back to `sudo docker` for that run.)
 the dual-boot repo if it doesn't), then `journalctl -u ollama | grep -i gpu`.
 Reinstalling after the driver (`curl -fsSL https://ollama.com/install.sh | sh`)
 rebinds GPU support, then `sudo systemctl restart ollama`.
+
+## NVIDIA driver not loaded after install
+
+- The `nvidia-driver` module installs packages; the driver loads only after
+  a **reboot**. `nvidia-smi` saying it "couldn't communicate with the
+  NVIDIA driver" before then is expected.
+- Still failing after the reboot with **Secure Boot** on: the DKMS-built
+  modules are unsigned for your firmware. Enroll the DKMS key —
+  `sudo mokutil --import /var/lib/dkms/mok.pub`, reboot, choose *Enroll MOK*
+  at the blue screen — or use Ubuntu's archive driver (`ubuntu-drivers`,
+  what the module uses on Ubuntu), whose modules are Canonical-signed.
+- RTX 50-series (Blackwell) needs the **open** kernel modules, branch 570
+  or newer — `cat /proc/driver/nvidia/version` shows which one loaded.
+- After the driver works, re-run `docker` (NVIDIA Container Toolkit) and
+  `ollama` if they were installed before it, and `llama-cpp` /
+  `ik-llama-cpp` to rebuild with the GPU visible.
+
+## VMware Workstation kernel modules
+
+- `vmware-modconfig` failing to build **vmmon/vmnet** right after a kernel
+  update: re-run `./scripts/setup.sh --vmware-workstation` — it installs
+  the headers for the running kernel and rebuilds the modules.
+- Workstation **17.x predates the Ubuntu 26.04 kernel**; its modules may
+  not compile there at all. 26H1 is the first release that supports
+  Ubuntu 26.04 hosts — download it from Broadcom's portal and point the
+  module at that bundle (`DEV_SETUP_VMWARE_BUNDLE=...`).
+- **Secure Boot**: unsigned vmmon/vmnet refuse to load ("Could not open
+  /dev/vmmon"). Sign them with a MOK you enroll (Broadcom KB 2146460):
+  `sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 MOK.priv MOK.der $(modinfo -n vmmon)`
+  (and the same for `vmnet`), after `mokutil --import MOK.der` and a reboot.

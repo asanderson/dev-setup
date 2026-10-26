@@ -26,9 +26,16 @@ installs from, so a bump here is what the installer would fetch:
   PROTON_VPN_RELEASE_DEB (+_SHA256)
                        newest protonvpn-stable-release .deb in Proton's repo
                        listing; the sha256 is computed from the download
+  SEVENZIP_VERSION (+_SHA256)
+                       newest ip7z/7zip GitHub release (Igor Pavlov's own
+                       channel); the sha256 is computed from the download
+  STRATA_VERSION (+ STRATA_INSTALL_SH_SHA256, STRATA_INSTALL_PS1_SHA256)
+                       newest Niko1221/Strata GitHub release; both installer
+                       scripts' sha256 computed from the downloads
   JDK_MAJOR            REPORT ONLY: Adoptium's most recent LTS (distro packaging
                        lags a new LTS; bump by hand once openjdk-N-jdk exists)
-  GO_VERSION           "latest" resolves at install time; not checked
+  GO_VERSION, LLAMA_CPP_VERSION, KOBOLDCPP_VERSION, IK_LLAMA_CPP_REF
+                       "latest"/a branch resolve at install time; not checked
 
 A resolver that fails (network, format change) is reported and skipped; it
 never blocks the other pins. Exit status is 0 unless --strict is given and a
@@ -138,6 +145,27 @@ def parse_adoptium_lts(payload: str) -> str:
     return str(json.loads(payload)["most_recent_lts"])
 
 
+def parse_sevenzip_tag(tag: str) -> str:
+    if not re.fullmatch(r"\d+\.\d+", tag):
+        raise ValueError(f"unexpected 7-Zip release tag {tag!r}")
+    return tag
+
+
+def parse_strata_tag(tag: str) -> str:
+    if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
+        raise ValueError(f"unexpected Strata release tag {tag!r}")
+    return tag
+
+
+def strata_url(tag: str, script: str) -> str:
+    return f"https://github.com/Niko1221/Strata/releases/download/{tag}/{script}"
+
+
+def sevenzip_url(version: str) -> str:
+    return (f"https://github.com/ip7z/7zip/releases/download/{version}/"
+            f"7z{version.replace('.', '')}-linux-x64.tar.xz")
+
+
 # --------------------------------------------------------------------------- #
 # resolvers: each returns (latest_value, extra_env_updates)
 # --------------------------------------------------------------------------- #
@@ -187,6 +215,24 @@ def resolve_proton_vpn(pins):
     return url, {"PROTON_VPN_RELEASE_DEB_SHA256": sha}
 
 
+def resolve_sevenzip(pins):
+    version = parse_sevenzip_tag(github_latest_tag("ip7z/7zip"))
+    if version == pins["SEVENZIP_VERSION"]:
+        return version, {}
+    sha = hashlib.sha256(fetch(sevenzip_url(version), binary=True)).hexdigest()
+    return version, {"SEVENZIP_SHA256": sha}
+
+
+def resolve_strata(pins):
+    tag = parse_strata_tag(github_latest_tag("Niko1221/Strata"))
+    if tag == pins["STRATA_VERSION"]:
+        return tag, {}
+    return tag, {
+        "STRATA_INSTALL_SH_SHA256": hashlib.sha256(fetch(strata_url(tag, "install.sh"), binary=True)).hexdigest(),
+        "STRATA_INSTALL_PS1_SHA256": hashlib.sha256(fetch(strata_url(tag, "install.ps1"), binary=True)).hexdigest(),
+    }
+
+
 def resolve_jdk(pins):
     return parse_adoptium_lts(fetch("https://api.adoptium.net/v3/info/available_releases")), {}
 
@@ -200,6 +246,8 @@ PINS = [
     ("K9S_VERSION", resolve_k9s, True, "derailed/k9s GitHub releases"),
     ("NVM_VERSION", resolve_nvm, True, "nvm-sh/nvm GitHub releases"),
     ("PROTON_VPN_RELEASE_DEB", resolve_proton_vpn, True, "repo.protonvpn.com stable listing (sha256 computed)"),
+    ("SEVENZIP_VERSION", resolve_sevenzip, True, "ip7z/7zip GitHub releases (sha256 computed)"),
+    ("STRATA_VERSION", resolve_strata, True, "Niko1221/Strata GitHub releases (installer sha256s computed)"),
     ("JDK_MAJOR", resolve_jdk, False, "Adoptium most_recent_lts (manual: archive packaging lags)"),
 ]
 
@@ -264,6 +312,10 @@ def sync_sbom(changes: dict, pins: dict) -> None:
             m_new = re.search(r"_(\d+(?:\.\d+)+)_all\.deb", new)
             if m_old and m_new:
                 bom_component(bom, "protonvpn-stable-release (repo bootstrap)")["version"] = m_new.group(1)
+        elif key == "SEVENZIP_VERSION":
+            bom_set_version(bom_component(bom, "7-Zip"), old, new)
+        elif key == "STRATA_VERSION":
+            bom_set_version(bom_component(bom, "Strata"), old, new)
         # NVM_VERSION: the SBOM entry records the resolution text only.
     bom["version"] = int(bom.get("version", 1)) + 1
     bom["metadata"]["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -304,6 +356,12 @@ def markdown_summary(rows, changes, manual, failures, stale) -> str:
             out.append(f"- `{key}`: `{old}` → `{new}`")
         out += ["", "`sbom.cdx.json` (document version +1) and `SBOM.md` were regenerated to match.",
                 "The nightly job only runs the lint checks; the container suites run on this PR as usual."]
+    if "STRATA_VERSION" in changes:
+        out += ["", "> `STRATA_INSTALL_SH_SHA256`/`STRATA_INSTALL_PS1_SHA256` were computed from the downloads; review",
+                "> the new installer scripts' diff on https://github.com/Niko1221/Strata/releases before merging."]
+    if "SEVENZIP_VERSION" in changes:
+        out += ["", "> `SEVENZIP_SHA256` was computed from the download. Cross-check it against the digest",
+                "> listed on the https://github.com/ip7z/7zip/releases release page before merging."]
     if "PROTON_VPN_RELEASE_DEB" in changes:
         out += ["", "> `PROTON_VPN_RELEASE_DEB_SHA256` was computed from the download. Cross-check it against the",
                 "> checksum on https://protonvpn.com/support/official-linux-vpn-ubuntu/ before merging."]
@@ -336,6 +394,20 @@ def selftest() -> int:
     listing = '<a href="protonvpn-stable-release_1.0.8_all.deb">x</a> <a href="protonvpn-stable-release_1.0.10_all.deb">y</a> <a href="protonvpn-stable-release_1.0.9_all.deb">z</a>'
     assert parse_proton_listing(listing) == "protonvpn-stable-release_1.0.10_all.deb"
     assert parse_adoptium_lts('{"most_recent_lts": 25}') == "25"
+    assert parse_sevenzip_tag("26.05") == "26.05"
+    assert parse_strata_tag("v0.2.6") == "v0.2.6"
+    assert strata_url("v0.2.6", "install.sh").endswith("/releases/download/v0.2.6/install.sh")
+    try:
+        parse_strata_tag("v0.3.0-rc1")
+        raise AssertionError("pre-release Strata tag accepted")
+    except ValueError:
+        pass
+    assert sevenzip_url("26.05").endswith("/26.05/7z2605-linux-x64.tar.xz")
+    try:
+        parse_sevenzip_tag("26.05-beta")
+        raise AssertionError("pre-release 7-Zip tag accepted")
+    except ValueError:
+        pass
     assert newest(["v0.50.18", "v0.50.9", "v0.49.99"]) == "v0.50.18"
     # SBOM rename keeps dependency refs consistent.
     bom = {"components": [{"name": "clang-22", "bom-ref": "clang-22", "purl": "pkg:deb/llvm/clang-22",

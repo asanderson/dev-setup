@@ -78,6 +78,58 @@ grep -q "Ollama is not installed" <<<"$out" \
   || { echo "FAIL: missing the run-with---ollama-first guidance"; exit 1; }
 echo "  PASS: ollama-models dependency contract"
 
+echo "### [flags] runtime-dependent modules refuse cleanly without their runtime"
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --openclaw' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] || { echo "FAIL: openclaw must fail when Node.js (nvm) is absent"; exit 1; }
+grep -q "Node.js is not installed" <<<"$out" \
+  || { echo "FAIL: missing the run-with---nodejs guidance"; exit 1; }
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --vllm' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] || { echo "FAIL: vllm must fail when uv is absent"; exit 1; }
+grep -q "uv is not installed" <<<"$out" \
+  || { echo "FAIL: missing the run-with---python guidance"; exit 1; }
+echo "  PASS: openclaw needs nodejs, vllm needs python (uv)"
+
+echo "### [flags] hardware/vendor-gated modules: clean skip or clean refusal"
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --nvidia-driver' 2>&1)" || rc=$?
+[[ $rc -eq 0 ]] || { echo "FAIL: nvidia-driver must skip cleanly (exit 0) without an NVIDIA GPU (got ${rc})"; exit 1; }
+grep -q "No NVIDIA GPU detected" <<<"$out" \
+  || { echo "FAIL: missing the no-GPU skip notice"; exit 1; }
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --vmware-workstation' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] || { echo "FAIL: vmware-workstation must fail without a downloaded bundle"; exit 1; }
+grep -q "Broadcom requires a (free) support-portal login" <<<"$out" \
+  || { echo "FAIL: missing the download-the-bundle guidance"; exit 1; }
+# A pre-26H1 bundle (17.x) is refused before anything runs it.
+sudo -u dev -H bash -c 'printf "#!/bin/sh\necho SHOULD-NOT-RUN\n" >/tmp/VMware-Workstation-Full-17.6.4-24832109.x86_64.bundle'
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  DEV_SETUP_VMWARE_BUNDLE=/tmp/VMware-Workstation-Full-17.6.4-24832109.x86_64.bundle \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --vmware-workstation' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] && grep -q "installs VMware Workstation Pro 26H1 or newer" <<<"$out" \
+  && ! grep -q SHOULD-NOT-RUN <<<"$out" \
+  || { echo "FAIL: vmware-workstation must refuse a 17.x bundle without running it (rc=${rc})"; exit 1; }
+rc=0
+out="$(sudo -u dev -H bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os windows' 2>&1)" || rc=$?
+[[ $rc -ne 0 ]] && grep -q "setup.ps1" <<<"$out" \
+  || { echo "FAIL: --os windows must point at scripts/setup.ps1"; exit 1; }
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --amazon-workspaces' 2>&1)" || rc=$?
+# Amazon ships no client for 26.04 yet: the module must refuse with
+# guidance rather than half-install the 24.04 build (whose libicu74/libxml2
+# dependencies 26.04 lacks). Flip this to an install probe once Amazon
+# publishes a resolute suite.
+[[ $rc -ne 0 ]] && grep -q "Amazon publishes no WorkSpaces client for" <<<"$out" \
+  || { echo "FAIL: amazon-workspaces must refuse cleanly on a release without an Amazon suite (rc=${rc})"; exit 1; }
+echo "  PASS: nvidia-driver no-GPU skip, vmware bundle guidance + pre-26H1 refusal, windows -> setup.ps1, workspaces no-suite refusal"
+
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
 set +e; run_setup; rc=$?; set -e
 echo "### [run] setup.sh exit code: ${rc}"
@@ -114,7 +166,19 @@ for m in ${MODULES_OVERRIDE}; do
     proton-pass)   probes=("dpkg -s proton-pass") ;;
     proton-meet)   probes=("dpkg -s proton-meet") ;;
     proton-authenticator) probes=("dpkg -s proton-authenticator") ;;
-    elastic|opensearch|ollama|ollama-models) echo "  SKIP ${m} (no probe in container)"; continue ;;
+    codex)       probes=('$HOME/.local/bin/codex --version') ;;
+    opencode)    probes=('$HOME/.local/bin/opencode --version') ;;
+    oh-my-pi)    probes=('PATH="$HOME/.bun/bin:$HOME/.local/bin:$PATH" omp --version') ;;
+    hermes-agent) probes=('test -x $HOME/.local/bin/hermes && echo "hermes launcher present"') ;;
+    openclaw)    probes=("openclaw --version") ;;
+    strata)      probes=('test -x $HOME/.local/bin/strata && echo "strata terminal present"') ;;
+    7zip)        probes=("7zz | grep -m1 '7-Zip'" "7z | grep -m1 '7-Zip'") ;;
+    libreoffice) probes=("libreoffice --version") ;;
+    amazon-workspaces) probes=("dpkg -s workspacesclient") ;;
+    llama-cpp)   probes=('$HOME/.local/bin/llama-cli --version' 'test -x $HOME/.local/bin/llama-server && echo llama-server') ;;
+    koboldcpp)   probes=('test -x $HOME/.local/bin/koboldcpp && cat $HOME/.local/opt/koboldcpp/VERSION') ;;
+    elastic|opensearch|ollama|ollama-models|nvidia-driver|cuda-toolkit|vmware-workstation|ik-llama-cpp|ktransformers|vllm)
+      echo "  SKIP ${m} (no probe in container)"; continue ;;
     *)           echo "  SKIP ${m} (unknown module)"; continue ;;
   esac
   for probe in "${probes[@]}"; do

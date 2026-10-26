@@ -14,9 +14,14 @@
 # engines that RUN this image, not image content), elastic/opensearch
 # (their installs need a running Docker daemon — run those stacks beside
 # the container instead), proton-vpn (its daemon's postinst needs a
-# running systemd, and a VPN belongs on the host anyway), and
-# ollama-models (~50GB of GPU-bound weights; pull them on the host). Run
-# the result with scripts/run.sh.
+# running systemd, and a VPN belongs on the host anyway), ollama-models
+# (~50GB of GPU-bound weights; pull them on the host), the rest of the GPU
+# stack (nvidia-driver is a host kernel driver; cuda-toolkit, llama-cpp,
+# ik-llama-cpp, koboldcpp, ktransformers and vllm are multi-GB GPU-bound
+# builds and wheels — run them on the host), vmware-workstation (a host
+# hypervisor with kernel modules, from a Broadcom-portal download), and
+# the libreoffice/amazon-workspaces desktop apps (host software, not dev
+# image content). Run the result with scripts/run.sh.
 #
 # PureOS note: Purism publishes OCI images only for byzantium (PureOS 10),
 # so --os pureos builds on that base.
@@ -38,6 +43,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${SCRIPT_DIR}/lib/common.sh"
 
 IMAGE_MODULES=(git nodejs claude-code claude-plugins vscode jdk maven cpp golang rust python cloud
+               codex opencode oh-my-pi hermes-agent openclaw strata 7zip
                proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
                ollama)
 
@@ -58,7 +64,11 @@ usage() {
   echo "  Not imageable: docker, podman (the engines), elastic, opensearch"
   echo "  (need a running daemon at install time), proton-vpn (daemon needs"
   echo "  running systemd), ollama-models (~50GB of weights that need a GPU"
-  echo "  and a running Ollama daemon — pull them on the host)."
+  echo "  and a running Ollama daemon — pull them on the host), the GPU stack"
+  echo "  (nvidia-driver cuda-toolkit llama-cpp ik-llama-cpp koboldcpp"
+  echo "  ktransformers vllm — host driver / multi-GB GPU-bound builds),"
+  echo "  vmware-workstation (host hypervisor), libreoffice and"
+  echo "  amazon-workspaces (host desktop apps)."
   echo "  --os             target OS: ${!OS_BASE[*]} (default ubuntu)"
   echo "  --engine         docker (default) or podman"
   echo "  Component flags: $(printf -- '--%s ' "${IMAGE_MODULES[@]}")"

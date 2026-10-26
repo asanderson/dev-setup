@@ -16,13 +16,25 @@ Authenticator — one module and flag each), Elastic Stack (Basic license, in
 Docker), OpenSearch Platform (the Apache-2.0 Elastic alternative, in
 Docker), Ollama, and a verified set of **local coding models** for it
 (gpt-oss 20B, Gemma 4 26B, Laguna XS 2.1, each with a pinned-context
-variant tuned for a 24GB GPU). See [docs/dev-tools.md](docs/dev-tools.md) for the
-full module table.
+variant tuned for a 24GB GPU). The local-LLM and GPU stack adds the
+**NVIDIA GPU driver**, the **CUDA Toolkit**, **llama.cpp**, **ik_llama.cpp**,
+**KoboldCpp**, **KTransformers**, **vLLM** and **Strata**; the agent CLIs
+**Codex**, **OpenCode**, **Oh My Pi**, **Hermes Agent** and **OpenClaw**;
+and the desktop set **7-Zip**, **LibreOffice**, **VMware Workstation Pro
+26H1** (from your Broadcom download) and the **Amazon WorkSpaces** client.
+See [docs/dev-tools.md](docs/dev-tools.md) for the full module table.
+
+**On Windows**, `scripts\setup.ps1` is a native, winget-based installer
+for the Windows builds of these — plus the Windows-only **Git Bash**,
+**Notepad++**, **WinSCP** and **Cygwin** — with the same selection
+contract: `powershell -ExecutionPolicy Bypass -File .\scripts\setup.ps1`
+(see [Windows](docs/dev-tools.md#windows)).
 
 > **Setting up the dual-boot laptop first?** The OS-level runbook — Windows
 > prep, Ubuntu 26.04 install, NVIDIA driver, kernel — lives in
 > [asanderson/dual-boot](https://github.com/asanderson/dual-boot). Run that
-> to completion, then come back here for the dev tools.
+> to completion, then come back here for the dev tools. (Elsewhere, the
+> `nvidia-driver` module installs the driver per distro.)
 
 ## Quick start
 
@@ -66,7 +78,7 @@ flags), keeps user data unless `--purge-data`, and never removes `python3`
 | Doc | What's inside |
 |---|---|
 | [Module reference](docs/dev-tools.md) | Every module — what it installs and from where; the component-selection flags (`--modules`, one flag per component) with examples; dependency-ordering notes; and the [post-install verification](docs/dev-tools.md#after-it-finishes) commands |
-| [Troubleshooting](docs/troubleshooting.md) | Symptom-first fixes: [Elasticsearch](docs/troubleshooting.md#elasticsearch-container-exits-immediately) / [OpenSearch](docs/troubleshooting.md#opensearch-container-exits-immediately) containers exiting at start, [Docker only working with sudo](docs/troubleshooting.md#docker-works-with-sudo-only), and [Ollama running on CPU](docs/troubleshooting.md#ollama-runs-on-cpu) |
+| [Troubleshooting](docs/troubleshooting.md) | Symptom-first fixes: [Elasticsearch](docs/troubleshooting.md#elasticsearch-container-exits-immediately) / [OpenSearch](docs/troubleshooting.md#opensearch-container-exits-immediately) containers exiting at start, [Docker only working with sudo](docs/troubleshooting.md#docker-works-with-sudo-only), [Ollama running on CPU](docs/troubleshooting.md#ollama-runs-on-cpu), the [NVIDIA driver not loading](docs/troubleshooting.md#nvidia-driver-not-loaded-after-install), and [VMware kernel modules](docs/troubleshooting.md#vmware-workstation-kernel-modules) |
 | [WorkSpace design spec](docs/superpowers/specs/2026-08-12-workspace-dev-environment-design.md) | Archived design reference for an AWS WorkSpace cloud dev desktop — a separate effort, not part of this installer |
 | [Software bill of materials](SBOM.md) | Readable SBOM of **everything the installer delivers** — a sorted summary linking into per-component entries with suppliers, licenses, resolution, and dependencies. Generated from the machine-readable [sbom.cdx.json](sbom.cdx.json) (CycloneDX 1.6, maintained alongside `config/versions.env`); CI keeps the two in sync |
 
@@ -87,12 +99,16 @@ scripts/
                            selection (prompts, --os, --modules, per-component flags)
   uninstall.sh           Mirror of the selection contract for removal
                            (all components by default; --purge-data for data)
+  setup.ps1              Native Windows installer (winget + vendor installers),
+                           same selection contract
+  uninstall.ps1          Its removal mirror (-PurgeData for data)
   offline-bundle.sh      SBOM-driven packer for air-gapped installs
   build.sh               Builds an OCI image of the selected components
   run.sh                 Runs that image in Docker/Podman (user + mounts
                            prompted or flagged)
   lib/common.sh          Shared helpers (prompts, apt/dnf, per-family installs)
   lib/install-offline.sh Standalone installer shipped inside offline bundles
+  lib/windows*.ps1       Windows helpers + component catalog
   modules/*.sh           One idempotent installer + uninstaller per tool
 config/
   versions.env           Pinned versions for artifact-based installs
@@ -118,7 +134,10 @@ GPU-present branches (NVIDIA Container Toolkit install, nvidia runtime
 registration, Ollama's GPU path) that the GPU-less matrix can't reach. An
 **engines matrix** installs Docker and Podman in a fresh container of every
 target OS each supports (docker on ubuntu/debian/rocky/rhel, podman on all
-five — PureOS asserts docker is refused there). Run
+five — PureOS asserts docker is refused there). A **Windows job** runs
+`setup.ps1` unattended on a Windows runner (twice, for idempotency) with a
+scoped winget set, then `uninstall.ps1`, and the lint job parses every
+PowerShell script. Run
 them locally with Docker: `./test/container-test.sh --rerun`,
 `./test/container-test.sh --gpu-path`, and
 `./test/engines-test.sh <ubuntu|debian|pureos|rocky|rhel>`.

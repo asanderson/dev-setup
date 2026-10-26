@@ -15,14 +15,22 @@
 #                nvidia-smi stub simulating the MSI Raider's RTX 5090. Runs
 #                the container --privileged for the nested dockerd. Takes
 #                no other arguments.
-#   module ...   modules to test (default: git claude-code claude-plugins
-#                vscode docker podman jdk maven cpp golang rust python
-#                cloud plus six proton-* modules). elastic and opensearch (need a
-#                Docker daemon inside the container), ollama (GB-scale
-#                download, needs a GPU to be meaningful), and proton-vpn
-#                (its daemon's postinst needs systemd, absent in
-#                containers — a failure there poisons every later apt run)
-#                are excluded by default.
+#   module ...   modules to test (default: git nodejs claude-code
+#                claude-plugins vscode docker podman jdk maven cpp golang
+#                rust python cloud, the agent CLIs (codex opencode oh-my-pi
+#                hermes-agent openclaw strata), 7zip libreoffice,
+#                six proton-* modules, and llama-cpp
+#                (CPU build) + koboldcpp). elastic and opensearch (need a
+#                Docker daemon inside the container), ollama and the GPU
+#                stack (nvidia-driver, cuda-toolkit, ik-llama-cpp,
+#                ktransformers, vllm: GB-scale downloads that need a GPU to
+#                be meaningful — their skip/refusal paths are asserted
+#                instead), vmware-workstation (needs a Broadcom-portal
+#                download), amazon-workspaces (Amazon ships no 26.04
+#                client yet — its clean refusal is asserted instead), and
+#                proton-vpn (its daemon's postinst needs
+#                systemd, absent in containers — a failure there poisons
+#                every later apt run) are excluded by default.
 #
 # Env:
 #   DEV_SETUP_TEST_IMAGE   container image (default ubuntu:26.04)
@@ -69,7 +77,9 @@ if [[ -n "$GPU_PATH" ]]; then
 fi
 
 [[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
-  proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator)
+  codex opencode oh-my-pi hermes-agent openclaw strata 7zip libreoffice
+  proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
+  llama-cpp koboldcpp)
 
 echo ">>> image: ${IMAGE}"
 echo ">>> modules: ${MODULES[*]}${RERUN:+ (mode: ${RERUN})}"

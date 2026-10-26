@@ -191,18 +191,22 @@ $script:WindowsUnsupported = [ordered]@{
 
 # VMware Workstation: Broadcom serves the installer only behind a (free)
 # support-portal login, so it cannot be fetched — use the one you saved.
+# It runs elevated, so it is never picked up on its own (a file dropped
+# into Downloads must not become admin code): the path must be given, and
+# the installer must carry a valid VMware/Broadcom Authenticode signature.
 function Install-VMwareWorkstation {
   $exe = $env:DEV_SETUP_VMWARE_INSTALLER
-  if (-not $exe) {
-    $found = @(Get-ChildItem -Path (Join-Path $HOME 'Downloads') -Filter 'VMware-Workstation-Full-*.exe' -ErrorAction SilentlyContinue |
-        Sort-Object Name)
-    if ($found.Count) { $exe = $found[-1].FullName }
-  }
   if (-not $exe -or -not (Test-Path -LiteralPath $exe)) {
-    throw ('No VMware Workstation Pro installer found. Broadcom requires a (free) support-portal login: sign in at ' +
-      'https://support.broadcom.com, open My Downloads > VMware Workstation Pro > 17.x for Windows, save the .exe to ' +
-      'your Downloads folder (or set DEV_SETUP_VMWARE_INSTALLER), and re-run with --vmware-workstation.')
+    throw ('No VMware Workstation Pro installer given (DEV_SETUP_VMWARE_INSTALLER). Broadcom requires a (free) ' +
+      'support-portal login: sign in at https://support.broadcom.com, open My Downloads > VMware Workstation Pro > ' +
+      '17.x for Windows, download the .exe, then set DEV_SETUP_VMWARE_INSTALLER to its path and re-run with --vmware-workstation.')
   }
+  $sig = Get-AuthenticodeSignature -FilePath $exe
+  if ($sig.Status -ne 'Valid' -or -not $sig.SignerCertificate -or
+    $sig.SignerCertificate.Subject -notmatch 'O="?(VMware|Broadcom)') {
+    throw "$exe is not a validly signed VMware/Broadcom installer (signature: $($sig.Status)) — not running it."
+  }
+  Write-Ok "Installer signature valid: $($sig.SignerCertificate.Subject)"
   $name = [IO.Path]::GetFileNameWithoutExtension($exe)   # VMware-Workstation-Full-17.6.4-24832109
   $version = ($name -split '-')[3]
   $build = ($name -split '-')[4]

@@ -6,6 +6,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Every job only checks out and runs the repo's own scripts.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: shellcheck

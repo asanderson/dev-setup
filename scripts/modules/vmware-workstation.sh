@@ -7,8 +7,7 @@
 # as root and carries no signature, so the module never picks one up on
 # its own (a file dropped into ~/Downloads must not become root code), and
 # DEV_SETUP_VMWARE_BUNDLE_SHA256 — the checksum Broadcom's portal lists for
-# the download — is verified when given; without it the module prints the
-# bundle's SHA-256 for you to compare. Releases older than
+# the download — is required: the bundle runs only when it matches. Releases older than
 # VMWARE_WORKSTATION_MIN_RELEASE (26H1, versions.env) are refused: 26H1 is
 # the first release supporting Ubuntu 26.04 hosts, 26H1u1 carries the
 # VMSA-2026-0007 fix, and 17.x reached end of service in Nov 2025. Newer
@@ -39,21 +38,9 @@ module_vmware_workstation_install() {
     err "No VMware Workstation Pro bundle given (DEV_SETUP_VMWARE_BUNDLE=${bundle:-<unset>})."
     err "Broadcom requires a (free) support-portal login to download it: sign in at"
     err "https://support.broadcom.com, open My Downloads > VMware Workstation Pro > ${VMWARE_WORKSTATION_MIN_RELEASE} for Linux (latest update),"
-    err "download the .bundle, then re-run with DEV_SETUP_VMWARE_BUNDLE=/path/to/it"
-    err "(and DEV_SETUP_VMWARE_BUNDLE_SHA256=<the checksum the portal lists>) --vmware-workstation."
+    err "download the .bundle, then re-run with DEV_SETUP_VMWARE_BUNDLE=/path/to/it and"
+    err "DEV_SETUP_VMWARE_BUNDLE_SHA256=<the checksum the portal lists> (both required) --vmware-workstation."
     return 1
-  fi
-  # The bundle runs as root: check it is the file Broadcom published.
-  sha="$(sha256sum "$bundle" | cut -d' ' -f1)"
-  if [[ -n "$want_sha" ]]; then
-    if [[ "${sha}" != "${want_sha,,}" ]]; then
-      err "SHA-256 mismatch for ${bundle}: got ${sha}, expected ${want_sha} — not running it."
-      return 1
-    fi
-    ok "Bundle SHA-256 matches DEV_SETUP_VMWARE_BUNDLE_SHA256."
-  else
-    warn "Bundle SHA-256: ${sha} — compare it with the checksum on Broadcom's download page"
-    warn "(set DEV_SETUP_VMWARE_BUNDLE_SHA256 to have the module verify it before running the bundle as root)."
   fi
   # VMware-Workstation-Full-<release>-<build>.x86_64.bundle, e.g. 26H1-25388281.
   version="$(basename "$bundle" | sed -n 's/^VMware-Workstation-Full-\([^-]*\)-\([0-9]*\)\..*/\1/p')"
@@ -66,6 +53,21 @@ module_vmware_workstation_install() {
     err "Download ${VMWARE_WORKSTATION_MIN_RELEASE} (latest update) from Broadcom's portal and point DEV_SETUP_VMWARE_BUNDLE at it."
     return 1
   fi
+  # The bundle is unsigned and runs as root: the checksum Broadcom's portal
+  # lists for the download is the only proof it is the file Broadcom
+  # published, so it is required, not optional.
+  sha="$(sha256sum "$bundle" | cut -d' ' -f1)"
+  if [[ -z "$want_sha" ]]; then
+    err "DEV_SETUP_VMWARE_BUNDLE_SHA256 is required: the bundle is unsigned and runs as root."
+    err "Copy the SHA-256 that Broadcom's download page lists for this file and re-run with"
+    err "DEV_SETUP_VMWARE_BUNDLE_SHA256=<it>. (For comparison, this file's SHA-256 is ${sha}.)"
+    return 1
+  fi
+  if [[ "${sha}" != "${want_sha,,}" ]]; then
+    err "SHA-256 mismatch for ${bundle}: got ${sha}, expected ${want_sha} — not running it."
+    return 1
+  fi
+  ok "Bundle SHA-256 matches DEV_SETUP_VMWARE_BUNDLE_SHA256."
 
   # Kernel-module build prerequisites for the running kernel.
   if [[ "$(os_family)" == deb ]]; then

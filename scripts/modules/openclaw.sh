@@ -23,8 +23,11 @@ module_openclaw_uninstall() {
   section "Uninstall: OpenClaw"
   if require_nvm_node openclaw 2>/dev/null && command_exists openclaw; then
     if [[ "${PURGE_DATA:-0}" == "1" ]]; then
-      openclaw uninstall --all --yes --non-interactive || true
-      log "Removed the gateway service, ~/.openclaw state and configured workspaces."
+      # --state removes ~/.openclaw (the default workspace lives inside it);
+      # not --all, whose --workspace scope deletes configured workspace
+      # directories wherever they are — user project dirs included.
+      openclaw uninstall --service --state --yes --non-interactive || true
+      log "Removed the gateway service and ~/.openclaw state (workspaces configured elsewhere are kept)."
     else
       openclaw uninstall --service --yes --non-interactive || true
       log "Kept: ~/.openclaw (config, credentials, workspace — --purge-data removes it)."

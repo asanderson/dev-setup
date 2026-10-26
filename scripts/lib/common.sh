@@ -239,9 +239,14 @@ add_cuda_repo() {
       warn "NVIDIA's CUDA repo has no ${distro} release yet; using ${fallback}."
       distro="$fallback"
     fi
-    [[ -f "/etc/yum.repos.d/cuda-${distro}.repo" ]] \
-      || fetch "${base}/${distro}/x86_64/cuda-${distro}.repo" \
-           | sudo tee "/etc/yum.repos.d/cuda-${distro}.repo" >/dev/null
+    if [[ ! -s "/etc/yum.repos.d/cuda-${distro}.repo" ]]; then
+      # Download first: a failed fetch must not leave an empty repo file
+      # that every later run would take as already configured.
+      local tmp; tmp="$(mktemp)"
+      fetch "${base}/${distro}/x86_64/cuda-${distro}.repo" -o "$tmp" || { rm -f "$tmp"; return 1; }
+      sudo install -m 0644 "$tmp" "/etc/yum.repos.d/cuda-${distro}.repo"
+      rm -f "$tmp"
+    fi
   fi
 }
 

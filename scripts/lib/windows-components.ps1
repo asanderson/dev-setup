@@ -8,6 +8,7 @@
 # Install/Uninstall script blocks for vendors that ship no winget package.
 
 $script:DevSetupPurgeData = $false
+$script:Pins = Read-VersionPins (Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) (Join-Path 'config' 'versions.env'))
 
 $script:Components = [ordered]@{
   'cuda-toolkit'       = @{
@@ -52,7 +53,9 @@ $script:Components = [ordered]@{
     Describe  = 'Oh My Pi (omp coding agent, official installer, latest)'
     Install   = { Invoke-RemoteInstaller -Url 'https://omp.sh/install.ps1' }
     Uninstall = {
-      if (Test-Command bun) { & bun remove -g '@oh-my-pi/pi-coding-agent' 2>$null | Out-Null }
+      # Through cmd: a 2> redirect on a native command under
+      # ErrorActionPreference=Stop throws in Windows PowerShell 5.1.
+      if (Test-Command bun) { & cmd /c 'bun remove -g @oh-my-pi/pi-coding-agent >nul 2>&1' }
       $dir = Join-Path $env:LOCALAPPDATA 'omp'
       Remove-UserPath $dir
       Remove-Dir $dir
@@ -85,18 +88,27 @@ $script:Components = [ordered]@{
     }
     Uninstall = {
       if (Test-Command openclaw) {
-        $scope = '--service'
-        if ($script:DevSetupPurgeData) { $scope = '--all' }
-        & openclaw uninstall $scope --yes --non-interactive
+        # --state removes ~/.openclaw (the default workspace lives inside
+        # it); --all would add --workspace, which deletes configured
+        # workspace directories wherever they are — user project dirs too.
+        $scopes = @('--service')
+        if ($script:DevSetupPurgeData) { $scopes += '--state' }
+        & openclaw uninstall @scopes --yes --non-interactive
         if (Test-Command npm.cmd) { & npm.cmd rm -g openclaw | Out-Null }
       } else { Write-Log 'OpenClaw is not installed.' }
     }
   }
   'strata'             = @{
-    Describe  = 'Strata (local LLM app + engine, OpenAI/Anthropic-compatible API, latest)'
+    Describe  = 'Strata (local LLM app + engine, OpenAI/Anthropic-compatible API, STRATA_VERSION pin)'
+    # Pinned release (config/versions.env): the installer script is
+    # SHA-256 verified, and STRATA_FEED points it at that same release, so
+    # the Terminal it installs is the pinned one (checked against the
+    # release manifest by the installer itself).
     Install   = {
-      Invoke-RemoteInstaller -Url 'https://github.com/Niko1221/Strata/releases/latest/download/install.ps1'
-      Write-Log "Next: 'strata launch' (fetches the engine + a model), then 'strata connect'."
+      $tag = $script:Pins['STRATA_VERSION']
+      $env:STRATA_FEED = "https://github.com/Niko1221/Strata/releases/download/$tag"
+      Invoke-RemoteInstaller -Url "$env:STRATA_FEED/install.ps1" -Sha256 $script:Pins['STRATA_INSTALL_PS1_SHA256']
+      Write-Log "Strata $tag installed. Next: 'strata launch' (fetches the engine + a model), then 'strata connect'."
     }
     Uninstall = {
       $dir = Join-Path $env:LOCALAPPDATA 'Strata'

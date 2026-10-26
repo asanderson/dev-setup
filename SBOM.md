@@ -133,7 +133,7 @@ Every component, sorted — each links to its entry (details and dependencies) i
 | [Rust toolchain (rustup)](#rust-toolchain-rustup) | application | latest stable via rustup | Rust Foundation (rustup.rs) |
 | [rust-lang.rust-analyzer](#rust-langrust-analyzer) | library | newest version compatible with the installed VS Code | rust-lang |
 | [software-properties-common](#software-properties-common) | library | latest, resolved at install time | Ubuntu archive |
-| [Strata](#strata) | application | latest GitHub release via the official installer | Niko1221 (github.com/Niko1221/Strata) |
+| [Strata](#strata) | application | v0.2.6 | Niko1221 (github.com/Niko1221/Strata) |
 | [superpowers@superpowers-dev](#superpowerssuperpowers-dev) | library | latest from the marketplace repo at install time | github.com/obra/superpowers |
 | [ubuntu-drivers-common](#ubuntu-drivers-common) | library | latest, resolved at install time | Ubuntu archive |
 | [uidmap](#uidmap) | library | latest, resolved at install time | Ubuntu archive |
@@ -1260,11 +1260,11 @@ Every component, sorted — each links to its entry (details and dependencies) i
 ### Strata
 
 - **Type:** application
+- **Version:** v0.2.6
 - **Supplier:** Niko1221 (github.com/Niko1221/Strata)
 - **License:** MIT
-- **purl:** `pkg:github/Niko1221/Strata`
-- **Resolution:** latest GitHub release via the official installer
-- **Note:** Terminal archive SHA-256-checked against the release manifest; per-user under ~/.local/share/strata; `strata launch` fetches the engine and models later
+- **purl:** `pkg:github/Niko1221/Strata@v0.2.6`
+- **Note:** STRATA_VERSION pin; the official installer script is SHA-256 verified (STRATA_INSTALL_SH_SHA256 / STRATA_INSTALL_PS1_SHA256) and pointed at the same release (STRATA_FEED), whose manifest SHA-256 it checks the Terminal archive against; per-user under ~/.local/share/strata; `strata launch` fetches the engine and models later
 - **Depends on / installs with it:** —
 
 ### superpowers@superpowers-dev

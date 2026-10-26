@@ -94,7 +94,6 @@ foreach ($name in $candidates) {
 }
 if ($selected.Count -eq 0) { Write-Warn 'Nothing selected — exiting.'; exit 0 }
 
-Assert-Winget
 if (-not (Test-IsAdmin)) {
   Write-Warn 'Not elevated: machine-wide packages will each ask for UAC confirmation (run from an elevated PowerShell to avoid that).'
 }

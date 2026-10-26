@@ -63,8 +63,9 @@ function Update-SessionPath {
 function Add-UserPath {
   param([string]$Dir)
   $user = [Environment]::GetEnvironmentVariable('Path', 'User')
+  # @(): a single-entry PATH must stay an array, or + below concatenates strings.
   $parts = @()
-  if ($user) { $parts = $user -split ';' | Where-Object { $_ } }
+  if ($user) { $parts = @($user -split ';' | Where-Object { $_ }) }
   if ($parts -notcontains $Dir) {
     [Environment]::SetEnvironmentVariable('Path', (($parts + $Dir) -join ';'), 'User')
     Write-Warn "Added $Dir to your user PATH (new shells pick it up)."
@@ -105,6 +106,18 @@ function Test-NvidiaGpu {
         Where-Object { $_.Name -match 'NVIDIA' }).Count)
 }
 
+# Pins shared with the Linux installer: config/versions.env's KEY="value"
+# lines, so one file (kept current by scripts/upstream-versions.py) pins
+# both.
+function Read-VersionPins {
+  param([string]$Path)
+  $pins = @{}
+  foreach ($line in (Get-Content -LiteralPath $Path)) {
+    if ($line -match '^([A-Z0-9_]+)="([^"]*)"\s*$') { $pins[$Matches[1]] = $Matches[2] }
+  }
+  return $pins
+}
+
 # Fetch a URL to a file (TLS 1.2 forced for Windows PowerShell 5.1).
 function Save-Url {
   param([string]$Url, [string]$OutFile)
@@ -133,6 +146,7 @@ function Assert-Winget {
 
 function Install-WingetPackage {
   param([string]$Id, [string[]]$Extra = @())
+  Assert-Winget
   $wgArgs = @('install', '--id', $Id, '--exact', '--source', 'winget', '--silent',
     '--disable-interactivity', '--accept-package-agreements', '--accept-source-agreements') + $Extra
   & winget @wgArgs
@@ -144,6 +158,7 @@ function Install-WingetPackage {
 
 function Uninstall-WingetPackage {
   param([string]$Id)
+  Assert-Winget
   & winget uninstall --id $Id --exact --silent --disable-interactivity --accept-source-agreements
   $rc = $LASTEXITCODE
   if ($script:WingetOk -contains $rc -or $script:WingetReboot -contains $rc) { Write-Ok "$Id removed."; return }
@@ -165,11 +180,16 @@ function Assert-Npm {
 
 # Run a vendor's PowerShell install script in a child PowerShell (same
 # edition as this one), so an `exit` inside it cannot end this installer.
+# With -Sha256 the downloaded script must match it before it runs.
 function Invoke-RemoteInstaller {
-  param([string]$Url, [string[]]$Arguments = @())
+  param([string]$Url, [string[]]$Arguments = @(), [string]$Sha256 = '')
   $tmp = Join-Path ([IO.Path]::GetTempPath()) ("dev-setup-" + [guid]::NewGuid().ToString('N') + '.ps1')
   try {
     Save-Url -Url $Url -OutFile $tmp
+    if ($Sha256) {
+      $got = (Get-FileHash -Algorithm SHA256 -LiteralPath $tmp).Hash.ToLower()
+      if ($got -ne $Sha256.ToLower()) { throw "SHA-256 mismatch for $Url (got $got, expected $Sha256) — not running it." }
+    }
     $exe = (Get-Process -Id $PID).Path
     & $exe -NoProfile -ExecutionPolicy Bypass -File $tmp @Arguments
     if ($LASTEXITCODE -ne 0) { throw "installer $Url failed (exit $LASTEXITCODE)." }

@@ -69,7 +69,6 @@ foreach ($name in $candidates) {
 }
 if ($selected.Count -eq 0) { Write-Warn 'Nothing selected — exiting.'; exit 0 }
 
-Assert-Winget
 Write-Section "Uninstalling: $($selected -join ' ')"
 $failed = @()
 foreach ($name in $selected) {

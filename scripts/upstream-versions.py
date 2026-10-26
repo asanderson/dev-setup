@@ -29,6 +29,9 @@ installs from, so a bump here is what the installer would fetch:
   SEVENZIP_VERSION (+_SHA256)
                        newest ip7z/7zip GitHub release (Igor Pavlov's own
                        channel); the sha256 is computed from the download
+  STRATA_VERSION (+ STRATA_INSTALL_SH_SHA256, STRATA_INSTALL_PS1_SHA256)
+                       newest Niko1221/Strata GitHub release; both installer
+                       scripts' sha256 computed from the downloads
   JDK_MAJOR            REPORT ONLY: Adoptium's most recent LTS (distro packaging
                        lags a new LTS; bump by hand once openjdk-N-jdk exists)
   GO_VERSION, LLAMA_CPP_VERSION, KOBOLDCPP_VERSION, IK_LLAMA_CPP_REF
@@ -148,6 +151,16 @@ def parse_sevenzip_tag(tag: str) -> str:
     return tag
 
 
+def parse_strata_tag(tag: str) -> str:
+    if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
+        raise ValueError(f"unexpected Strata release tag {tag!r}")
+    return tag
+
+
+def strata_url(tag: str, script: str) -> str:
+    return f"https://github.com/Niko1221/Strata/releases/download/{tag}/{script}"
+
+
 def sevenzip_url(version: str) -> str:
     return (f"https://github.com/ip7z/7zip/releases/download/{version}/"
             f"7z{version.replace('.', '')}-linux-x64.tar.xz")
@@ -210,6 +223,16 @@ def resolve_sevenzip(pins):
     return version, {"SEVENZIP_SHA256": sha}
 
 
+def resolve_strata(pins):
+    tag = parse_strata_tag(github_latest_tag("Niko1221/Strata"))
+    if tag == pins["STRATA_VERSION"]:
+        return tag, {}
+    return tag, {
+        "STRATA_INSTALL_SH_SHA256": hashlib.sha256(fetch(strata_url(tag, "install.sh"), binary=True)).hexdigest(),
+        "STRATA_INSTALL_PS1_SHA256": hashlib.sha256(fetch(strata_url(tag, "install.ps1"), binary=True)).hexdigest(),
+    }
+
+
 def resolve_jdk(pins):
     return parse_adoptium_lts(fetch("https://api.adoptium.net/v3/info/available_releases")), {}
 
@@ -224,6 +247,7 @@ PINS = [
     ("NVM_VERSION", resolve_nvm, True, "nvm-sh/nvm GitHub releases"),
     ("PROTON_VPN_RELEASE_DEB", resolve_proton_vpn, True, "repo.protonvpn.com stable listing (sha256 computed)"),
     ("SEVENZIP_VERSION", resolve_sevenzip, True, "ip7z/7zip GitHub releases (sha256 computed)"),
+    ("STRATA_VERSION", resolve_strata, True, "Niko1221/Strata GitHub releases (installer sha256s computed)"),
     ("JDK_MAJOR", resolve_jdk, False, "Adoptium most_recent_lts (manual: archive packaging lags)"),
 ]
 
@@ -290,6 +314,8 @@ def sync_sbom(changes: dict, pins: dict) -> None:
                 bom_component(bom, "protonvpn-stable-release (repo bootstrap)")["version"] = m_new.group(1)
         elif key == "SEVENZIP_VERSION":
             bom_set_version(bom_component(bom, "7-Zip"), old, new)
+        elif key == "STRATA_VERSION":
+            bom_set_version(bom_component(bom, "Strata"), old, new)
         # NVM_VERSION: the SBOM entry records the resolution text only.
     bom["version"] = int(bom.get("version", 1)) + 1
     bom["metadata"]["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -330,6 +356,9 @@ def markdown_summary(rows, changes, manual, failures, stale) -> str:
             out.append(f"- `{key}`: `{old}` → `{new}`")
         out += ["", "`sbom.cdx.json` (document version +1) and `SBOM.md` were regenerated to match.",
                 "The nightly job only runs the lint checks; the container suites run on this PR as usual."]
+    if "STRATA_VERSION" in changes:
+        out += ["", "> `STRATA_INSTALL_SH_SHA256`/`STRATA_INSTALL_PS1_SHA256` were computed from the downloads; review",
+                "> the new installer scripts' diff on https://github.com/Niko1221/Strata/releases before merging."]
     if "SEVENZIP_VERSION" in changes:
         out += ["", "> `SEVENZIP_SHA256` was computed from the download. Cross-check it against the digest",
                 "> listed on the https://github.com/ip7z/7zip/releases release page before merging."]
@@ -366,6 +395,13 @@ def selftest() -> int:
     assert parse_proton_listing(listing) == "protonvpn-stable-release_1.0.10_all.deb"
     assert parse_adoptium_lts('{"most_recent_lts": 25}') == "25"
     assert parse_sevenzip_tag("26.05") == "26.05"
+    assert parse_strata_tag("v0.2.6") == "v0.2.6"
+    assert strata_url("v0.2.6", "install.sh").endswith("/releases/download/v0.2.6/install.sh")
+    try:
+        parse_strata_tag("v0.3.0-rc1")
+        raise AssertionError("pre-release Strata tag accepted")
+    except ValueError:
+        pass
     assert sevenzip_url("26.05").endswith("/26.05/7z2605-linux-x64.tar.xz")
     try:
         parse_sevenzip_tag("26.05-beta")

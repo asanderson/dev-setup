@@ -214,7 +214,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 | Oh My Pi | `omp`, the batteries-included fork of the Pi coding agent | Official install script (`bun install -g` with the nodejs module's Bun, else a verified binary) |
 | Hermes Agent | Nous Research's agent CLI (`hermes`) | Official install script, non-interactive (own pinned uv/Python under `~/.hermes`) |
 | OpenClaw | Self-hosted AI assistant gateway (`openclaw`); onboarding left to you, with the upstream security guidance printed | Official install script, npm method, into the nvm-managed Node (needs the nodejs module) |
-| Strata | Local LLM app + engine with OpenAI/Anthropic-compatible APIs on localhost ([Niko1221/Strata](https://github.com/Niko1221/Strata)); `strata connect` wires Claude Code/Codex/OpenCode to it | Official installer (Terminal archive SHA-256-checked against the release manifest) |
+| Strata | Local LLM app + engine with OpenAI/Anthropic-compatible APIs on localhost ([Niko1221/Strata](https://github.com/Niko1221/Strata)); `strata connect` wires Claude Code/Codex/OpenCode to it | Official installer at the `STRATA_VERSION` pin — the script SHA-256 verified, and pointed at the same release, whose manifest it checks the Terminal archive against |
 | 7-Zip | `7zz` (+ a `7z` alias), pinned in `config/versions.env` | Igor Pavlov's GitHub releases (ip7z/7zip), SHA-256 verified; the static build, identical on every target |
 | LibreOffice | Office suite | Distro packages (AppStream on EL — deprecated in RHEL 9.5, supported through RHEL 9) |
 | VMware Workstation Pro | Desktop hypervisor — **17 Pro as requested, or the successor bundle you supply** (17.6.4 is the last 17.x; end of service Nov 2025, and 26H1 is the first release supporting Ubuntu 26.04 hosts). Broadcom downloads need a free support-portal login: download the `.bundle`, then run with `DEV_SETUP_VMWARE_BUNDLE=/path/to/it` — it runs as root, so it is never picked up implicitly — and `DEV_SETUP_VMWARE_BUNDLE_SHA256=<portal checksum>` to have it verified first (otherwise its SHA-256 is printed for you to compare) | Broadcom's `.bundle` run unattended (`--console --eulas-agreed --required`) + `vmware-modconfig` builds vmmon/vmnet |
@@ -263,7 +263,7 @@ package; winget itself ships with Windows 10/11 as "App Installer".
 | Oh My Pi | `omp.sh/install.ps1` |
 | Hermes Agent | Nous Research's `install.ps1 -NonInteractive` |
 | OpenClaw | `openclaw.ai/install.ps1 -NoOnboard` |
-| Strata | the release's `install.ps1` |
+| Strata | the pinned release's `install.ps1` (SHA-256 verified, same `STRATA_VERSION` pin as Linux — read from `config/versions.env`) |
 | 7-Zip | winget `7zip.7zip` |
 | Notepad++ | winget `Notepad++.Notepad++` |
 | WinSCP | winget `WinSCP.WinSCP` |

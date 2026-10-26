@@ -1,9 +1,10 @@
 # shellcheck shell=bash
-# Module: NVIDIA GPU driver — the open kernel modules (the only flavor
-# that drives Blackwell/RTX 50 GPUs, and the only one NVIDIA ships from
-# R615 on), per target OS:
-#   ubuntu       Canonical's `ubuntu-drivers install` — picks the recommended
-#                branch from the archive (signed modules for Secure Boot)
+# Module: NVIDIA GPU driver, per target OS — the open kernel modules on
+# NVIDIA's channel (the only flavor that drives Blackwell/RTX 50 GPUs, and
+# the only one NVIDIA ships from R615 on):
+#   ubuntu       Canonical's `ubuntu-drivers install` — the archive's
+#                recommended package for the detected GPU (the -open branch
+#                on Blackwell), signed modules for Secure Boot
 #   debian       NVIDIA's CUDA repo `nvidia-open` (Debian's own packages stop
 #                at 550, which predates Blackwell)
 #   rocky/rhel   NVIDIA's CUDA repo, open-dkms module stream + `nvidia-open`
@@ -28,7 +29,9 @@ module_nvidia_driver_install() {
   case "${TARGET_OS:-ubuntu}" in
     ubuntu)
       apt_install ubuntu-drivers-common "linux-headers-$(uname -r)"
-      sudo ubuntu-drivers install
+      # Noninteractive: DKMS/Secure Boot debconf prompts must not block
+      # an unattended run (sudo's env_reset would drop an exported value).
+      sudo DEBIAN_FRONTEND=noninteractive ubuntu-drivers install
       ;;
     debian)
       _nvidia_debian_contrib
@@ -83,11 +86,13 @@ module_nvidia_driver_uninstall() {
   local -a pkgs
   if command_exists dpkg; then
     mapfile -t pkgs < <(dpkg-query -W -f='${Package}\n' 'nvidia-*' 'libnvidia-*' 'xserver-xorg-video-nvidia*' 2>/dev/null \
-      | grep -v '^nvidia-container' || true)
+      | grep -Ev '^(lib)?nvidia-container' || true)
   else
     mapfile -t pkgs < <(rpm -qa --qf '%{NAME}\n' 'nvidia-*' 'kmod-nvidia*' 'libnvidia-*' 2>/dev/null \
-      | grep -v '^nvidia-container' || true)
+      | grep -Ev '^(lib)?nvidia-container' || true)
   fi
+  # (the NVIDIA Container Toolkit and its libnvidia-container libraries
+  # belong to the docker module.)
   if [[ ${#pkgs[@]} -eq 0 ]]; then
     log "No NVIDIA driver packages installed."
     return 0

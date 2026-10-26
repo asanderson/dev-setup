@@ -38,11 +38,14 @@ module_cuda_toolkit_uninstall() {
   if command_exists dpkg; then
     mapfile -t pkgs < <(dpkg-query -W -f='${Package}\n' 'cuda-*' 'libcublas*' 'libcufft*' 'libcurand*' \
       'libcusolver*' 'libcusparse*' 'libnpp*' 'libnvjitlink*' 'libnvjpeg*' 'nsight-*' 2>/dev/null \
-      | grep -v '^cuda-keyring$' || true)
+      | grep -Ev '^cuda-(keyring|drivers|compat)' || true)
   else
     mapfile -t pkgs < <(rpm -qa --qf '%{NAME}\n' 'cuda-*' 'libcublas*' 'libcufft*' 'libcurand*' \
-      'libcusolver*' 'libcusparse*' 'libnpp*' 'libnvjitlink*' 'libnvjpeg*' 'nsight-*' 2>/dev/null || true)
+      'libcusolver*' 'libcusparse*' 'libnpp*' 'libnvjitlink*' 'libnvjpeg*' 'nsight-*' 2>/dev/null \
+      | grep -Ev '^cuda-(drivers|compat)' || true)
   fi
+  # (cuda-drivers*/cuda-compat* are driver packages — the nvidia-driver
+  # module's to remove.)
   pkg_remove "${pkgs[@]}"
   sudo rm -f /etc/profile.d/cuda.sh /etc/ld.so.conf.d/dev-setup-cuda.conf
   sudo ldconfig

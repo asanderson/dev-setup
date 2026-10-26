@@ -2559,7 +2559,7 @@
         },
         {
           "name": "note",
-          "value": "Ubuntu only (suite per release; noble as the fallback for newer releases); Windows: winget Amazon.WorkspacesClient"
+          "value": "Ubuntu only, on releases Amazon publishes a suite for (focal/jammy/noble); refused on 26.04 until Amazon ships a resolute build (the noble one needs libicu74/libxml2); Windows: winget Amazon.WorkspacesClient"
         }
       ],
       "bom-ref": "workspacesclient"

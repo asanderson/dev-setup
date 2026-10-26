@@ -142,10 +142,11 @@ jobs:
         # anything installs; runtime-dependent modules (openclaw, vllm)
         # refuse without nodejs/python; nvidia-driver skips cleanly with no
         # GPU; vmware-workstation refuses without a Broadcom download;
-        # --os windows points at setup.ps1). Then the default module set
+        # --os windows points at setup.ps1; amazon-workspaces refuses on
+        # 26.04, which Amazon ships no client for). Then the default module set
         # (git nodejs claude-code claude-plugins vscode docker podman
         # jdk maven cpp golang rust python cloud, the agent CLIs, 7zip,
-        # libreoffice, amazon-workspaces, llama-cpp (CPU build), koboldcpp
+        # libreoffice, llama-cpp (CPU build), koboldcpp
         # + six proton-* modules;
         # proton-vpn is excluded because its daemon's postinst needs
         # systemd, absent in containers), scoped via

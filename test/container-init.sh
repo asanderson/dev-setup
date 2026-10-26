@@ -110,7 +110,16 @@ rc=0
 out="$(sudo -u dev -H bash -c 'cd ~/dev-setup && ./scripts/setup.sh --os windows' 2>&1)" || rc=$?
 [[ $rc -ne 0 ]] && grep -q "setup.ps1" <<<"$out" \
   || { echo "FAIL: --os windows must point at scripts/setup.ps1"; exit 1; }
-echo "  PASS: nvidia-driver no-GPU skip, vmware bundle guidance, windows -> setup.ps1"
+rc=0
+out="$(sudo -u dev -H env DEV_SETUP_ASSUME_YES=1 \
+  bash -c 'cd ~/dev-setup && ./scripts/setup.sh --amazon-workspaces' 2>&1)" || rc=$?
+# Amazon ships no client for 26.04 yet: the module must refuse with
+# guidance rather than half-install the 24.04 build (whose libicu74/libxml2
+# dependencies 26.04 lacks). Flip this to an install probe once Amazon
+# publishes a resolute suite.
+[[ $rc -ne 0 ]] && grep -q "Amazon publishes no WorkSpaces client for" <<<"$out" \
+  || { echo "FAIL: amazon-workspaces must refuse cleanly on a release without an Amazon suite (rc=${rc})"; exit 1; }
+echo "  PASS: nvidia-driver no-GPU skip, vmware bundle guidance, windows -> setup.ps1, workspaces no-suite refusal"
 
 echo "### [run] setup.sh under DEV_SETUP_ASSUME_YES=1"
 set +e; run_setup; rc=$?; set -e

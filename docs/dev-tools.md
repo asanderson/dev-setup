@@ -172,7 +172,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 | Everywhere (all five) | Codex, OpenCode, Oh My Pi, Hermes Agent, OpenClaw, Strata, 7-Zip, LibreOffice, VMware Workstation Pro, llama.cpp, ik_llama.cpp, KoboldCpp | vendor install scripts and static binaries (distro-agnostic), the 7-Zip vendor tarball, distro LibreOffice packages, Broadcom's distro-agnostic `.bundle`, source builds |
 | Ubuntu, Debian, Rocky, RHEL (no PureOS) | NVIDIA GPU driver, CUDA Toolkit, vLLM | NVIDIA publishes no driver/CUDA channel for PureOS (a free-software-only distro); vLLM's CUDA wheels need that driver |
 | Ubuntu and Debian only | KTransformers | its wheels are `manylinux_2_35` — glibc 2.35+; EL9 ships 2.34 |
-| Ubuntu only | Amazon WorkSpaces client | Amazon's apt repo has Ubuntu LTS suites only (no Debian/EL client); Ubuntu 26.04 uses the noble suite until Amazon publishes its own |
+| Ubuntu only | Amazon WorkSpaces client | Amazon's apt repo has suites for the Ubuntu LTS releases it supports (20.04, 22.04, 24.04) — no Debian/EL client. **Ubuntu 26.04 has none yet** (the 24.04 build needs libicu74/libxml2, which 26.04 dropped), so there the module refuses with guidance: use WorkSpaces Web Access or the Windows client until Amazon publishes one |
 | Windows only (`scripts\setup.ps1`) | Git Bash, Notepad++, WinSCP, Cygwin | Windows software by definition — see [Windows](#windows) |
 
 > **GPU note:** if this machine has an NVIDIA GPU, install the driver first —
@@ -218,7 +218,7 @@ family to the right installer and packages — apt vs dnf, vendor `.deb` vs
 | 7-Zip | `7zz` (+ a `7z` alias), pinned in `config/versions.env` | Igor Pavlov's GitHub releases (ip7z/7zip), SHA-256 verified; the static build, identical on every target |
 | LibreOffice | Office suite | Distro packages (AppStream on EL — deprecated in RHEL 9.5, supported through RHEL 9) |
 | VMware Workstation Pro | Desktop hypervisor — **17 Pro as requested, or the successor bundle you supply** (17.6.4 is the last 17.x; end of service Nov 2025, and 26H1 is the first release supporting Ubuntu 26.04 hosts). Broadcom downloads need a free support-portal login: download the `.bundle`, then run with `DEV_SETUP_VMWARE_BUNDLE=/path/to/it` — it runs as root, so it is never picked up implicitly — and `DEV_SETUP_VMWARE_BUNDLE_SHA256=<portal checksum>` to have it verified first (otherwise its SHA-256 is printed for you to compare) | Broadcom's `.bundle` run unattended (`--console --eulas-agreed --required`) + `vmware-modconfig` builds vmmon/vmnet |
-| Amazon WorkSpaces | WorkSpaces client (`workspacesclient`) | Amazon's apt repo (Ubuntu suites; noble as the 26.04 fallback) |
+| Amazon WorkSpaces | WorkSpaces client (`workspacesclient`) on the Ubuntu releases Amazon publishes a suite for (20.04–24.04); refused with guidance on 26.04 until Amazon ships one | Amazon's apt repo |
 | llama.cpp | `llama-cli`, `llama-server`, ... built from the newest release (`LLAMA_CPP_VERSION` pins a tag) — CUDA when the toolkit is present, tuned to the local GPU | Source build (static) → `~/.local/opt/llama.cpp`, linked into `~/.local/bin` |
 | ik_llama.cpp | ikawrakow's fork (extra quant types, faster CPU/hybrid MoE), head of `main` — binaries as `ik-llama-*` so both forks coexist | Source build (static) → `~/.local/opt/ik_llama.cpp` |
 | KoboldCpp | Single-file GGUF runner + web UI (`koboldcpp`, port 5001), newest release | Release binary: the CUDA build with an NVIDIA GPU, `nocuda` otherwise |

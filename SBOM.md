@@ -1373,7 +1373,7 @@ Every component, sorted — each links to its entry (details and dependencies) i
 - **License:** AWS Customer Agreement
 - **purl:** `pkg:deb/amazon/workspacesclient`
 - **Resolution:** latest in Amazon's apt repo at install time
-- **Note:** Ubuntu only (suite per release; noble as the fallback for newer releases); Windows: winget Amazon.WorkspacesClient
+- **Note:** Ubuntu only, on releases Amazon publishes a suite for (focal/jammy/noble); refused on 26.04 until Amazon ships a resolute build (the noble one needs libicu74/libxml2); Windows: winget Amazon.WorkspacesClient
 - **Depends on / installs with it:** —
 
 ### xz-utils

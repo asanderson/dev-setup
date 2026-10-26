@@ -18,15 +18,17 @@
 #   module ...   modules to test (default: git nodejs claude-code
 #                claude-plugins vscode docker podman jdk maven cpp golang
 #                rust python cloud, the agent CLIs (codex opencode oh-my-pi
-#                hermes-agent openclaw strata), 7zip libreoffice
-#                amazon-workspaces, six proton-* modules, and llama-cpp
+#                hermes-agent openclaw strata), 7zip libreoffice,
+#                six proton-* modules, and llama-cpp
 #                (CPU build) + koboldcpp). elastic and opensearch (need a
 #                Docker daemon inside the container), ollama and the GPU
 #                stack (nvidia-driver, cuda-toolkit, ik-llama-cpp,
 #                ktransformers, vllm: GB-scale downloads that need a GPU to
 #                be meaningful — their skip/refusal paths are asserted
 #                instead), vmware-workstation (needs a Broadcom-portal
-#                download), and proton-vpn (its daemon's postinst needs
+#                download), amazon-workspaces (Amazon ships no 26.04
+#                client yet — its clean refusal is asserted instead), and
+#                proton-vpn (its daemon's postinst needs
 #                systemd, absent in containers — a failure there poisons
 #                every later apt run) are excluded by default.
 #
@@ -75,7 +77,7 @@ if [[ -n "$GPU_PATH" ]]; then
 fi
 
 [[ ${#MODULES[@]} -eq 0 ]] && MODULES=(git nodejs claude-code claude-plugins vscode docker podman jdk maven cpp golang rust python cloud
-  codex opencode oh-my-pi hermes-agent openclaw strata 7zip libreoffice amazon-workspaces
+  codex opencode oh-my-pi hermes-agent openclaw strata 7zip libreoffice
   proton-mail proton-bridge proton-drive proton-pass proton-meet proton-authenticator
   llama-cpp koboldcpp)
 

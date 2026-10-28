@@ -40,6 +40,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Push with the PAT too (not just the gh calls): GitHub never starts
+          # workflow runs for pushes made with GITHUB_TOKEN, and refuses pushes
+          # that touch .github/workflows/ unless the token has the workflows scope.
+          token: ${{ secrets.UPSTREAM_BUMP_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Resolve latest upstream versions and apply the bumps
         id: resolve

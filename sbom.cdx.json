@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 8,
+  "version": 9,
   "metadata": {
-    "timestamp": "2026-10-26T08:02:40Z",
+    "timestamp": "2026-10-28T13:02:22Z",
     "authors": [
       {
         "name": "asanderson/dev-setup"
@@ -706,8 +706,8 @@
     },
     {
       "type": "library",
-      "name": "clang-22",
-      "version": "22",
+      "name": "clang-23",
+      "version": "23",
       "supplier": {
         "name": "apt.llvm.org (LLVM project)"
       },
@@ -716,19 +716,19 @@
           "expression": "Apache-2.0 WITH LLVM-exception"
         }
       ],
-      "purl": "pkg:deb/llvm/clang-22",
+      "purl": "pkg:deb/llvm/clang-23",
       "properties": [
         {
           "name": "resolution",
-          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+          "value": "newest 23.x in the llvm-toolchain-resolute-23 suite (LLVM_VERSION pin)"
         }
       ],
-      "bom-ref": "clang-22"
+      "bom-ref": "clang-23"
     },
     {
       "type": "library",
-      "name": "clangd-22",
-      "version": "22",
+      "name": "clangd-23",
+      "version": "23",
       "supplier": {
         "name": "apt.llvm.org (LLVM project)"
       },
@@ -737,19 +737,19 @@
           "expression": "Apache-2.0 WITH LLVM-exception"
         }
       ],
-      "purl": "pkg:deb/llvm/clangd-22",
+      "purl": "pkg:deb/llvm/clangd-23",
       "properties": [
         {
           "name": "resolution",
-          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+          "value": "newest 23.x in the llvm-toolchain-resolute-23 suite (LLVM_VERSION pin)"
         }
       ],
-      "bom-ref": "clangd-22"
+      "bom-ref": "clangd-23"
     },
     {
       "type": "library",
-      "name": "clang-format-22",
-      "version": "22",
+      "name": "clang-format-23",
+      "version": "23",
       "supplier": {
         "name": "apt.llvm.org (LLVM project)"
       },
@@ -758,19 +758,19 @@
           "expression": "Apache-2.0 WITH LLVM-exception"
         }
       ],
-      "purl": "pkg:deb/llvm/clang-format-22",
+      "purl": "pkg:deb/llvm/clang-format-23",
       "properties": [
         {
           "name": "resolution",
-          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+          "value": "newest 23.x in the llvm-toolchain-resolute-23 suite (LLVM_VERSION pin)"
         }
       ],
-      "bom-ref": "clang-format-22"
+      "bom-ref": "clang-format-23"
     },
     {
       "type": "library",
-      "name": "clang-tidy-22",
-      "version": "22",
+      "name": "clang-tidy-23",
+      "version": "23",
       "supplier": {
         "name": "apt.llvm.org (LLVM project)"
       },
@@ -779,19 +779,19 @@
           "expression": "Apache-2.0 WITH LLVM-exception"
         }
       ],
-      "purl": "pkg:deb/llvm/clang-tidy-22",
+      "purl": "pkg:deb/llvm/clang-tidy-23",
       "properties": [
         {
           "name": "resolution",
-          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+          "value": "newest 23.x in the llvm-toolchain-resolute-23 suite (LLVM_VERSION pin)"
         }
       ],
-      "bom-ref": "clang-tidy-22"
+      "bom-ref": "clang-tidy-23"
     },
     {
       "type": "library",
-      "name": "lld-22",
-      "version": "22",
+      "name": "lld-23",
+      "version": "23",
       "supplier": {
         "name": "apt.llvm.org (LLVM project)"
       },
@@ -800,19 +800,19 @@
           "expression": "Apache-2.0 WITH LLVM-exception"
         }
       ],
-      "purl": "pkg:deb/llvm/lld-22",
+      "purl": "pkg:deb/llvm/lld-23",
       "properties": [
         {
           "name": "resolution",
-          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+          "value": "newest 23.x in the llvm-toolchain-resolute-23 suite (LLVM_VERSION pin)"
         }
       ],
-      "bom-ref": "lld-22"
+      "bom-ref": "lld-23"
     },
     {
       "type": "library",
-      "name": "lldb-22",
-      "version": "22",
+      "name": "lldb-23",
+      "version": "23",
       "supplier": {
         "name": "apt.llvm.org (LLVM project)"
       },
@@ -821,19 +821,19 @@
           "expression": "Apache-2.0 WITH LLVM-exception"
         }
       ],
-      "purl": "pkg:deb/llvm/lldb-22",
+      "purl": "pkg:deb/llvm/lldb-23",
       "properties": [
         {
           "name": "resolution",
-          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+          "value": "newest 23.x in the llvm-toolchain-resolute-23 suite (LLVM_VERSION pin)"
         }
       ],
-      "bom-ref": "lldb-22"
+      "bom-ref": "lldb-23"
     },
     {
       "type": "library",
-      "name": "llvm-22",
-      "version": "22",
+      "name": "llvm-23",
+      "version": "23",
       "supplier": {
         "name": "apt.llvm.org (LLVM project)"
       },
@@ -842,14 +842,14 @@
           "expression": "Apache-2.0 WITH LLVM-exception"
         }
       ],
-      "purl": "pkg:deb/llvm/llvm-22",
+      "purl": "pkg:deb/llvm/llvm-23",
       "properties": [
         {
           "name": "resolution",
-          "value": "newest 22.x in the llvm-toolchain-resolute-22 suite (LLVM_VERSION pin)"
+          "value": "newest 23.x in the llvm-toolchain-resolute-23 suite (LLVM_VERSION pin)"
         }
       ],
-      "bom-ref": "llvm-22"
+      "bom-ref": "llvm-23"
     },
     {
       "type": "application",
@@ -1582,7 +1582,7 @@
     {
       "type": "application",
       "name": "Apache Maven",
-      "version": "3.9.16",
+      "version": "3.10.0",
       "supplier": {
         "name": "Apache Software Foundation"
       },
@@ -1593,7 +1593,7 @@
           }
         }
       ],
-      "purl": "pkg:generic/apache-maven@3.9.16",
+      "purl": "pkg:generic/apache-maven@3.10.0",
       "properties": [
         {
           "name": "note",
@@ -1701,7 +1701,7 @@
       "properties": [
         {
           "name": "resolution",
-          "value": "latest GitHub release at install time; K9S_VERSION=v0.50.18 offline fallback"
+          "value": "latest GitHub release at install time; K9S_VERSION=v0.51.0 offline fallback"
         },
         {
           "name": "note",
@@ -1756,7 +1756,7 @@
     {
       "type": "application",
       "name": "protonvpn-stable-release (repo bootstrap)",
-      "version": "1.0.8",
+      "version": "1.0.10",
       "supplier": {
         "name": "Proton AG"
       },
@@ -1939,7 +1939,7 @@
     {
       "type": "container",
       "name": "elasticsearch",
-      "version": "9.5.1",
+      "version": "9.5.5",
       "supplier": {
         "name": "Elastic N.V."
       },
@@ -1950,7 +1950,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/elasticsearch@9.5.1?repository_url=docker.elastic.co",
+      "purl": "pkg:docker/elasticsearch@9.5.5?repository_url=docker.elastic.co",
       "properties": [
         {
           "name": "note",
@@ -1962,7 +1962,7 @@
     {
       "type": "container",
       "name": "kibana",
-      "version": "9.5.1",
+      "version": "9.5.5",
       "supplier": {
         "name": "Elastic N.V."
       },
@@ -1973,13 +1973,13 @@
           }
         }
       ],
-      "purl": "pkg:docker/kibana@9.5.1?repository_url=docker.elastic.co",
+      "purl": "pkg:docker/kibana@9.5.5?repository_url=docker.elastic.co",
       "bom-ref": "kibana"
     },
     {
       "type": "container",
       "name": "opensearchproject/opensearch",
-      "version": "3.8.0",
+      "version": "3.9.0",
       "supplier": {
         "name": "OpenSearch Software Foundation (Linux Foundation)"
       },
@@ -1990,7 +1990,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/opensearchproject/opensearch@3.8.0",
+      "purl": "pkg:docker/opensearchproject/opensearch@3.9.0",
       "properties": [
         {
           "name": "note",
@@ -2002,7 +2002,7 @@
     {
       "type": "container",
       "name": "opensearchproject/opensearch-dashboards",
-      "version": "3.8.0",
+      "version": "3.9.0",
       "supplier": {
         "name": "OpenSearch Software Foundation (Linux Foundation)"
       },
@@ -2013,7 +2013,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/opensearchproject/opensearch-dashboards@3.8.0",
+      "purl": "pkg:docker/opensearchproject/opensearch-dashboards@3.9.0",
       "bom-ref": "opensearchproject/opensearch-dashboards"
     },
     {
@@ -2415,7 +2415,7 @@
     {
       "type": "application",
       "name": "Strata",
-      "version": "v0.2.6",
+      "version": "v0.2.7",
       "supplier": {
         "name": "Niko1221 (github.com/Niko1221/Strata)"
       },
@@ -2426,7 +2426,7 @@
           }
         }
       ],
-      "purl": "pkg:github/Niko1221/Strata@v0.2.6",
+      "purl": "pkg:github/Niko1221/Strata@v0.2.7",
       "externalReferences": [
         {
           "type": "website",
@@ -2877,13 +2877,13 @@
         "ca-certificates",
         "ccache",
         "clang",
-        "clang-22",
+        "clang-23",
         "clang-format",
-        "clang-format-22",
+        "clang-format-23",
         "clang-tidy",
-        "clang-tidy-22",
+        "clang-tidy-23",
         "clangd",
-        "clangd-22",
+        "clangd-23",
         "Claude Code",
         "cmake",
         "code (Visual Studio Code)",
@@ -2910,11 +2910,11 @@
         "libsecret-1-0",
         "libtool",
         "llama.cpp",
-        "lld-22",
+        "lld-23",
         "lldb",
-        "lldb-22",
+        "lldb-23",
         "llvm",
-        "llvm-22",
+        "llvm-23",
         "lsb-release",
         "manpages-dev",
         "ninja-build",

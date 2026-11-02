@@ -102,3 +102,16 @@ jobs:
           else
             gh issue create --title "$ISSUE_TITLE" --body-file /tmp/summary.md --label dependencies
           fi
+
+      - name: Close the tracking issue once no pin needs a manual decision
+        if: steps.resolve.outputs.manual == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.UPSTREAM_BUMP_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          existing="$(gh issue list --search "\"$ISSUE_TITLE\" in:title" --state open --json number,title \
+                      --jq ".[] | select(.title == \"$ISSUE_TITLE\") | .number" | head -1)"
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "Every report-only pin matches upstream again (run ${{ github.run_id }}); nothing needs a manual decision."
+            echo "Closed issue #$existing"
+          fi

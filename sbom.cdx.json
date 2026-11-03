@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 11,
+  "version": 12,
   "metadata": {
-    "timestamp": "2026-11-01T06:31:14Z",
+    "timestamp": "2026-11-03T06:32:25Z",
     "authors": [
       {
         "name": "asanderson/dev-setup"
@@ -1939,7 +1939,7 @@
     {
       "type": "container",
       "name": "elasticsearch",
-      "version": "9.5.5",
+      "version": "9.5.6",
       "supplier": {
         "name": "Elastic N.V."
       },
@@ -1950,7 +1950,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/elasticsearch@9.5.5?repository_url=docker.elastic.co",
+      "purl": "pkg:docker/elasticsearch@9.5.6?repository_url=docker.elastic.co",
       "properties": [
         {
           "name": "note",
@@ -1962,7 +1962,7 @@
     {
       "type": "container",
       "name": "kibana",
-      "version": "9.5.5",
+      "version": "9.5.6",
       "supplier": {
         "name": "Elastic N.V."
       },
@@ -1973,7 +1973,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/kibana@9.5.5?repository_url=docker.elastic.co",
+      "purl": "pkg:docker/kibana@9.5.6?repository_url=docker.elastic.co",
       "bom-ref": "kibana"
     },
     {
@@ -2415,7 +2415,7 @@
     {
       "type": "application",
       "name": "Strata",
-      "version": "v0.2.9",
+      "version": "v0.2.10",
       "supplier": {
         "name": "Niko1221 (github.com/Niko1221/Strata)"
       },
@@ -2426,7 +2426,7 @@
           }
         }
       ],
-      "purl": "pkg:github/Niko1221/Strata@v0.2.9",
+      "purl": "pkg:github/Niko1221/Strata@v0.2.10",
       "externalReferences": [
         {
           "type": "website",

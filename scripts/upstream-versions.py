@@ -266,6 +266,11 @@ def bom_set_version(comp: dict, old: str, new: str) -> None:
     comp["version"] = new
     if "purl" in comp:
         comp["purl"] = comp["purl"].replace(f"@{old}", f"@{new}", 1)
+    # Release links (".../releases/tag/v0.2.9") carry the version too; replace
+    # only the whole token so "v0.2.1" never rewrites part of "v0.2.10".
+    token = re.compile(rf"(?<![\w.]){re.escape(old)}(?![\w.])")
+    for ref in comp.get("externalReferences", []):
+        ref["url"] = token.sub(new, ref["url"])
 
 
 def bom_rename_ref(bom: dict, old: str, new: str) -> None:
@@ -420,6 +425,20 @@ def selftest() -> int:
     assert bom["components"][0] == {"name": "clang-23", "bom-ref": "clang-23", "purl": "pkg:deb/llvm/clang-23",
                                     "properties": [{"name": "resolution", "value": "newest 23.x in the llvm-toolchain-resolute-23 suite"}]}
     assert bom["dependencies"] == [{"ref": "root", "dependsOn": ["clang-23"]}, {"ref": "clang-23", "dependsOn": []}]
+    # A version bump moves the purl and the release link, and only whole version tokens.
+    comp = {"version": "v0.2.9", "purl": "pkg:github/o/r@v0.2.9",
+            "externalReferences": [{"type": "website", "url": "https://github.com/o/r/releases/tag/v0.2.9"}]}
+    bom_set_version(comp, "v0.2.9", "v0.2.10")
+    assert comp["purl"] == "pkg:github/o/r@v0.2.10"
+    assert comp["externalReferences"][0]["url"] == "https://github.com/o/r/releases/tag/v0.2.10"
+    bom_set_version(comp, "v0.2.1", "v0.2.2")
+    assert comp["externalReferences"][0]["url"].endswith("/tag/v0.2.10"), "partial version token rewritten"
+    # Every release-tag link in the live SBOM names its component's version.
+    for c in json.loads(BOM.read_text())["components"]:
+        for ref in c.get("externalReferences", []):
+            m = re.search(r"/releases/tag/([^/?#]+)", ref.get("url", ""))
+            assert not m or m.group(1) == c.get("version"), \
+                f"sbom.cdx.json: {c['name']} is {c.get('version')} but links release {m.group(1)}"
     # The live pin file parses and every PIN key exists in it.
     pins = read_env()
     missing = [k for k, *_ in PINS if k not in pins]

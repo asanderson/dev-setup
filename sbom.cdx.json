@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 15,
+  "version": 16,
   "metadata": {
-    "timestamp": "2026-11-06T06:33:13Z",
+    "timestamp": "2026-11-08T06:30:38Z",
     "authors": [
       {
         "name": "asanderson/dev-setup"
@@ -2415,7 +2415,7 @@
     {
       "type": "application",
       "name": "Strata",
-      "version": "v0.2.11",
+      "version": "v0.2.12",
       "supplier": {
         "name": "Niko1221 (github.com/Niko1221/Strata)"
       },
@@ -2426,11 +2426,11 @@
           }
         }
       ],
-      "purl": "pkg:github/Niko1221/Strata@v0.2.11",
+      "purl": "pkg:github/Niko1221/Strata@v0.2.12",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://github.com/Niko1221/Strata/releases/tag/v0.2.11"
+          "url": "https://github.com/Niko1221/Strata/releases/tag/v0.2.12"
         }
       ],
       "properties": [
@@ -2444,7 +2444,7 @@
     {
       "type": "application",
       "name": "7-Zip",
-      "version": "26.05",
+      "version": "26.06",
       "supplier": {
         "name": "Igor Pavlov (github.com/ip7z/7zip)"
       },
@@ -2453,7 +2453,7 @@
           "expression": "LGPL-2.1-or-later AND BSD-3-Clause"
         }
       ],
-      "purl": "pkg:github/ip7z/7zip@26.05",
+      "purl": "pkg:github/ip7z/7zip@26.06",
       "properties": [
         {
           "name": "note",

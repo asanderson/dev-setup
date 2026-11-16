@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 17,
+  "version": 18,
   "metadata": {
-    "timestamp": "2026-11-10T06:32:05Z",
+    "timestamp": "2026-11-16T06:50:15Z",
     "authors": [
       {
         "name": "asanderson/dev-setup"
@@ -1582,7 +1582,7 @@
     {
       "type": "application",
       "name": "Apache Maven",
-      "version": "3.10.0",
+      "version": "3.10.1",
       "supplier": {
         "name": "Apache Software Foundation"
       },
@@ -1593,7 +1593,7 @@
           }
         }
       ],
-      "purl": "pkg:generic/apache-maven@3.10.0",
+      "purl": "pkg:generic/apache-maven@3.10.1",
       "properties": [
         {
           "name": "note",
@@ -2415,7 +2415,7 @@
     {
       "type": "application",
       "name": "Strata",
-      "version": "v0.2.13",
+      "version": "v0.2.14",
       "supplier": {
         "name": "Niko1221 (github.com/Niko1221/Strata)"
       },
@@ -2426,11 +2426,11 @@
           }
         }
       ],
-      "purl": "pkg:github/Niko1221/Strata@v0.2.13",
+      "purl": "pkg:github/Niko1221/Strata@v0.2.14",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://github.com/Niko1221/Strata/releases/tag/v0.2.13"
+          "url": "https://github.com/Niko1221/Strata/releases/tag/v0.2.14"
         }
       ],
       "properties": [

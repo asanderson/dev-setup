@@ -13,7 +13,16 @@ module_podman_install() {
     # (pasta/slirp4netns) arrives via podman's Recommends.
     apt_install podman uidmap
   else
-    sudo dnf install -y podman
+    # Enterprise Linux repos are sometimes published out of step: podman's
+    # newest network backend (netavark) can need an aardvark-dns build the
+    # repo does not carry yet, and dnf's default best=True then refuses the
+    # whole install. Fall back to the newest set that does install.
+    # --setopt=best=False is spelled the same in dnf4 and dnf5.
+    if ! sudo dnf install -y podman; then
+      warn "The newest podman packages do not install together here (repo published out of step);"
+      warn "installing the newest set that does. Re-run this module later to pick up the rest."
+      sudo dnf install -y --setopt=best=False podman
+    fi
   fi
 
   # Rootless operation needs subordinate UID/GID ranges for the user.

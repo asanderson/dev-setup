@@ -32,9 +32,13 @@ module_llama_cpp_install() {
     ref="$(github_latest_tag ggml-org/llama.cpp nightly-tag.txt)"
     [[ -n "$ref" ]] || { err "Could not resolve the newest llama.cpp release; pin LLAMA_CPP_VERSION in config/versions.env."; return 1; }
   fi
+  # The lookup needs git, which build_ggml_project would only install after it.
+  if ! command_exists git; then
+    if [[ "$(os_family)" == deb ]]; then apt_install git; else sudo dnf install -y git; fi
+  fi
   build_number="$(llama_cpp_build_number "$ref")"
   [[ -n "$build_number" ]] \
-    || warn "llama.cpp: no b<N> release tag on ${ref}'s commit; the build may embed a web UI from another release."
+    || warn "llama.cpp: could not find the b<N> release tag on ${ref}'s commit (lookup failed, or there is none); the build may embed a web UI from another release."
   build_ggml_project llama.cpp "$LLAMA_CPP_REPO" "$ref" "$prefix" \
     ${build_number:+"-DLLAMA_BUILD_NUMBER=${build_number}"}
   ensure_local_bin_path

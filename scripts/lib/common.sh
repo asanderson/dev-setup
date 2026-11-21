@@ -336,7 +336,9 @@ build_ggml_project() {
   local commit stamp
   commit="$(git ls-remote "$url" "$ref" 2>/dev/null | head -n1 | cut -f1 || true)"
   [[ -n "$commit" ]] || { err "${name}: cannot resolve '${ref}' at ${url}."; return 1; }
-  stamp="${commit} cuda=${cuda}"
+  # The extra cmake arguments are part of what was built (llama.cpp's build
+  # number picks the web UI it embeds), so a change in them rebuilds.
+  stamp="${commit} cuda=${cuda}${*:+ $*}"
   if [[ -f "${prefix}/.dev-setup-build" && "$(cat "${prefix}/.dev-setup-build")" == "$stamp" ]]; then
     ok "${name}: already built at ${ref} (${commit:0:12}, cuda=${cuda})."
     return 0

@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 23,
+  "version": 24,
   "metadata": {
-    "timestamp": "2026-11-23T06:44:50Z",
+    "timestamp": "2026-11-24T06:34:51Z",
     "authors": [
       {
         "name": "asanderson/dev-setup"
@@ -1939,7 +1939,7 @@
     {
       "type": "container",
       "name": "elasticsearch",
-      "version": "9.5.6",
+      "version": "9.5.7",
       "supplier": {
         "name": "Elastic N.V."
       },
@@ -1950,7 +1950,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/elasticsearch@9.5.6?repository_url=docker.elastic.co",
+      "purl": "pkg:docker/elasticsearch@9.5.7?repository_url=docker.elastic.co",
       "properties": [
         {
           "name": "note",
@@ -1962,7 +1962,7 @@
     {
       "type": "container",
       "name": "kibana",
-      "version": "9.5.6",
+      "version": "9.5.7",
       "supplier": {
         "name": "Elastic N.V."
       },
@@ -1973,7 +1973,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/kibana@9.5.6?repository_url=docker.elastic.co",
+      "purl": "pkg:docker/kibana@9.5.7?repository_url=docker.elastic.co",
       "bom-ref": "kibana"
     },
     {

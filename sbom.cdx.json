@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:9ff564b1-6fda-47b7-9128-228350d4f0d8",
-  "version": 25,
+  "version": 26,
   "metadata": {
-    "timestamp": "2026-11-25T06:35:45Z",
+    "timestamp": "2026-11-26T06:35:29Z",
     "authors": [
       {
         "name": "asanderson/dev-setup"
@@ -1979,7 +1979,7 @@
     {
       "type": "container",
       "name": "opensearchproject/opensearch",
-      "version": "3.10.0",
+      "version": "3.10.1",
       "supplier": {
         "name": "OpenSearch Software Foundation (Linux Foundation)"
       },
@@ -1990,7 +1990,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/opensearchproject/opensearch@3.10.0",
+      "purl": "pkg:docker/opensearchproject/opensearch@3.10.1",
       "properties": [
         {
           "name": "note",
@@ -2002,7 +2002,7 @@
     {
       "type": "container",
       "name": "opensearchproject/opensearch-dashboards",
-      "version": "3.10.0",
+      "version": "3.10.1",
       "supplier": {
         "name": "OpenSearch Software Foundation (Linux Foundation)"
       },
@@ -2013,7 +2013,7 @@
           }
         }
       ],
-      "purl": "pkg:docker/opensearchproject/opensearch-dashboards@3.10.0",
+      "purl": "pkg:docker/opensearchproject/opensearch-dashboards@3.10.1",
       "bom-ref": "opensearchproject/opensearch-dashboards"
     },
     {
@@ -2415,7 +2415,7 @@
     {
       "type": "application",
       "name": "Strata",
-      "version": "v0.2.21",
+      "version": "v0.2.22",
       "supplier": {
         "name": "Niko1221 (github.com/Niko1221/Strata)"
       },
@@ -2426,11 +2426,11 @@
           }
         }
       ],
-      "purl": "pkg:github/Niko1221/Strata@v0.2.21",
+      "purl": "pkg:github/Niko1221/Strata@v0.2.22",
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://github.com/Niko1221/Strata/releases/tag/v0.2.21"
+          "url": "https://github.com/Niko1221/Strata/releases/tag/v0.2.22"
         }
       ],
       "properties": [
